@@ -1469,3 +1469,194 @@ body[data-theme^="luz"] .modal .mbox,body[data-theme^="luz"] .modal .mbox *{colo
 .puz .lead2{margin-top:14px}
 </style>
 <style>.gal h2{font-size:clamp(46px,6.4vw,124px);margin:12px 0 0}</style>
+<style>
+/* ===================== R1 · 15/10 ===================== */
+/* 1 crédito do loader na Terra */
+.ld-credit{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.12em;font-size:13px}
+/* 4 etiqueta da classe sempre preenchida */
+.klass{background:var(--kc,var(--accent));color:#fff;border-color:var(--kc,var(--accent));text-shadow:none}
+/* 11 barra do topo: invisível, vira vidro quando algo passa embaixo */
+.top{background:none!important;isolation:isolate}
+.top::before{content:"";position:absolute;inset:0 0 -22px;z-index:-1;pointer-events:none;-webkit-backdrop-filter:blur(14px) saturate(1.25);backdrop-filter:blur(14px) saturate(1.25);background:color-mix(in srgb,var(--bg) 22%,transparent);-webkit-mask-image:linear-gradient(#000 62%,transparent);mask-image:linear-gradient(#000 62%,transparent)}
+.top .btn.small{opacity:1!important}
+/* menu do celular */
+.tlinks{display:flex;align-items:center;gap:clamp(10px,1.6vw,22px)}
+.tmenu{display:none}
+/* 10 descrição da caixa em 2 linhas */
+.caixa .lead2.two{max-width:min(66ch,100%)}
+/* 12 caixas: número ao lado do texto, Terra */
+.cx{grid-template-columns:auto 1fr;align-items:center;column-gap:14px}
+.cx .cx-img{grid-column:1/-1}
+.cx b{font-size:clamp(52px,4.6vw,84px)}
+.cx p{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.06em;font-size:14px;line-height:1.35;max-width:none;padding-left:0}
+/* 13 galeria */
+.gal-h{white-space:normal}
+/* 15 caldeirão: respiro entre ingredientes, botões e resultado */
+.cx-side .label{margin-bottom:6px}
+.cx-play .ings{margin-top:22px}
+.cx-play .cact{margin-top:34px}
+.cx-side .cres{margin-top:26px}
+/* 17 desafio: frase como título */
+#quebra .pq-big{font-size:clamp(40px,4.2vw,78px);line-height:.94;max-width:22ch;margin:10px 0 0}
+.pq-big .acc{display:block;margin-top:.12em}
+.pq-name{margin-top:18px;font-family:var(--f-label);text-transform:uppercase;letter-spacing:.14em;font-size:clamp(14px,1.1vw,17px);color:var(--accent)}
+.pq-name::before{content:"Desafio · "}
+/* 3 setas da abertura só nos blocos de história */
+.st-nav{transition:opacity .3s}
+.st-pickrow{transition:opacity .2s}
+/* 7 limbo: o vídeo fica fixo e só aparece (o perspective prendia o vídeo na seção) */
+.limbo .stage{perspective:none!important}
+
+/* ===================== MOBILE ===================== */
+@media (max-width:760px){
+ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
+ body{position:relative}
+ /* topo: logo · peão · Lista · menu */
+ .top{gap:8px;padding-inline:14px}
+ .top .dock{display:none}
+ .ptag-b{padding:7px 9px 4px 8px;font-size:11px}
+ .tnav{gap:8px}
+ .top .btn.small{padding:9px 11px 6px;font-size:10.5px;letter-spacing:.05em}
+ .tmenu{display:grid;place-content:center;gap:4px;width:36px;height:36px;border-radius:50%;border:1px solid color-mix(in srgb,var(--bone) 25%,transparent);background:color-mix(in srgb,var(--bg) 40%,transparent);cursor:pointer;padding:0}
+ .tmenu i{display:block;width:15px;height:1.5px;background:var(--bone);border-radius:2px;transition:transform .25s,opacity .25s}
+ .top.menu-open .tmenu i:nth-child(1){transform:translateY(5.5px) rotate(45deg)}
+ .top.menu-open .tmenu i:nth-child(2){opacity:0}
+ .top.menu-open .tmenu i:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
+ .tlinks{position:absolute;top:calc(100% + 4px);right:14px;flex-direction:column;align-items:stretch;gap:0;min-width:210px;padding:8px;border-radius:16px;background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid color-mix(in srgb,var(--bone) 14%,transparent);box-shadow:0 20px 40px -12px rgba(0,0,0,.5);opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .2s,transform .2s}
+ .top.menu-open .tlinks{opacity:1;transform:none;pointer-events:auto}
+ .tlinks .tlink{display:block!important;text-align:left;padding:13px 12px 10px;font-size:13px;border:0;border-radius:10px}
+ .tlinks .tlink:hover,.tlinks .tlink:active{background:color-mix(in srgb,var(--bone) 8%,transparent)}
+ /* abertura: cartas no centro, texto embaixo, sem setas (indicador de rolagem) */
+ .st-nav{display:none!important}
+ .st-card,.st-card.board{top:34%!important}
+ .st-txt{top:auto!important;bottom:calc(96px + env(safe-area-inset-bottom,0px));height:30vh;left:var(--gutter)!important;right:var(--gutter)!important}
+ .st-block{justify-content:flex-end!important}
+ .st-end{justify-content:center!important}
+ .st-bigboard{left:50%!important;top:36%!important;width:90vw!important}
+ .st-bigboard img{border-radius:14px}
+ .st-skip{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+ .st-cue{position:absolute;left:50%;bottom:calc(26px + env(safe-area-inset-bottom,0px));z-index:6;transform:translateX(-50%);width:24px;height:38px;border:1.5px solid color-mix(in srgb,var(--bone) 55%,transparent);border-radius:14px;pointer-events:none;transition:opacity .3s}
+ .st-cue::before{content:"";position:absolute;left:50%;top:7px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:var(--bone);animation:cue 1.6s cubic-bezier(.4,0,.2,1) infinite}
+ /* 4 crédito final em duas linhas alinhadas */
+ .st-end .st-cred{font-size:11px;letter-spacing:.14em;line-height:1.7;padding:0 var(--gutter)}
+ .st-end .st-cred span,.ld-credit span{display:block}.st-end .st-cred .st-dot,.ld-credit .st-dot{display:none}
+ .ld-credit{font-size:11px;line-height:1.7}
+ /* 5 escolha do peão: grade 3×2 */
+ .st-pickrow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;max-width:340px}
+ .st-pickrow button{justify-content:center;padding:11px 6px 8px;font-size:11px;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+ .st-pickrow button span{overflow:hidden;text-overflow:ellipsis}
+ /* 6 peça: título numa linha */
+ .pc-txt h2{font-size:9.4vw;white-space:nowrap}
+ .pc-txt h2 br{display:none}
+ .pc-txt p:last-child{font-size:17px}
+ /* 7 lendas: só nome e pontos */
+ .lv-info .klass,.lv-info .def,.lv-info .lv-tip{display:none!important}
+ .lv-info h3{font-size:10vw!important}
+ .lv-info .dpts{font-size:22px}
+ /* 8–9 reinos: cartas em cima, texto embaixo, nome menor */
+ .reino .txt{top:auto!important;bottom:calc(46px + env(safe-area-inset-bottom,0px));left:var(--gutter);right:var(--gutter)}
+ .reino .txt h2{font-size:13vw!important;line-height:.9}
+ .fan{top:40%!important}
+ /* 10 limbo: vídeo central, texto embaixo, mais simples */
+ .limbo .bgv{object-position:50% 50%}
+ .ltxt{top:auto!important;bottom:calc(40px + env(safe-area-inset-bottom,0px));left:var(--gutter);right:var(--gutter);max-width:none;text-align:center;padding:16px 16px 14px;border-radius:18px;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+ .limbo .ltxt h2{font-size:15vw!important;margin:2px 0 8px}
+ .ltxt p{font-size:16px}
+ .ltxt .label{display:none}
+ /* 11 relíquias lado a lado */
+ .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px}
+ .rel{padding:12px 8px 12px}
+ .rel h3{font-size:14px}
+ /* 12 magias: respiro */
+ .msteps{gap:24px!important;margin-top:28px!important}
+ .msteps li{grid-template-columns:44px 1fr;column-gap:14px}
+ .msteps li::after,.msteps li::before{width:44px;height:44px}
+ .msteps b{font-size:22px;margin-bottom:4px}
+ .msteps span{font-size:16px;line-height:1.5}
+ .cald .lead2{margin-bottom:6px}
+ /* 13 aviso do caldeirão embaixo da carta, não em cima */
+ .pothint{position:absolute!important;top:calc(100% + 14px);bottom:auto!important;left:50%!important;transform:translateX(-50%)!important;animation:none!important;font-size:11px;padding:8px 14px 5px}
+ .cx-play .pot{margin-bottom:64px}
+ /* 12 caixas no celular */
+ .cx p{font-size:13px}
+ /* desafio */
+ .pq-big{font-size:11vw}
+}
+@keyframes cue{0%{transform:translateY(0);opacity:0}25%{opacity:1}80%{transform:translateY(12px);opacity:0}100%{opacity:0}}
+@media (min-width:761px){.st-cue{display:none}}
+</style>
+<style>
+/* 14 modal de cadastro: no celular vira "bottom sheet" leve */
+@media (max-width:760px){
+ #lead{place-items:end center!important;padding:0!important}
+ #lead .mbox{width:100%;max-width:none;padding:0!important;animation:sheet .38s cubic-bezier(.2,.8,.2,1)}
+ #lead form{max-height:90svh;overflow:auto;margin:0!important;border-radius:24px 24px 0 0!important;border-bottom:0!important;padding:26px 20px calc(22px + env(safe-area-inset-bottom,0px))!important}
+ #lead form::before{content:"";display:block;width:42px;height:4px;border-radius:4px;background:color-mix(in srgb,var(--bone) 30%,transparent);margin:-12px auto 14px}
+ #lead h3{font-size:9.5vw!important;margin-bottom:6px}
+ #lead #leadd{font-size:15px;line-height:1.45;margin-bottom:14px;color:var(--bone-dim)}
+ #lead label{font-size:11px;letter-spacing:.1em}
+ #lead input{height:48px;font-size:16px;margin-top:6px}
+ #lead form>label{margin-bottom:10px;display:block}
+ #lead .btn{width:100%;margin-top:6px}
+ #lead .mbg{background:rgba(4,6,7,.72)}
+}
+#lead .mbox>.mx{position:absolute;top:14px;right:14px;width:38px;height:38px;font-size:20px;z-index:3}
+@keyframes sheet{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+</style>
+<style>
+/* ===================== R2 · 15/10 ===================== */
+/* 1 personagem salta mais da carta; cartas sem recorte ganham profundidade interna */
+.layers .plate{transform:translate(calc(var(--lx,0)*-9px),calc(var(--ly,0)*-8px)) scale(1.08)!important}
+.layers .char{transform:translate(calc(var(--lx,0)*16px),calc(var(--ly,0)*13px)) scale(1.09)!important;filter:drop-shadow(0 14px 18px rgba(0,0,0,.55))}
+.layers.deep img{transform:translate(calc(var(--lx,0)*-3.5%),calc(var(--ly,0)*-3%)) scale(1.12);transition:transform .2s ease-out}
+.layers.deep::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 26px rgba(0,0,0,.55);border-radius:inherit}
+/* 5 galeria em arco */
+.ring-stage{--R:800px;--w:280px;position:relative;height:clamp(340px,40vw,560px);margin-top:clamp(26px,5vh,50px);overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.ring{position:absolute;left:50%;top:50%;width:0;height:0}
+.ring-item{position:absolute;left:0;top:0;width:var(--w);aspect-ratio:4/3;margin:0;border-radius:14px;overflow:hidden;box-shadow:0 22px 44px -24px rgba(40,25,10,.65);will-change:transform,opacity}
+.ring-item img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:760px){.ring-stage{--R:330px;--w:140px;height:260px}}
+/* 6 em breve: silhuetas que acendem */
+.scard img{transition:filter 1.1s ease,transform 1.1s cubic-bezier(.2,.8,.2,1)}
+.scard.bw img{filter:grayscale(1) brightness(.35) contrast(1.15) blur(5px)}
+.scard.bw.lit img{filter:grayscale(.4) brightness(.68) contrast(1.1) blur(1.5px);transform:scale(1.04)}
+.scard.sil img{transition:filter 1.1s ease,opacity 1.1s}
+.scard.sil.lit img{filter:brightness(.18) drop-shadow(0 0 22px var(--accent))}
+.scard{transition:box-shadow 1.1s,transform 1.1s cubic-bezier(.2,.8,.2,1)}
+.scard.lit{box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 50%,transparent),0 24px 50px -20px color-mix(in srgb,var(--accent) 60%,transparent);transform:translateY(-4px)}
+@media (prefers-reduced-motion:reduce){.layers.deep img,.layers .char,.layers .plate{transform:none!important}}
+</style>
+<style>
+/* ===================== R3 · ajustes da história ===================== */
+/* 2/6 topo: sem vidro na história; fora dela, vidro leve estilo iOS (pouco desfoque, mais saturação, filete) */
+.top::before{inset:0!important;-webkit-backdrop-filter:blur(8px) saturate(1.8) brightness(1.05)!important;backdrop-filter:blur(8px) saturate(1.8) brightness(1.05)!important;background:color-mix(in srgb,var(--bg) 30%,transparent)!important;-webkit-mask-image:none!important;mask-image:none!important;border-bottom:1px solid color-mix(in srgb,var(--bone) 10%,transparent);opacity:1;transition:opacity .35s}
+.top.instory::before,html.loading .top::before{opacity:0}
+/* 4 recorte: deslocamento mínimo */
+.layers .plate{transform:translate(calc(var(--lx,0)*-2px),calc(var(--ly,0)*-2px)) scale(1.04)!important}
+.layers .char{transform:translate(calc(var(--lx,0)*4px),calc(var(--ly,0)*3px)) scale(1.04)!important;filter:drop-shadow(0 8px 10px rgba(0,0,0,.45))}
+.layers.deep img{transform:translate(calc(var(--lx,0)*-1.6%),calc(var(--ly,0)*-1.4%)) scale(1.06)}
+/* 3 cartas da história mais espaçadas (Saci × Thor) */
+.st-card.in{transform:translate(calc(var(--ic,0)*var(--sp,.48)*100%),calc(var(--i,0)*10px)) rotate(var(--rot)) scale(1)!important}
+.st-card.out{transform:translate(calc(var(--ic,0)*var(--sp,.48)*100%),calc(var(--i,0)*10px - 85vh)) rotate(calc(var(--rot) + 16deg)) scale(.92)!important}
+.st-card:not(.in):not(.out):not(.pre){transform:translate(calc(var(--ic,0)*var(--sp,.48)*100%),calc(var(--i,0)*10px + 75vh)) rotate(calc(var(--rot) - 22deg)) scale(.9)!important}
+/* 1/5 tabuleiro da história: maior e inclinado em 3D conforme surge */
+.st-bigboard{width:min(84vw,112vh)!important;transform:translate(-50%,-50%) perspective(1600px) rotateX(calc(var(--rv,0)*40deg)) rotateZ(calc(var(--rv,0)*-24deg)) scale(calc(.92 + var(--rv,0)*.18))!important;transform-style:preserve-3d}
+@media (min-width:761px){.st-bigboard{left:32vw!important}.st-cards{left:5vw!important}}
+/* 7 o fim da história não repete a logo (ela já veio do carregamento) */
+.st-end .st-logo,.st-end .st-sub,.st-end .st-cred{display:none!important}
+.loader.fly{background:transparent!important;pointer-events:none;transition:background .8s ease}
+.loader.fly .ld-bar,.loader.fly .ld-pct,.loader.fly .ld-credit{opacity:0;transition:opacity .3s}
+.loader.fly .ld-in{transform:none!important;opacity:1!important}
+.loader .ld-logo,.loader .ld-sub{transition:transform 1s cubic-bezier(.7,0,.2,1)}
+.loader.fly.out{opacity:0;transition:opacity .25s}
+.top .logo{transition:opacity .2s}
+@media (max-width:760px){
+ /* M1 cartas maiores */
+ .st-card,.st-card.board{width:52vw!important;margin:calc(52vw*-.68) 0 0 -26vw!important;top:36%!important}
+ .st-card.in{transform:translate(calc(var(--ic,0)*var(--sp,.48)*62%),calc(var(--i,0)*8px)) rotate(var(--rot)) scale(1)!important}
+ .st-bigboard{left:50%!important;top:34%!important;width:96vw!important}
+ /* M3 escolha do peão: título visível, peão acima dos botões */
+ .st-pick{padding-top:calc(env(safe-area-inset-top,0px) + 92px)!important}
+ .st-pick h2{font-size:9vw}
+}
+</style>

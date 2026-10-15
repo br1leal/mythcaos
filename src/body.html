@@ -1,7 +1,7 @@
 <div class="loader" id="loader" role="status" aria-live="polite">
   <div class="ld-in"><p class="ld-logo">__LOGO__</p><p class="ld-sub">O Despertar das Lendas</p>
     <div class="ld-bar"><i id="ldbar"></i></div><p class="label ld-pct"><span id="ldpct">0</span>% · acordando as lendas</p></div>
-  <p class="ld-credit">Criado e desenvolvido por Bruno Leal · um jogo 100% brasileiro</p>
+  <p class="ld-credit"><span>Criado e desenvolvido por Bruno Leal</span><span class="st-dot"> · </span><span>um jogo 100% brasileiro</span></p>
 </div>
 <div class="atmo" aria-hidden="true"></div>
 <canvas id="amb" aria-hidden="true"></canvas>
@@ -15,7 +15,7 @@
 
 <header class="top">
   <div class="brand"><a class="logo" href="#historia" id="hlogo"><span id="hlogot">__LOGO__</span><span class="lsub" id="hlogos">O Despertar das Lendas</span></a><button class="dock" id="dock" type="button" aria-label="Ver sua lenda de perto" title="Ver de perto"></button><div class="ptag"><button class="ptag-b" id="ptagb" type="button" aria-expanded="false" aria-controls="ptagm"><i></i><span id="ptagn">Saci</span><em>trocar</em></button><div class="ptag-m" id="ptagm" hidden></div></div></div>
-  <nav class="tnav" aria-label="Atalhos"><button class="tlink" type="button" data-autor>Sobre o autor</button><a class="tlink" href="#quebra">Desafio MythCaos</a><button class="btn small" type="button" data-lead>Lista de espera</button></nav>
+  <nav class="tnav" aria-label="Atalhos"><div class="tlinks" id="tlinks"><button class="tlink" type="button" data-autor>Sobre o autor</button><a class="tlink" href="#quebra">Desafio MythCaos</a></div><button class="btn small" type="button" data-lead>Lista de espera</button><button class="tmenu" id="tmenu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="tlinks"><i></i><i></i><i></i></button></nav>
 </header>
 
 <nav class="rail" aria-label="Seções">
@@ -55,7 +55,7 @@
     <button class="st-skip" id="stskip" type="button">Pular intro <span aria-hidden="true">↓</span></button>
     <div class="st-pick" id="stpick"><div class="st-pickhead"><h2>Escolha o seu peão</h2></div><div class="st-pickrow" id="stpickrow"></div></div>
     <div class="st-prog" id="stprog" aria-hidden="true"></div>
-    <div class="st-nav" id="stnav"><button type="button" data-d="-1" aria-label="Bloco anterior">↑</button><button type="button" data-d="1" aria-label="Próximo bloco">↓</button></div>
+    <div class="st-cue" id="stcue" aria-hidden="true"></div><div class="st-nav" id="stnav"><button type="button" data-d="-1" aria-label="Bloco anterior">↑</button><button type="button" data-d="1" aria-label="Próximo bloco">↓</button></div>
   </div>
 </section>
 
@@ -225,8 +225,8 @@
 </section>
 
 <section id="galeria" class="gal wrap" data-theme="luz" data-mode="dock">
-  <p class="label">Na mesa</p>
-  <h2 class="one">Imagine na sua mesa</h2>
+  <p class="label">Lugar de lenda é na mesa.</p>
+  <h2 class="one gal-h">Uma rodada vira duas.<br>Duas viram revanche.</h2>
   <div class="mosaic">
     <figure class="m-a"><img src="assets/gal/foto3.webp" alt="" loading="lazy"></figure>
     <figure class="m-b"><img src="assets/gal/foto1.webp" alt="" loading="lazy"></figure>
@@ -272,8 +272,8 @@
 
 <section id="quebra" class="puz wrap" data-theme="luz" data-mode="dock">
   <p class="label">Minigame · ranking ao vivo</p>
-  <h2 class="one">Monte a lenda</h2>
-  <p class="pq">Enquanto o jogo não fica pronto, <span class="acc">que tal encarar o desafio?</span></p>
+  <h2 class="pq-big">Enquanto o jogo não fica pronto, <span class="acc">que tal encarar o desafio?</span></h2>
+  <p class="pq-name">Monte a lenda</p>
   <p class="lead2 two">Três cartas, três níveis e o relógio correndo. Quem montar mais rápido sobe no ranking.</p>
   <div class="pwrap">
     <div class="pintro">

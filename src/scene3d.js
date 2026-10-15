@@ -39,8 +39,14 @@ const load=(file,cb)=>fetch(`assets/peoes/${file}.glb64.txt`).then(r=>r.text()).
   load(id,g=>{g.scene.visible=id===MC.pawn;models[id].f=g.scene;fig.add(g.scene);MC.modelLoaded&&MC.modelLoaded()});
   load(id+'_marc',g=>{MC.modelLoaded&&MC.modelLoaded();g.scene.visible=id===MC.pawn;g.scene.traverse(o=>{if(o.isMesh){o.material.transparent=true;baseMats.push(o.material)}});models[id].b=g.scene;base.add(g.scene);
     const cl=g.scene.clone(true); cl.traverse(o=>{if(o.isMesh){o.material=o.material.clone();o.material.transparent=true;deckMats.push(o.material)}}); cl.visible=id===MC.pawn; models[id].d=cl; deckBase.add(cl)})});
-let spinBoost=0;
-MC.onPawn=id=>{for(const k in models){models[k].d&&(models[k].d.visible=k===id);models[k].f&&(models[k].f.visible=k===id);models[k].b&&(models[k].b.visible=k===id)} spinBoost=Math.PI*2};
+// os outros cinco peões correm a trilha junto com o seu (filhos do tabuleiro)
+const RIV={ids:['saci','iara','medusa','mula','papainoel','valquiria'],g:{},ready:false};
+const RCFG={saci:[.86,.8,1.7,.10,-.12],iara:[.62,1.15,2.3,-.12,.1],medusa:[.78,.95,1.2,.12,.12],mula:[.9,.7,2.9,-.1,-.1],papainoel:[.48,1.3,1.5,0,.16],valquiria:[.7,.9,3.4,.15,-.02]};
+function rivBuild(){ if(RIV.ready||RIV.fail) return; if(performance.now()>30000&&!RIV.ids.every(id=>models[id]&&models[id].f&&models[id].b)){RIV.fail=true; return} if(!RIV.ids.every(id=>models[id]&&models[id].f&&models[id].b)) return;
+  RIV.ids.forEach(id=>{const g=new THREE.Group(); const bc=models[id].b.clone(true); bc.traverse(o=>{if(o.isMesh){o.material=o.material.clone(); o.material.opacity=1}}); g.add(models[id].f.clone(true), bc); g.traverse(o=>o.visible=true); g.scale.setScalar(.72); g.visible=false; board.add(g); RIV.g[id]=g}); RIV.ready=true}
+function rivStep(id,q){const [cap,a,w]=RCFG[id]; const x=Math.pow(q,a)+Math.sin(q*w*6.283)*.035*q; return Math.max(0,Math.min(35,cap*36*x))}
+let spinBoost=0; const FRONT={};
+MC.onPawn=id=>{for(const k in models){models[k].d&&(models[k].d.visible=k===id);models[k].f&&(models[k].f.visible=k===id);models[k].b&&(models[k].b.visible=k===id)} spinBoost=Math.PI*2; vYaw=0; MC.faceId=id; MC.faceT=performance.now()};
 MC.onJoin=()=>{spinBoost=Math.PI*4}; MC.onDraw=c=>{spinBoost=c==='Limbo'?Math.PI*6:Math.PI}; 
 
 // girar com o mouse
@@ -69,8 +75,8 @@ function tick(now){
   const W=innerWidth,H=innerHeight,mob=W<761,k=1-Math.exp(-dt*6);
   const sv=(scrollY-lastScroll)/Math.max(dt,.001); lastScroll=scrollY; vel+=(sv-vel)*(1-Math.exp(-dt*5));
   if(!drag){dragYaw+=vYaw; vYaw*=Math.pow(.04,dt); dragPitch*=Math.pow(.2,dt)}
-  spin=(MC.reduce?0:now*.00025)+scrollY*.0022+dragYaw;
-  if(spinBoost>0){const d=Math.min(spinBoost,dt*9);spinBoost-=d;dragYaw+=d}
+  MC._tAcc=(MC._tAcc||0)+((MC.faceT&&now-MC.faceT<4200)||MC.reduce?0:dt*1000); spin=MC._tAcc*.00025+scrollY*.0022+dragYaw; MC._ang=spin+mx*.5;
+  if(spinBoost>0){const d=Math.min(spinBoost,dt*9);spinBoost-=d;dragYaw+=d} else if(MC.faceId&&!drag&&now-MC.faceT<4200){const T=Math.PI*2; let e=-(FRONT[MC.faceId]||0)-(spin+mx*.5); e=((e+Math.PI)%T+T)%T-Math.PI; dragYaw+=e*Math.min(1,dt*5)}
   rim.color.lerp(rimColor,k*.5); key.color.lerp(keyColor,k*.5);
   cam.position.x+=((MC.reduce?0:mx*.6)-cam.position.x)*k; cam.position.y+=((MC.reduce?0:-my*.4)-cam.position.y)*k; cam.lookAt(0,0,0);
 
@@ -79,17 +85,22 @@ function tick(now){
   if(mode==='board'){
     onBoard=true;
     const vh=2*CZ*Math.tan(THREE.MathUtils.degToRad(FOV/2)), vw=vh*cam.aspect;
-    const bsF=Math.min(1.35,vw*(mob?.98:.7)/BW,vh*1.02/(BH*.74)), bsI=Math.min(vw*(mob?.92:.5)/BW, vh*(mob?.46:.5)/BH);
+    const bsF=Math.min(1.12,vw*(mob?.98:.58)/BW,vh*.8/(BH*.74)), bsI=Math.min(vw*(mob?.92:.5)/BW, vh*(mob?.46:.5)/BH);
     const rise=smooth(clamp(((MC.boardIn??1)-.45)/.55)), mv=smooth(clamp((p-.11)/.11));
-    const ox=lerp(0,mob?0:vw*.2,mv), oy=lerp(-vh*(mob?.1:.14),mob?-vh*.06:vh*.09,mv)-(1-rise)*vh*.9+(MC.boardOut||0)*vh*1.1;
+    const ox=lerp(0,mob?0:vw*.2,mv), oy=lerp(-vh*(mob?.1:.14),mob?-vh*.04:vh*.025,mv)-(1-rise)*vh*.9+(MC.boardOut||0)*vh*1.1;
     const bs=lerp(bsI,bsF,mv); board.scale.setScalar(bs); board.position.set(ox,oy,0);
     board.rotation.x=lerp(1.28,.95,mv)-(1-rise)*.5; board.rotation.y=lerp(-1.1+rise*.5+p*1.2,-.3+p*.6,mv);
     const s=Math.min(36,Math.max(0,(p-.22)/.74*36)), i=Math.floor(s), f=smooth(s-i);
     const a=casaLocal[i], b=casaLocal[Math.min(36,i+1)]; const loc=a.clone().lerp(b,f);
     const hop=Math.sin(Math.PI*f)*.35; hopNow=hop;
     loc.y=hop; board.updateMatrixWorld(); tp=board.localToWorld(loc); ts=.72*bs; vis=p>.16; posK=1-Math.exp(-dt*14);
+    rivBuild(); if(RIV.ready){ const q=clamp((p-.22)/.74), rs=[]; const cw=Math.abs(casaLocal[1].x-casaLocal[0].x)||Math.abs(casaLocal[1].z-casaLocal[0].z)||.3;
+      RIV.ids.forEach(id=>{const g=RIV.g[id]; if(id===MC.pawn){g.visible=false; return} const st=rivStep(id,q), si=Math.floor(st), sf=smooth(st-si); rs.push(+st.toFixed(2));
+        const A=casaLocal[si], B=casaLocal[Math.min(36,si+1)], v=A.clone().lerp(B,sf); const [, , ,ox,oz]=RCFG[id]; v.x+=ox*cw; v.z+=oz*cw; v.y=Math.sin(Math.PI*sf)*.3;
+        g.position.copy(v); g.rotation.set(0,-.4+Math.sin(now*.001+st)*.15,0); g.scale.setScalar(.72*(1-(MC.boardOut||0)*.999)); g.visible=p>.16; if(MC.reduce) g.rotation.y=-.4});
+      MC.boardSteps={me:+s.toFixed(2),rivals:rs} }
   } else if(mode==='story'){
-    const sp=MC.storyPawn||0; tp=toWorld(W/2,H*(mob?.74:.8)); ts=Math.max(.0001,H*(mob?.34:.46)*wpp()*(.6+.4*sp)); vis=sp>.02; tiltX=.18; posK=1-Math.exp(-dt*9);
+    const sp=MC.storyPawn||0; tp=toWorld(W/2,H*(mob?.6:.8)); ts=Math.max(.0001,H*(mob?.25:.46)*wpp()*(.6+.4*sp)); vis=sp>.02; tiltX=.18; posK=1-Math.exp(-dt*9);
   } else if(mode==='zoom'){
     tp=toWorld(W/2,H*(mob?.86:.92)); ts=H*(mob?.46:.58)*wpp(); posK=1-Math.exp(-dt*7); tiltX=.12;
   } else if(mode==='dock'||(!mode)){
@@ -104,7 +115,7 @@ function tick(now){
     tiltZ=Math.max(-.35,Math.min(.35,-vel*.0002)); tiltX=Math.max(-.3,Math.min(.3,vel*.0001));
     if(mode==='hero') tiltX+=.3; else if(mode==='show') tiltX+=.12;
   }
-  boardMix+=((onBoard?1:0)-boardMix)*(1-Math.exp(-dt*12)); board.visible=boardMix>.01; top.opacity=side.opacity=boardMix*(1-(MC.boardOut||0));
+  if(!onBoard&&RIV.ready) for(const id in RIV.g) RIV.g[id].visible=false; boardMix+=((onBoard?1:0)-boardMix)*(1-Math.exp(-dt*12)); board.visible=boardMix>.01; top.opacity=side.opacity=boardMix*(1-(MC.boardOut||0));
   if(vis&&!MC._pv&&mode==='dock'){cur.pos.copy(tp); cur.s=ts*.05} MC._pv=vis;
   pawn.visible=vis;
   cur.pos.lerp(tp,posK); cur.s+=(ts-cur.s)*posK; cur.lift+=(MC.lift-cur.lift)*k;
