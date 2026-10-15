@@ -2,16 +2,10 @@
 const MANI=__MANI__, CUTS=new Set(__CUTS__);
 const MC=window.MC={pawn:'saci',mode:'hero',p:0,slot:null,free:{sx:0,sy:0,hp:300},theme:'base',lift:0,reduce:matchMedia('(prefers-reduced-motion: reduce)').matches};
 
-MC.store=(async()=>{ if(!(window.claude&&window.claude.use)) return null; const db=await window.claude.use('db'); const user=await window.claude.use('user'); if(!db||!user) return null; const id=await user.id(); if(!id) return null;
-  const at=()=>new Date().toISOString();
-  return {saveLead:async d=>{await db.doc('leads/'+id).set({...d,at:at()}); await db.doc('mesa/'+id).set({at:at()})}, mesa:async()=>(await db.collection('mesa').get()).size, vote:v=>db.doc('votes/'+id).set({...v,at:at()}), votes:async()=>(await db.collection('votes').get()).docs.map(x=>x.data()),
-    mine:async()=>{const x=await db.doc('votes/'+id).get(); return x.exists?x.data():null}, suggest:v=>db.collection('sugestoes/'+id+'/itens').doc().set({nome:v,at:at()}),
-    myLead:async()=>{const x=await db.doc('leads/'+id).get(); return x.exists?x.data():null},
-    myScore:async()=>{const x=await db.doc('puzzle/'+id).get(); return x.exists?x.data():null},
-    saveScore:d=>db.doc('puzzle/'+id).set({...d,at:at()}), scores:async()=>(await db.collection('puzzle').get()).docs.map(x=>({...x.data(),_id:x.id})), uid:id} })().catch(()=>null);
+MC.store=window.MC_STORE||Promise.resolve(null); // definido em store.js
 // lead lembrado neste navegador (para preencher sozinho)
 // MODO TESTE: a cada carregamento o contato é esquecido, para testar os fluxos que pedem dados
-const TEST_RESET=true;
+const TEST_RESET=!!window.MC_TEST_RESET; // ligado/desligado em store.js
 MC.lead=null; try{ if(TEST_RESET) localStorage.removeItem('mc-lead'); else MC.lead=JSON.parse(localStorage.getItem('mc-lead')||'null')}catch(e){}
 MC.rememberLead=d=>{MC.lead={...(MC.lead||{}),...d}; try{localStorage.setItem('mc-lead',JSON.stringify(MC.lead))}catch(e){}};
 MC.store.then(async st=>{if(!st||MC.lead||TEST_RESET) return; try{const l=await st.myLead(); if(l&&l.email){MC.rememberLead({nome:l.nome||'',email:l.email,tel:l.tel||''}); MC.onLead&&MC.onLead()}}catch(e){}});
