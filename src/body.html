@@ -1,0 +1,382 @@
+<div class="loader" id="loader" role="status" aria-live="polite">
+  <div class="ld-in"><p class="ld-logo">__LOGO__</p><p class="ld-sub">O Despertar das Lendas</p>
+    <div class="ld-bar"><i id="ldbar"></i></div><p class="label ld-pct"><span id="ldpct">0</span>% · acordando as lendas</p></div>
+  <p class="ld-credit">Criado e desenvolvido por Bruno Leal · um jogo 100% brasileiro</p>
+</div>
+<div class="atmo" aria-hidden="true"></div>
+<canvas id="amb" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="pickhand" id="pickhand" aria-hidden="true"><span class="ghand" role="img" aria-label="Arraste para girar"><svg class="h-open" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg><svg class="h-grab" viewBox="0 0 24 24"><path d="M18 11.5V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1.4"/><path d="M14 10V8a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 9.9V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v5"/><path d="M6 14a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8 2 2 0 1 1 4 0"/></svg><i class="g-arc"></i></span></div>
+<canvas id="fxc" aria-hidden="true"></canvas>
+<div class="sunfx" id="sunfx" aria-hidden="true"><div class="rays"></div><div class="sunglow"></div><div class="clouds"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="goo" x="-10%" y="-10%" width="120%" height="140%"><feGaussianBlur in="SourceGraphic" stdDeviation="9" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter></svg>
+
+
+<header class="top">
+  <div class="brand"><a class="logo" href="#historia" id="hlogo"><span id="hlogot">__LOGO__</span><span class="lsub" id="hlogos">O Despertar das Lendas</span></a><button class="dock" id="dock" type="button" aria-label="Ver sua lenda de perto" title="Ver de perto"></button><div class="ptag"><button class="ptag-b" id="ptagb" type="button" aria-expanded="false" aria-controls="ptagm"><i></i><span id="ptagn">Saci</span><em>trocar</em></button><div class="ptag-m" id="ptagm" hidden></div></div></div>
+  <nav class="tnav" aria-label="Atalhos"><button class="tlink" type="button" data-autor>Sobre o autor</button><a class="tlink" href="#quebra">Desafio MythCaos</a><button class="btn small" type="button" data-lead>Lista de espera</button></nav>
+</header>
+
+<nav class="rail" aria-label="Seções">
+  <a href="#historia"><span>História</span><i></i></a>
+  <a href="#peca"><span>A peça</span><i></i></a>
+  <a href="#lendas"><span>Lendas</span><i></i></a>
+  <a href="#decks"><span>Baralhos</span><i></i></a>
+  <a href="#insignias"><span>Insígnias</span><i></i></a>
+  <a href="#raizes"><span>Raízes</span><i></i></a>
+  <a href="#mares"><span>Marés</span><i></i></a>
+  <a href="#tormentas"><span>Tormentas</span><i></i></a>
+  <a href="#titas"><span>Titãs</span><i></i></a>
+  <a href="#travessia"><span>Portal</span><i></i></a>
+  <a href="#limbo"><span>Limbo</span><i></i></a>
+  <a href="#reliquias"><span>Relíquias</span><i></i></a>
+  <a href="#tabuleiro"><span>Tabuleiro</span><i></i></a>
+  <a href="#caixa"><span>Na caixa</span><i></i></a>
+  <a href="#galeria"><span>Galeria</span><i></i></a>
+  <a href="#caldeirao"><span>Magias</span><i></i></a>
+  <a href="#embreve"><span>Em breve</span><i></i></a>
+  <a href="#quebra"><span>Desafio</span><i></i></a>
+  <a href="#lista"><span>Lista</span><i></i></a>
+</nav>
+
+<div class="pzoom" id="pzoom" hidden role="dialog" aria-modal="true" aria-labelledby="pzn">
+  <div class="pz-bg" data-pzclose></div>
+  <div class="pz-txt"><p class="label">Sua lenda</p><h3 id="pzn">Saci</h3><p class="pz-hint"><span class="ghand" role="img" aria-label="Arraste para girar"><svg class="h-open" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg><svg class="h-grab" viewBox="0 0 24 24"><path d="M18 11.5V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1.4"/><path d="M14 10V8a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 9.9V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v5"/><path d="M6 14a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8 2 2 0 1 1 4 0"/></svg><i class="g-arc"></i></span></p></div>
+  <button class="mx" type="button" aria-label="Fechar" data-pzclose>×</button>
+</div>
+
+<main>
+<section id="historia" class="story" data-theme="historia" data-mode="story">
+  <div class="stage">
+    <div class="st-bg" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="st-cards" id="stcards" aria-hidden="true"></div>
+    <div class="st-txt" id="sttxt"></div>
+    <button class="st-skip" id="stskip" type="button">Pular intro <span aria-hidden="true">↓</span></button>
+    <div class="st-pick" id="stpick"><div class="st-pickhead"><h2>Escolha o seu peão</h2></div><div class="st-pickrow" id="stpickrow"></div></div>
+    <div class="st-prog" id="stprog" aria-hidden="true"></div>
+    <div class="st-nav" id="stnav"><button type="button" data-d="-1" aria-label="Bloco anterior">↑</button><button type="button" data-d="1" aria-label="Próximo bloco">↓</button></div>
+  </div>
+</section>
+
+<section id="peca" class="peca" data-theme="base" data-mode="show" data-k="0.5,0.64,0.42" data-km="0.5,0.58,0.26">
+  <div class="stage">
+    <div class="pc-txt" id="pctxt"><p class="label">Peões exclusivos</p><h2>Duas peças, uma lenda</h2><p>A base marca de qual baralho você compra. <br>O peão corre a trilha até o templo.</p></div>
+    <p class="pc-hint" id="pchint"></p>
+  </div>
+</section>
+
+<section id="teaser" class="teaser wrap" data-theme="base" data-mode="dock" hidden>
+  <div class="tz">
+    <div class="tz-txt">
+      <p class="label">Teaser</p>
+      <h2>O Caos vai começar<span class="acc">e ninguém sai ileso</span></h2>
+      <button class="btn" type="button" data-lead>Quero receber novidades</button>
+    </div>
+    <div class="tz-frame" id="tzframe">
+      <div class="screen">
+        <div class="vid"><div class="pan"><div class="strip" id="strip"></div></div></div>
+        <button class="play" id="tzplay" type="button" aria-label="Assistir ao teaser"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></button><span class="badge">Teaser em produção</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="confirmadas" class="conf wrap" data-theme="lenda" data-mode="dock">
+  <p class="label">Conheça algumas</p>
+  <h2 class="conf-t">Lendas do jogo</h2>
+</section>
+
+<section id="lendas" class="lenda" data-theme="lenda" data-mode="dock">
+  <div class="stage">
+    <div class="lv-track">
+    <div class="lv-panel" data-l="medusa">
+      <video class="lv" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
+      <div class="lv-shade" aria-hidden="true"></div>
+      <div class="lv-wrap">
+        <div class="lv-card" role="button" tabindex="0" aria-label="Virar a carta da Medusa"><div class="lv-tilt"><div class="lv-in"><div class="lv-f"><div class="layers">__L:31-c-medusa__</div><div class="fx sheen"></div><div class="fx film"></div><div class="fx glare"></div></div><div class="lv-b"><img src="assets/imp/titas/114-verso.jpg" alt=""></div></div></div></div>
+        <div class="lv-info"><p class="klass" style="--kc:#e0362a">Caos · Titãs</p><h3>Medusa</h3><p class="dpts" style="--kc:#e0362a">−5 pontos</p><p class="def">Um olhar e o alvo perde o próximo turno.</p><p class="label lv-tip">Clique na carta para ver o verso</p></div>
+      </div>
+    </div>
+    <div class="lv-panel" data-l="mula">
+      <video class="lv" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
+      <div class="lv-shade" aria-hidden="true"></div>
+      <div class="lv-wrap">
+        <div class="lv-card" role="button" tabindex="0" aria-label="Virar a carta da Mula sem Cabeça"><div class="lv-tilt"><div class="lv-in"><div class="lv-f"><div class="layers">__L:28-c-mula-sem-cabeca__</div><div class="fx sheen"></div><div class="fx film"></div><div class="fx glare"></div></div><div class="lv-b"><img src="assets/imp/raizes/114-verso.jpg" alt=""></div></div></div></div>
+        <div class="lv-info"><p class="klass" style="--kc:#e0362a">Caos · Raízes</p><h3>Mula sem Cabeça</h3><p class="dpts" style="--kc:#e0362a">−2 pontos</p><p class="def">O alvo descarta a carta de maior valor, ou 1 ingrediente à sua escolha.</p><p class="label lv-tip">Clique na carta para ver o verso</p></div>
+      </div>
+    </div>
+    </div>
+    <div class="lv-dots" aria-hidden="true"><i></i><i></i></div>
+  </div>
+</section>
+
+<section id="duelos" class="duel" data-theme="duelo" data-mode="dock" hidden>
+  <div class="stage">
+    <div class="dhead"><p class="label">Duelos</p><h2>Lenda contra lenda</h2><p class="dsub">Um <b>crossover</b> entre <span>Folclore</span>, <span>Mitologias</span> e <span>Lendas Urbanas</span>.</p></div>
+    <p class="dnum label" id="dnum">1 / 4</p>
+    <div class="dcard" id="dl"><div class="layers"></div><p class="dname"></p></div>
+    <div class="vs" aria-hidden="true">vs</div>
+    <div class="dcard" id="dr"><div class="layers"></div><p class="dname"></p></div>
+    <div class="impact" id="impact"></div>
+    <div class="dcap"><p class="atk" id="datk"></p><p class="dfn" id="ddef"></p></div>
+  </div>
+</section>
+
+<section id="decks" class="decks wrap" data-theme="base" data-mode="dock">
+  <p class="label">Explore</p>
+  <h2 class="one">Os quatro Reinos</h2>
+  <p class="lead2 two">Todos começam nas Raízes. Cada Portal leva a um Reino mais forte. <br>Mas cuidado: os Limbos tornam as quedas mais fortes.</p>
+  <p class="deckhint label">Clique no baralho para conhecer outras cartas</p>
+  <div class="deckrow">
+    <button class="deck" data-r="raizes" style="--dc:#e0763c"><span class="dn">Raízes</span><span class="dcount">Reino I · <b>28</b> cartas</span><span class="stack"><img src="assets/imp/raizes/114-verso.jpg" alt=""></span><span class="dlock"></span></button>
+    <button class="deck" data-r="mares" style="--dc:#4fc3c7"><span class="dn">Marés</span><span class="dcount">Reino II · <b>25</b> cartas</span><span class="stack"><img src="assets/imp/mares/114-verso.jpg" alt=""></span><span class="dlock"></span></button>
+    <button class="deck" data-r="tormentas" style="--dc:#a88bff"><span class="dn">Tormentas</span><span class="dcount">Reino III · <b>24</b> cartas</span><span class="stack"><img src="assets/imp/tormentas/114-verso.jpg" alt=""></span><span class="dlock"></span></button>
+    <button class="deck" data-r="titas" style="--dc:#e8b54c"><span class="dn">Titãs</span><span class="dcount">Reino IV · <b>19</b> cartas</span><span class="stack"><img src="assets/imp/titas/114-verso.jpg" alt=""></span><span class="dlock"></span></button>
+  </div>
+</section>
+
+<section id="insignias" class="ins wrap" data-theme="base" data-mode="dock">
+  <p class="label">Insígnias</p>
+  <h2 class="one">Três classes de lendas</h2>
+  <p class="lead2 two">As cartas de personagem se dividem em Guardiões de proteção, Caos de combate e Oráculos de manipulação.<br>A insígnia no canto mostra a classe e quanto a carta vale na sua mão quando a rodada fecha.</p>
+  <div class="igrid"><div class="icol" style="--ic:#e8892c"><img class="ibig" src="assets/ins/guardias-5.webp" alt=""><div class="itx"><p class="label ikind">Proteção</p><h3>Guardião</h3><p>A espada. De +1 a +5. Defende você de ataques de Caos e de Oráculo, e te leva para frente.</p><div class="irow"><img src="assets/ins/guardias-1.webp" alt="1"><img src="assets/ins/guardias-2.webp" alt="2"><img src="assets/ins/guardias-3.webp" alt="3"><img src="assets/ins/guardias-4.webp" alt="4"><img src="assets/ins/guardias-5.webp" alt="5"></div></div></div><div class="icol" style="--ic:#e0362a"><img class="ibig" src="assets/ins/caos-8.webp" alt=""><div class="itx"><p class="label ikind">Combate</p><h3>Caos</h3><p>A serpente. De −2 a −8. Ataca os outros, mas pesa se ficar na sua mão.</p><div class="irow"><img src="assets/ins/caos-2.webp" alt="2"><img src="assets/ins/caos-3.webp" alt="3"><img src="assets/ins/caos-4.webp" alt="4"><img src="assets/ins/caos-5.webp" alt="5"><img src="assets/ins/caos-8.webp" alt="8"></div></div></div><div class="icol" style="--ic:#a88bff"><img class="ibig" src="assets/ins/oraculos-4.webp" alt=""><div class="itx"><p class="label ikind">Manipulação</p><h3>Oráculo</h3><p>A lua. De +1 a +4. Informação: espiar, prever e reordenar.</p><div class="irow"><img src="assets/ins/oraculos-1.webp" alt="1"><img src="assets/ins/oraculos-2.webp" alt="2"><img src="assets/ins/oraculos-3.webp" alt="3"><img src="assets/ins/oraculos-4.webp" alt="4"></div></div></div></div>
+</section>
+
+<section id="raizes" class="reino" data-theme="raizes" data-mode="dock">
+  <div class="stage"><canvas class="bgfx" aria-hidden="true"></canvas>
+    <div class="txt"><p class="label">Reino I</p><h2>Raízes<span class="acc">onde a mata tem dono</span></h2><p class="desc">Curupira, Saci e Mula sem Cabeça. É aqui que toda partida começa.</p>
+      <div class="count"><div><b>28</b><span class="label">cartas</span></div></div><p class="hintc">Clique numa carta para ver de perto.</p></div>
+    <div class="fan"></div>
+  </div>
+</section>
+<section id="mares" class="reino" data-theme="mares" data-mode="dock">
+  <div class="stage"><canvas class="bgfx" aria-hidden="true"></canvas>
+    <div class="txt"><p class="label">Reino II</p><h2>Marés<span class="acc">o que o rio leva, não volta</span></h2><p class="desc">Iara, Boto e navios fantasmas. As águas guardam mais do que mostram.</p>
+      <div class="count"><div><b>25</b><span class="label">cartas</span></div></div><p class="hintc">Clique numa carta para ver de perto.</p></div>
+    <div class="fan"></div>
+  </div>
+</section>
+<section id="tormentas" class="reino" data-theme="tormentas" data-mode="dock">
+  <div class="stage"><canvas class="bgfx" aria-hidden="true"></canvas>
+    <div class="txt"><p class="label">Reino III</p><h2>Tormentas<span class="acc">quando o trovão fala</span></h2><p class="desc">Deuses do trovão, espíritos da neve e monstros do tamanho de prédios.</p>
+      <div class="count"><div><b>24</b><span class="label">cartas</span></div></div><p class="hintc">Clique numa carta para ver de perto.</p></div>
+    <div class="fan"></div>
+  </div>
+</section>
+<section id="titas" class="reino" data-theme="titas" data-mode="dock">
+  <div class="stage"><canvas class="bgfx" aria-hidden="true"></canvas>
+    <div class="txt"><p class="label">Reino IV</p><h2>Titãs<span class="acc">o baralho épico</span></h2><p class="desc">Os maiores valores do jogo. E o maior risco. Poucos chegam aqui. Menos ainda ficam.</p>
+      <div class="count"><div><b>19</b><span class="label">cartas</span></div></div><p class="hintc">Clique numa carta para ver de perto.</p></div>
+    <div class="fan"></div>
+  </div>
+</section>
+
+<section id="travessia" class="trav" data-theme="portal" data-mode="portal">
+  <div class="stage">
+    <video class="bgv" id="pvid" muted loop playsinline preload="auto" aria-hidden="true"><source media="(max-width:760px)" src="assets/video/portal-m.mp4" type="video/mp4"><source src="assets/video/portal.mp4" type="video/mp4"></video>
+    <canvas class="melt" id="melt" aria-hidden="true"></canvas>
+    <div class="txt" id="travtxt"><p class="label">Cartas de Portais</p><h2>Atravesse</h2><p>Comprou um Portal? Use na hora e suba de Reino. Ou guarde para o momento certo.</p></div>
+    <div class="travflash" id="travflash"></div>
+    <div class="travwarn" id="travwarn"><p>Cuidado.<span class="acc">Quanto mais alto, maior a queda.</span></p></div>
+  </div>
+</section>
+
+<section id="limbo" class="limbo" data-theme="limbo" data-mode="fall">
+  <div class="stage" id="limbostage">
+    <video class="bgv" id="lvid" muted loop playsinline autoplay preload="auto" aria-hidden="true"><source media="(max-width:760px)" src="assets/video/limbo-m.mp4" type="video/mp4"><source src="assets/video/limbo.mp4" type="video/mp4"></video>
+    <div class="lshade" aria-hidden="true"></div>
+    <div class="slot" data-slot></div>
+    <div class="txt ltxt" id="limbotxt"><p class="label">Cartas Limbo</p><h2 id="limbot">Despenque</h2><p>Comprou um Limbo? Volte para as Raízes. Os Reinos altos escondem nove deles, e ninguém vê a queda chegando.</p><p class="lred">Retorne ao Reino I e passe a vez</p></div>
+  </div>
+</section>
+
+<section id="reliquias" class="reliq wrap" data-theme="base" data-mode="dock">
+  <p class="label">Relíquias</p>
+  <h2>Quatro tesouros</h2>
+  <p class="lead2 two">A condição de vitória: três iguais ou quatro diferentes. Quem baixa primeiro fecha a rodada e sai na frente. <br><span class="dim">Passe o mouse nas relíquias para ver as outras versões.</span></p>
+  <div class="rgrid">
+    <article class="rel" style="--rc:#3fe0a6"><img data-holo src="assets/imp/tormentas/73-r-cristal.jpg" alt="Carta Relíquia: Cristal da Aurora"><h3>Cristal da Aurora</h3></article>
+    <article class="rel" style="--rc:#a07bff"><img data-holo src="assets/imp/raizes/79-r-perola.jpg" alt="Carta Relíquia: Pérola Negra"><h3>Pérola Negra</h3></article>
+    <article class="rel" style="--rc:#e3a23a"><img data-holo src="assets/imp/raizes/85-r-talisma.jpg" alt="Carta Relíquia: Talismã Dente-de-Sabre"><h3>Talismã Dente-de-Sabre</h3></article>
+    <article class="rel" style="--rc:#e0445e"><img data-holo src="assets/imp/raizes/91-r-orquidea.jpg" alt="Carta Relíquia: Orquídea Coração Valente"><h3>Orquídea Coração Valente</h3></article>
+  </div>
+</section>
+
+<section id="tabuleiro" class="tab" data-theme="tabuleiro" data-mode="board">
+  <div class="stage">
+    <div class="tintro" id="tintro"><p class="label">O tabuleiro</p><p class="big">36 casas. Um templo.<span class="acc">Só um vencedor.</span></p></div>
+    <div class="txt" id="tabtxt"><p class="label">O tabuleiro</p><h2>Do abismo<br>ao templo</h2><p>Os pontos que sobram na sua mão viram passos. <strong>Quem chegar primeiro nas nuvens, vence.</strong></p><p class="tw">Mas cuidado, ele joga contra você: o <b style="--c:#4fc3ff">Portal</b> te lança pra frente, as <b style="--c:#bfe9ff">Geleiras</b> te congelam por uma rodada, o <b style="--c:#7fb43c">Pântano</b> te puxa pra trás e o <b style="--c:#ff4a2a">Desfiladeiro</b> te joga de volta ao abismo.</p>
+      <div class="hud" aria-live="polite"><div class="n" id="casa">00<small> / 36</small></div><div class="sp" id="esp">Largada: a cratera</div></div></div>
+  </div>
+</section>
+
+<section id="caixa" class="caixa wrap" data-theme="luz" data-mode="dock">
+  <p class="label">O que vai na caixa</p>
+  <h2 class="one cx-h">Feito por um brasileiro.<br>Com lendas do mundo todo.</h2>
+  <p class="lead2 two">Mais de 3 anos de criação, tudo do zero: ilustrações únicas, mecânicas e esculturas. Partidas rápidas, feitas para acabar em provocação, alianças e alguns pedidos de revanche.</p>
+  <ul class="facts"><li><b>30–45 min</b> por partida</li><li><b>4 a 6</b> jogadores</li></ul>
+  <div class="cxgrid">
+    <div class="cx"><div class="cx-img cx-ph"><img src="assets/box/decks.webp" alt="Os quatro baralhos dos Reinos"></div><b>108</b><p>cartas com ilustrações únicas</p></div>
+    <div class="cx"><div class="cx-img cx-ph"><img src="assets/box/peoes.webp" alt="Os seis peões"></div><b>6</b><p>peões exclusivos com base de Reino</p></div>
+    <div class="cx"><div class="cx-img cx-ph cx-zoom"><img src="assets/box/tabuleiro-card.webp" alt="Tabuleiro"></div><b>1</b><p>tabuleiro de 36 casas, do abismo ao templo</p></div>
+    <div class="cx"><div class="cx-img cx-ph"><img src="assets/box/dado.webp" alt="Dado exclusivo"></div><b>1</b><p>dado exclusivo do MythCaos</p></div>
+  </div>
+</section>
+
+<section id="galeria" class="gal wrap" data-theme="luz" data-mode="dock">
+  <p class="label">Na mesa</p>
+  <h2 class="one">Imagine na sua mesa</h2>
+  <div class="mosaic">
+    <figure class="m-a"><img src="assets/gal/foto3.webp" alt="" loading="lazy"></figure>
+    <figure class="m-b"><img src="assets/gal/foto1.webp" alt="" loading="lazy"></figure>
+    <figure class="m-c"><img src="assets/gal/foto2.webp" alt="" loading="lazy"></figure>
+    <figure class="m-d"><img src="assets/gal/foto4.webp" alt="" loading="lazy"></figure>
+    <figure class="m-g"><img src="assets/gal/foto7.webp" alt="" loading="lazy"></figure>
+    <figure class="m-e"><img src="assets/gal/foto5.webp" alt="" loading="lazy"></figure>
+    <figure class="m-f"><img src="assets/gal/foto6.webp" alt="" loading="lazy"></figure>
+  </div>
+</section>
+
+<section id="caldeirao" class="cald wrap" data-theme="luzm" data-mode="dock">
+  <p class="xbig">Conteúdo extra<span>em desenvolvimento</span></p>
+  <div class="cgrid2">
+    <div class="cx-txt">
+      <h2>Magias<span class="acc">confusão na certa</span></h2>
+      <p class="lead2">Já pensou começar a partida com um poder secreto que fica com você até o fim? Se você conseguir realizá-lo, a vantagem é absurda.</p>
+      <ol class="msteps">
+        <li><b>Uma Magia só sua</b><span>Todo mundo começa com uma Magia secreta.</span></li>
+        <li><b>Carta ou ingrediente?</b><span>Crie sua estratégia, compre uma carta ou um ingrediente para realizar o feitiço.</span></li>
+        <li><b>Complete a receita</b><span>Junte os ingredientes pedidos, revele a carta e vire o jogo.</span></li>
+      </ol>
+    </div>
+    <div class="cx-play">
+      <div class="pot" id="pot"><div class="swirl"></div><div class="inner"><div class="face front"><div class="liq" aria-hidden="true"></div><img src="assets/imp/magia/114-verso.jpg" alt="Verso das cartas de Magia"><div class="slots" id="slots"><span></span><span></span><span></span><span></span></div></div><div class="face back"><div class="mrec" id="mrec"></div><img id="magimg" alt="" hidden></div></div><p class="pothint" id="pothint">Clique na carta</p></div>
+      <div class="cx-side">
+        <p class="label">Teste uma receita</p>
+        <p class="cx-hint" id="cxhint">Clique na carta para receber sua Magia secreta e ver a receita.</p>
+        <div class="ings" id="ings"></div>
+        <div class="cact"><button class="btn" id="brew" type="button">Mexer o caldeirão</button><button class="btn" id="again" type="button" hidden>Jogar de novo</button><button class="btn ghost" id="cclear" type="button">Esvaziar</button></div>
+        <div class="cres" aria-live="polite"><h3 id="cn">Sua Magia espera</h3><p id="ce">Primeiro descubra a receita, depois monte no caldeirão.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="embreve" class="soon wrap" data-theme="luz" data-mode="dock">
+  <p class="label">Na mesa de criação</p>
+  <h2>Em breve</h2>
+  <p class="lead2">Novas lendas estão sendo desenhadas agora. Algumas ainda são só sombra.</p>
+  <div class="sgrid" id="sgrid"></div>
+</section>
+
+<section id="quebra" class="puz wrap" data-theme="luz" data-mode="dock">
+  <p class="label">Minigame · ranking ao vivo</p>
+  <h2 class="one">Monte a lenda</h2>
+  <p class="pq">Enquanto o jogo não fica pronto, <span class="acc">que tal encarar o desafio?</span></p>
+  <p class="lead2 two">Três cartas, três níveis e o relógio correndo. Quem montar mais rápido sobe no ranking.</p>
+  <div class="pwrap">
+    <div class="pintro">
+      <div class="plevels">
+        <div class="plv"><img src="assets/imp/raizes/20-c-bicho-papao.jpg" alt=""><span class="label">Nível 1 · 9 peças</span><b>Bicho-Papão</b></div>
+        <div class="plv"><img src="assets/imp/tormentas/52-o-loki.jpg" alt=""><span class="label">Nível 2 · 12 peças</span><b>Loki</b></div>
+        <div class="plv"><img src="assets/imp/mares/05-g-klaus.jpg" alt=""><span class="label">Nível 3 · 20 peças</span><b>Klaus</b></div>
+      </div>
+      <ol class="prules"><li>Troque as peças de lugar até a carta aparecer inteira.</li><li>O relógio corre e cada troca conta.</li><li>Seu tempo total entra no ranking.</li></ol>
+    </div>
+    <aside class="rank" aria-labelledby="rankt">
+      <h3 id="rankt">Ranking</h3>
+      <div class="rtabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-rt="total">Geral</button><button type="button" role="tab" aria-selected="false" data-rt="0">Bicho-Papão</button><button type="button" role="tab" aria-selected="false" data-rt="1">Loki</button><button type="button" role="tab" aria-selected="false" data-rt="2">Klaus</button></div>
+      <ol class="rlist" id="rlist"><li class="empty">Ninguém completou ainda. O primeiro lugar está livre.</li></ol>
+      <button class="btn ghost small rall" id="rall" type="button">Ver ranking completo</button>
+      <div class="pcta"><button class="pgo" id="popen" type="button"><i aria-hidden="true"></i><span><small>Desafio Monte a Lenda</small>Jogar agora</span></button></div>
+    </aside>
+  </div>
+</section>
+
+<section id="lista" class="lista wrap" data-theme="luz" data-mode="dock">
+  <div class="intro"><p class="label">Lista de espera</p><h2>Guarde seu lugar na mesa</h2>
+    <p class="counter" id="counter">Seja um dos primeiros da mesa.</p>
+    <p>Veja as cartas novas primeiro, participe dos playtests e saiba antes de todo mundo quando o jogo sair. Se a mesa pedir, abrimos uma campanha no Catarse.</p></div>
+  <form id="form" novalidate>
+    <label for="f-nome">Seu nome<input id="f-nome" name="nome" autocomplete="name" required></label>
+    <label for="f-email">E-mail<input id="f-email" name="email" type="email" autocomplete="email" required></label>
+    <label for="f-tel">Celular (WhatsApp)<input id="f-tel" name="tel" type="tel" autocomplete="tel" placeholder="(11) 90000-0000"></label>
+    <label for="f-mesa">Quantas pessoas jogam na sua mesa?<select id="f-mesa" name="mesa"><option>2 a 3</option><option selected>4 a 6</option><option>Mais de 6</option></select></label>
+    <label class="chk" for="f-catarse"><input id="f-catarse" type="checkbox" checked> Quero saber se abrir uma campanha no Catarse</label>
+    <button class="btn" type="submit">Entrar na lista</button>
+    <p class="ok" id="ok" aria-live="polite"></p>
+  </form>
+</section>
+<footer class="wrap"><div class="credit"><p class="cbig">__LOGO__</p><p>Criado e desenvolvido por <strong>Bruno Leal</strong>. Ideia, mecânicas, personagens, peças 3D e site.</p><p class="label">Um jogo 100% brasileiro</p><p class="fnav"><button class="tlink" type="button" data-autor>Sobre o autor</button> · <a class="tlink" href="#quebra">Desafio MythCaos</a></p></div><span>© 2026 Bruno Leal · Todos os direitos reservados</span></footer>
+</main>
+
+<div class="modal" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbn">
+  <div class="mbg" data-close></div>
+  <div class="lb-in">
+    <div class="lb-card"><div class="lb-tilt" id="lbtilt"><div class="lb-back"><img id="lbback" alt=""></div><div class="lb-face"><div class="layers" id="lblayers"></div><div class="fx sheen"></div><div class="fx film"></div><div class="fx glare"></div></div></div></div>
+    <div class="lb-info"><p class="klass" id="lbk"></p><h3 id="lbn"></h3><p class="def" id="lbe"></p><p class="dpts" id="lbp"></p><p class="lbfl" id="lbfl" hidden></p><p class="expl" id="lbx" hidden></p>
+      <div class="lbbtns"><button class="btn small" type="button" data-close>Fechar</button><button class="btn ghost small" type="button" data-lead>Quero esse jogo</button></div></div>
+  </div>
+  <button class="mx" type="button" aria-label="Fechar" data-close>×</button>
+</div>
+
+<div class="pmodal" id="pmodal" hidden role="dialog" aria-modal="true" aria-label="Desafio Monte a lenda">
+  <div class="pm-in">
+      <div class="pgate" id="pgate">
+        <p class="label">Antes de começar</p>
+        <h3>Entre no ranking</h3>
+        <p id="pgated">Para seu tempo contar no ranking, precisamos do seu nome, e-mail e celular. Você só preenche uma vez.</p>
+        <form id="pform" novalidate>
+          <label for="p-nome">Nome no ranking<input id="p-nome" autocomplete="name"></label>
+          <label for="p-email">E-mail<input id="p-email" type="email" autocomplete="email"></label>
+          <label for="p-tel">Celular (WhatsApp)<input id="p-tel" type="tel" autocomplete="tel" placeholder="(11) 90000-0000"></label>
+          <button class="btn" type="submit">Começar o desafio</button>
+          <p class="ok" id="pok" aria-live="polite"></p>
+        </form>
+        <div class="pknown" id="pknown" hidden><p>Bem-vindo de volta, <b id="pwho"></b>. Seus dados já estão salvos.</p><button class="btn" id="pgo" type="button">Começar o desafio</button><button class="linkb" id="pnot" type="button">Não sou eu</button></div>
+      </div>
+      <div class="pgame" id="pgame" hidden>
+        <div class="phud"><span class="label" id="plevel">Nível 1 de 3</span><span class="ptime" id="ptime">00:00.0</span><span class="label">Movimentos <b id="pmoves">0</b></span></div>
+        <div class="pbwrap"><div class="board" id="pboard" aria-label="Quebra-cabeça"></div><div class="pcount" id="pcount" hidden></div></div>
+        <p class="phelp">Arraste uma peça até outra, ou toque em duas para trocar.</p>
+      </div>
+      <div class="pend" id="pend" hidden></div>
+    </div>
+  <button class="mx" type="button" aria-label="Fechar" id="pclose">×</button>
+</div>
+
+<div class="modal" id="rankm" hidden role="dialog" aria-modal="true" aria-labelledby="rankmt">
+  <div class="mbg" data-close></div>
+  <div class="mbox rankbox"><p class="label">Monte a lenda</p><h3 id="rankmt">Ranking completo</h3><ol class="rlist" id="rlistall"></ol><button class="btn small" type="button" data-close>Fechar</button></div>
+  <button class="mx" type="button" aria-label="Fechar" data-close>×</button>
+</div>
+<div class="modal relfan" id="relm" hidden role="dialog" aria-modal="true" aria-labelledby="relmt">
+  <div class="mbg" data-close></div>
+  <div class="rf-in"><p class="label">Relíquia · versões</p><h3 id="relmt"></h3><div class="rf-fan" id="rffan"></div><p class="rf-hint">Passe o mouse para destacar uma versão.</p></div>
+  <button class="mx" type="button" aria-label="Fechar" data-close>×</button>
+</div>
+<div class="modal" id="autorm" hidden role="dialog" aria-modal="true" aria-labelledby="autort">
+  <div class="mbg" data-close></div>
+  <div class="mbox autorbox"><p class="label">Sobre o autor</p><h3 id="autort">Bruno Leal</h3>
+    <p>Designer brasileiro e criador do MythCaos. Ideia, mecânicas, personagens, peças 3D e este site saíram da mesma cabeça, com o folclore, as mitologias e as lendas urbanas que ele cresceu ouvindo.</p>
+    <ul class="autorc"><li><span class="label">E-mail</span><a id="autormail" href="#">[e-mail]</a></li><li><span class="label">WhatsApp</span><a id="autortel" href="#">[telefone]</a></li></ul>
+    <div class="lbbtns"><a class="btn small" href="#quebra" data-close>Jogar o desafio</a><button class="btn ghost small" type="button" data-lead>Lista de espera</button></div></div>
+  <button class="mx" type="button" aria-label="Fechar" data-close>×</button>
+</div>
+<div class="modal" id="lead" hidden role="dialog" aria-modal="true" aria-labelledby="leadt">
+  <div class="mbg" data-close></div>
+  <div class="mbox">
+    <form id="leadf" novalidate>
+      <p class="label" id="leadk">Novidades</p>
+      <h3 id="leadt">Fique por dentro</h3>
+      <p id="leadd">Cartas novas, convites para playtest e o aviso de lançamento. Sem spam.</p>
+      <label for="l-nome">Seu nome<input id="l-nome" autocomplete="name"></label>
+      <label for="l-email">E-mail<input id="l-email" type="email" autocomplete="email"></label>
+      <label for="l-tel">Celular (WhatsApp)<input id="l-tel" type="tel" autocomplete="tel" placeholder="(11) 90000-0000"></label>
+      <button class="btn" type="submit">Quero receber novidades</button>
+      <p class="ok" id="lok" aria-live="polite"></p>
+    </form>
+  </div>
+  <button class="mx" type="button" aria-label="Fechar" data-close>×</button>
+</div>

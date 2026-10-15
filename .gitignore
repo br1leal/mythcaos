@@ -1,0 +1,11 @@
+.DS_Store
+node_modules/
+.env
+.env.local
+.vercel
+# fontes não usadas
+assets/fonts/Brookvale*
+assets/fonts/Englebert*
+assets/fonts/Falkenberg*
+assets/fonts/Nebraska*
+assets/fonts/Terra Craft Script.otf
