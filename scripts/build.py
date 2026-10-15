@@ -11,5 +11,6 @@ store=open(f('src/store.js')).read()
 s=css+'\n'+body+'\n<script>\n'+store+'\n</script>\n<script>\n'+js+'\n</script>\n<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>\n<script type="module">\n'+mod+'\n</script>\n'
 head='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>'
 i=s.index(body)  # tudo antes do body (CSS, <title>, links) vai no <head>
-s=head+s[:i]+'</head><body>'+s[i:]+'</body></html>\n'
+ana=open(f('src/analytics.html')).read() if os.path.exists(f('src/analytics.html')) else ''
+s=head+ana+s[:i]+'</head><body>'+s[i:]+'</body></html>\n'
 open(f('index.html'),'w').write(s); print(len(s))
