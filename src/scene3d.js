@@ -11,13 +11,13 @@ const key=new THREE.DirectionalLight('#ffb59e',2.6); key.position.set(-4,5,6); s
 const rim=new THREE.DirectionalLight('#ee6b54',3.2); rim.position.set(4,2,-5); scene.add(rim);
 const fill=new THREE.DirectionalLight('#ffffff',.6); fill.position.set(1,0,8); scene.add(fill);
 const rimColor=new THREE.Color('#ee6b54'), keyColor=new THREE.Color('#ffb59e');
-MC.onTheme=()=>{const g=getComputedStyle(document.body).getPropertyValue('--glow').trim()||'#ee6b54'; try{rimColor.set(g)}catch(e){} keyColor.set(MC.theme==='limbo'?'#ff2a2a':'#ffb59e')}; MC.onTheme();
+MC.onTheme=()=>requestAnimationFrame(()=>{const g=getComputedStyle(document.body).getPropertyValue('--glow').trim()||'#ee6b54'; try{rimColor.set(g)}catch(e){} keyColor.set(MC.theme==='limbo'?'#ff2a2a':'#ffb59e')}); MC.onTheme();
 function size(){const w=innerWidth,h=innerHeight;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()} size(); addEventListener('resize',size);
 
 // tabuleiro com espessura
 const board=new THREE.Group(); scene.add(board);
 const BW=6, BH=6*1767/1800, TH=.32;
-const tex=new THREE.TextureLoader().load('assets/misc/tabuleiro2.jpg'); tex.colorSpace=THREE.SRGBColorSpace; tex.anisotropy=8; tex.repeat.set(.96,.96); tex.offset.set(.02,.02);
+const tex=new THREE.TextureLoader().load('assets/misc/tabuleiro2.webp'); tex.colorSpace=THREE.SRGBColorSpace; tex.anisotropy=8; tex.repeat.set(.96,.96); tex.offset.set(.02,.02);
 const top=new THREE.MeshStandardMaterial({map:tex,roughness:.8,transparent:true,opacity:0});
 const side=new THREE.MeshStandardMaterial({color:'#3a2616',roughness:.85,transparent:true,opacity:0});
 const slab=new THREE.Mesh(new THREE.BoxGeometry(BW,TH,BH),[side,side,top,side,side,side]); slab.position.y=-TH/2; board.add(slab);

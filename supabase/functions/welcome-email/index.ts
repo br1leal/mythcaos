@@ -9,16 +9,15 @@ const FROM = Deno.env.get("WELCOME_FROM") ?? "MythCaos <contato@mythcaos.com.br>
 const SITE = "https://mythcaos.com.br";
 const LOGO = `${SITE}/assets/email/logo-v2.png`; // logo oficial (Saci), PNG 480px exibido a 240px
 
-// ===== TEXTO (aguardando aprovação do Bruno) =====
+// ===== TEXTO (versão curta aprovada pelo Bruno em 16/10/26) =====
 const SUBJECT = (n: string) => `${n}, seu lugar na mesa está guardado`;
 const PREHEADER = "As lendas ainda estão se arrumando. Você vai saber antes de todo mundo.";
 const BODY = (n: string) => [
   `Oi, ${n}!`,
-  "Obrigado por entrar na lista de espera do MythCaos — a corrida em que Saci, Medusa, Thor e companhia disputam quem chega primeiro ao templo.",
-  "O jogo está em pleno desenvolvimento, sendo testado mesa a mesa. Quando tiver novidade de verdade, você fica sabendo primeiro, sem enxurrada de e-mails.",
-  "Até lá, segura o dado.",
+  "Obrigado por entrar na lista de espera do MythCaos. O jogo está em pleno desenvolvimento, atualmente na fase de playtest. Quando tiver novidade de verdade, você fica sabendo primeiro.",
+  "Até breve.",
 ];
-const SIGN = "Bruno Leal<br>criador do MythCaos · jogo 100% brasileiro";
+const SIGN = `Um abraço,<br>Bruno Leal · criador do MythCaos · jogo 100% brasileiro<br><a href="https://instagram.com/mythcaos" style="color:#e0362a;text-decoration:none">Instagram @mythcaos</a>`;
 // =================================================
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
@@ -31,12 +30,12 @@ function html(nome: string) {
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 </head><body style="margin:0;background:#120e0b">
 <span style="display:none;max-height:0;overflow:hidden">${PREHEADER}</span>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#120e0b"><tr><td align="center" style="padding:40px 16px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#120e0b"><tr><td align="center" style="padding:32px 16px 24px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px">
 <tr><td style="padding:0 0 32px"><a href="${SITE}"><img src="${LOGO}" width="240" alt="MythCaos · O Despertar das Lendas" style="display:block;width:240px;max-width:100%;height:auto;border:0;color:#f1e4cf;font:800 28px Arial,sans-serif"></a></td></tr>
 <tr><td style="border-top:2px solid #e0362a;padding:28px 0 0">${p}
 <p style="margin:28px 0 0;font-family:${F};font-size:15px;line-height:1.5;color:#c9bba5">${SIGN}</p></td></tr>
-<tr><td style="padding:36px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#8a7f70">Você recebeu este e-mail porque se cadastrou em <a href="${SITE}" style="color:#c9bba5">${SITE.replace("https://", "")}</a>.</td></tr>
+<tr><td style="padding:24px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#8a7f70">Você recebeu este e-mail porque se cadastrou em <a href="${SITE}" style="color:#c9bba5">${SITE.replace("https://", "")}</a>.</td></tr>
 </table></td></tr></table></body></html>`;
 }
 

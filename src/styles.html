@@ -1674,7 +1674,6 @@ body[data-theme^="luz"] .modal .mbox,body[data-theme^="luz"] .modal .mbox *{colo
 @media (max-width:520px){#hlogot .mclogo{height:46px}}
 </style><style>
 /* ===== Rodada 4 ===== */
-@font-face{font-family:"Vakantcy";src:url(assets/fonts/vakantcy.woff2) format("woff2");font-display:swap}
 @font-face{font-family:"GumpsOver";src:url(assets/fonts/gumpsover.woff2) format("woff2");font-display:swap}
 /* 9 Limbo e "Cuidado" em Gumps Over */
 .travwarn p,.travwarn p .acc,#limbo .ltxt h2{font-family:"GumpsOver",var(--f-display);font-stretch:normal;font-variation-settings:normal;font-weight:400;text-transform:none;letter-spacing:0}
@@ -1775,4 +1774,36 @@ body[data-theme^="luz"] #mtrail{mix-blend-mode:multiply}
 html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
 #mcur{width:18px;height:18px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
 #mcur.on{width:22px;height:22px}
-</style>
+</style><style>
+/* ===== R4c ===== */
+/* sem barra no topo (nem vidro) */
+.top::before{display:none!important}
+/* rastro do mouse: só o brilho sutil, sem deformar */
+.mlens,html.lgr .mlens{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+/* destaques em Vakantcy maiores */
+@font-face{font-family:"Vakantcy";src:url(assets/fonts/vakantcy.woff2) format("woff2");font-display:swap;size-adjust:132%}
+.deck .dn{line-height:1.25;padding:2px 6px}
+/* palco ocupa a tela toda quando a barra de endereço some (sem buraco embaixo) */
+@supports (height:100lvh){.stage,.grv-st{height:100lvh}
+ @media (max-width:760px){.st-txt{bottom:calc(96px + env(safe-area-inset-bottom,0px) + (100lvh - 100svh))!important}
+  .st-skip{bottom:calc(24px + env(safe-area-inset-bottom,0px) + (100lvh - 100svh))!important}
+  .ltxt{bottom:calc(40px + env(safe-area-inset-bottom,0px) + (100lvh - 100svh))!important}}}
+/* baralhos alinhados */
+.deck .dlock:empty{display:block;visibility:hidden}
+.deck .dlock{min-height:1.2em}
+/* insígnias: destaque ao lado do texto também no celular */
+@media (max-width:1100px){.icol{grid-template-columns:auto minmax(0,1fr)!important;align-items:center!important;justify-items:stretch!important}
+ .icol .ibig{height:clamp(110px,22vw,200px)!important}}
+@media (max-width:520px){.icol{gap:14px!important;padding:20px 16px!important}.icol .ibig{height:104px!important}.icol .itx h3{font-size:34px!important}.icol .itx p{font-size:15px!important}.icol .irow img{height:40px!important}}
+/* limbo no celular: sem a caixa escura atrás do texto */
+@media (max-width:760px){.ltxt{background:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding:0!important}
+ .limbo .lshade{background:linear-gradient(transparent 45%,rgba(0,0,0,.75))}}
+/* em breve: 3 fileiras */
+.soon-rows{margin-top:24px;display:grid;gap:clamp(4px,1vw,12px)}
+.soon-rows .soon-ring{--R:760px;--w:150px;height:clamp(250px,24vw,330px);margin:0}
+@media (max-width:760px){.soon-rows .soon-ring{--R:300px;--w:92px;height:190px}}
+</style><style>
+/* insígnias: destaque ao lado do texto em todas as larguras */
+.icol{grid-template-columns:auto minmax(0,1fr)!important;align-items:center!important}
+@media (min-width:1101px){.icol .ibig{height:clamp(110px,9vw,150px)!important}.icol .irow img{height:clamp(36px,2.8vw,46px)!important}}
+</style><style>.mclogo{filter:none!important} /* a arte da logo já tem sombra */</style>

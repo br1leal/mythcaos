@@ -19,7 +19,7 @@ const find=f=>{const k=WHERE[f]; return k?{k,c:MANI[k].find(x=>x.f===f+'.jpg')}:
 // ---------- peões e tema ----------
 const PAWNS=[['saci','Saci','#c8281e','#e0362a'],['iara','Iara','#2f6fd0','#3f8cff'],['medusa','Medusa','#7a8a34','#9cb03c'],['mula','Mula sem Cabeça','#2a2a30','#ff7a1a'],['papainoel','Klaus','#ede6da','#e6edf5'],['valquiria','Valquíria','#e8b923','#f2c230']];
 try{const s=localStorage.getItem('mc-pawn'); if(PAWNS.some(p=>p[0]===s)) MC.pawn=s}catch(e){}
-function applyPawn(id){const p=PAWNS.find(x=>x[0]===id);MC.pawn=id;document.querySelectorAll('img.mclogo').forEach(i=>{const f=v=>v.replace(/logo-[a-z]+-(\d)/g,'logo-'+id+'-$1'); i.srcset=f(i.srcset); i.src=f(i.src)});document.documentElement.style.setProperty('--accent',p[3]);document.documentElement.style.setProperty('--btn-ink',id==='papainoel'?'#0d1a1c':'#140c08');
+function applyPawn(id){const p=PAWNS.find(x=>x[0]===id);MC.pawn=id;if(MC.pawnReady) document.querySelectorAll('img.mclogo').forEach(i=>{const f=v=>v.replace(/logo-[a-z]+-(\d)/g,'logo-'+id+'-$1'); i.srcset=f(i.srcset); if(i.getAttribute('src')) i.src=f(i.src)});document.documentElement.style.setProperty('--accent',p[3]);document.documentElement.style.setProperty('--btn-ink',id==='papainoel'?'#0d1a1c':'#140c08');
   try{localStorage.setItem('mc-pawn',id)}catch(e){}; $$('#gpick button,#ptagm button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id)); const tn=$('#ptagn'); if(tn) tn.textContent=p[1]; const zn=$('#pzn'); if(zn) zn.textContent=p[1]; MC.onPawn&&MC.onPawn(id); MC.onTheme&&MC.onTheme()}
 const gpick=$('#gpick');
 if(gpick) PAWNS.forEach(([id,name,c])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.style.setProperty('--c',c);b.innerHTML=`<i></i><span>${name.split(' ')[0]}</span>`;b.setAttribute('aria-label',name);b.onclick=()=>applyPawn(id);gpick.appendChild(b)});
@@ -27,7 +27,8 @@ const ptm=$('#ptagm'), ptb=$('#ptagb');
 PAWNS.forEach(([id,name,c])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.style.setProperty('--c',c);b.innerHTML=`<i></i>${name}`;b.onclick=()=>{applyPawn(id);togTag(false)};ptm.appendChild(b)});
 function togTag(on){ptm.hidden=!on;ptb.setAttribute('aria-expanded',on)}
 ptb.onclick=e=>{e.stopPropagation();togTag(ptm.hidden)}; document.addEventListener('click',e=>{if(!e.target.closest('.ptag')) togTag(false)}); addEventListener('keydown',e=>{if(e.key==='Escape') togTag(false)});
-applyPawn(MC.pawn);
+applyPawn(MC.pawn); MC.pawnReady=true; // a logo de chegada é sorteada (MC_L); só muda quando a pessoa escolhe uma lenda
+window.MC_LOGO&&window.MC_LOGO();
 
 let mxN=0,myN=0; addEventListener('pointermove',e=>{mxN=e.clientX/innerWidth-.5;myN=e.clientY/innerHeight-.5});
 const gate={hidden:true}; const gateOpen=false;
@@ -140,7 +141,7 @@ const ORD=['raizes','mares','tormentas','titas']; let cur='raizes';
 let dMsg='';
 // só o Reino onde você está fica liberado; os outros ficam cinza até um Portal abrir o caminho
 function paintDecks(){ $$('.deck').forEach(d=>{const k=d.dataset.r, on=k===cur; d.classList.toggle('active',on); d.classList.toggle('locked',!on); d.disabled=false; d.removeAttribute('aria-disabled');
-  d.querySelector('.dlock').textContent=on?dMsg:(ORD.indexOf(k)>ORD.indexOf(cur)?'Abre com um Portal':'')}); selDeck=$(`.deck[data-r="${cur}"]`)}
+  d.querySelector('.dlock').textContent=on?dMsg:(ORD.indexOf(k)>ORD.indexOf(cur)?'':'')}); selDeck=$(`.deck[data-r="${cur}"]`)}
 function deckFx(kind,from,to){ const a=$(`.deck[data-r="${from}"] .stack`), b=$(`.deck[data-r="${to}"] .stack`); if(!a||!b) return;
   const ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect(), fx=document.createElement('div'); fx.className='deckfx '+kind;
   const x1=ra.left+ra.width/2, y1=ra.top+ra.height/2, x2=rb.left+rb.width/2, y2=rb.top+rb.height/2;
@@ -244,7 +245,9 @@ function updTrav(){const r=trav.getBoundingClientRect(); if(r.bottom<0||r.top>in
 // ---------- Limbo ----------
 const limboSec=$('#limbo'), lst=$('#limbostage'), lvid=$('#lvid'), ltxt=$('#limbotxt'), pvid=$('#pvid'); let wasLimbo=false; limboSec.prepend(lvid); // fora do palco: o tremor (transform) prendia o vídeo fixo à seção
 // vídeos de fundo: fixos na tela (não sobem com a rolagem), entram com fade e só tocam quando visíveis
-[[limboSec,lvid],[trav,pvid]].forEach(([sec,v])=>new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting) v.play().catch(()=>{}); else v.pause()})).observe(sec));
+// vídeos de fundo só baixam quando a seção chega perto (versão leve no celular)
+[[limboSec,lvid],[trav,pvid]].forEach(([sec,v])=>{ new IntersectionObserver((es,o)=>es.forEach(en=>{ if(en.isIntersecting&&!v.src){ v.src=v.dataset.src+(innerWidth<761?'-m':'')+'.mp4'; v.preload='auto'; v.load(); o.disconnect() }}),{rootMargin:'150% 0px'}).observe(sec);
+  new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting) v.play().catch(()=>{}); else v.pause()})).observe(sec)});
 function bgvFade(sec,v,inEnd){const r=sec.getBoundingClientRect(), H=innerHeight; if(r.bottom<0||r.top>H){v.style.opacity=0;return 0}
   const a=clamp((H-r.top)/(H*.9)), b=clamp(r.bottom/(H*.9)); const o=MC.reduce?1:Math.min(sstep(a),inEnd??b); v.style.opacity=o.toFixed(3); return o}
 function updLimbo(now){ const o=bgvFade(limboSec,lvid); if(o<=0) return; const p=prog(limboSec);
@@ -458,8 +461,9 @@ function bgDraw(o,p,now,dt){const b=o.bg, cv=b.cv, W=cv.clientWidth, H=cv.client
 // ---------- fundo ambiente que reage ao mouse ----------
 const amb=$('#amb'), actx=amb.getContext('2d'); const motes=[]; let ambW=0,ambH=0, pmx=-999, pmy=-999;
 addEventListener('pointermove',e=>{pmx=e.clientX;pmy=e.clientY});
-function ambDraw(dt){const W=amb.clientWidth,H=amb.clientHeight; if(W!==ambW||H!==ambH){ambW=amb.width=W;ambH=amb.height=H;motes.length=0;for(let i=0;i<70;i++) motes.push({x:rnd(0,W),y:rnd(0,H),vx:rnd(-8,8),vy:rnd(-14,-4),r:rnd(.8,2.4),s:rnd(.3,1)})}
-  const glow=getComputedStyle(document.body).getPropertyValue('--glow').trim()||'#e0362a'; actx.clearRect(0,0,W,H); actx.fillStyle=glow;
+let glowC='#e0362a'; const readGlow=()=>{glowC=getComputedStyle(document.body).getPropertyValue('--glow').trim()||'#e0362a'}; readGlow(); new MutationObserver(()=>requestAnimationFrame(readGlow)).observe(document.body,{attributes:true,attributeFilter:['data-theme']}); // lido só quando o tema muda (antes era a cada quadro)
+function ambDraw(dt){const W=innerWidth,H=innerHeight; if(W!==ambW||H!==ambH){ambW=amb.width=W;ambH=amb.height=H;motes.length=0;for(let i=0;i<70;i++) motes.push({x:rnd(0,W),y:rnd(0,H),vx:rnd(-8,8),vy:rnd(-14,-4),r:rnd(.8,2.4),s:rnd(.3,1)})}
+  actx.clearRect(0,0,W,H); actx.fillStyle=glowC;
   for(const m of motes){const dx=m.x-pmx, dy=m.y-pmy, d2=dx*dx+dy*dy; if(d2<16000){const f=(16000-d2)/16000*220; const d=Math.sqrt(d2)||1; m.vx+=dx/d*f*dt; m.vy+=dy/d*f*dt}
     m.vx*=Math.pow(.6,dt); m.vy=m.vy*Math.pow(.6,dt)+(-8*(1-Math.pow(.6,dt))); m.x+=m.vx*dt; m.y+=m.vy*dt;
     if(m.y<-10){m.y=H+10;m.x=rnd(0,W)} if(m.x<-10)m.x=W+10; if(m.x>W+10)m.x=-10;
@@ -472,7 +476,7 @@ MC.modelLoaded=()=>{LD.models=Math.min(1,LD.models+1/12)};
 document.fonts&&document.fonts.ready.then(()=>LD.fonts=1); if(!document.fonts) LD.fonts=1;
 addEventListener('load',()=>LD.page=1); if(document.readyState==='complete') LD.page=1;
 const t0=performance.now();
-function ldTick(){ if(ldDone) return; const pr=(LD.fonts*.15+LD.page*.3+LD.models*.35+LD.vid*.2); ldShown+=(pr-ldShown)*.12; const pc=Math.round(ldShown*100);
+function ldTick(){ if(ldDone) return; const pr=(LD.fonts*.2+LD.page*.4+LD.models*.4); /* o loader não espera vídeo (eles carregam perto da seção) */ ldShown+=(pr-ldShown)*.12; const pc=Math.round(ldShown*100);
   $('#ldbar').parentElement.style.setProperty('--lp',pc+'%'); $('#ldbar').style.width=pc+'%'; $('#ldpct').textContent=pc;
   if((pr>.98&&ldShown>.95)||performance.now()-t0>12000){ if(!LD.tr) LD.tr=performance.now(); }
   if(LD.tr&&performance.now()-LD.tr>(MC.reduce?300:1800)){ ldDone=true; $('#ldbar').style.width='100%'; $('#ldpct').textContent=100;
@@ -490,9 +494,9 @@ const LENDAS=[...lendSec.querySelectorAll('.lv-panel')].map((pn,i)=>({sec:lendSe
 LENDAS.forEach(L=>L.pn.querySelectorAll('.layers').forEach(el=>{const f=el.innerHTML.match(/__L:([^_]+)__/); if(f) el.innerHTML=layersHTML(f[1],'Carta '+nameOf(f[1]))}));
 // o vídeo é baixado inteiro (blob) para a rolagem poder ir e voltar sem travar
 function lvLoad(L){ const kind=innerWidth<761?'9x16':'16x9'; if(L.kind===kind) return; L.kind=kind;
-  fetch(`assets/video/${L.name}-${kind}.mp4`).then(r=>r.blob()).then(b=>{ if(L.kind!==kind) return; if(L.url) URL.revokeObjectURL(L.url); L.url=URL.createObjectURL(b); L.v.src=L.url; L.v.load();
+  fetch(`assets/video/${L.name}-${kind}-v2.mp4`).then(r=>r.blob()).then(b=>{ if(L.kind!==kind) return; if(L.url) URL.revokeObjectURL(L.url); L.url=URL.createObjectURL(b); L.v.src=L.url; L.v.load();
     L.v.addEventListener('loadedmetadata',()=>{L.dur=L.v.duration||6},{once:true}); L.v.addEventListener('loadeddata',()=>{LD.vid=1},{once:true})}).catch(()=>{LD.vid=1})}
-LENDAS.forEach(L=>{L.st.style.setProperty('--cls',L.cls); lvLoad(L); holo(L.pn.querySelector('.lv-tilt'),12,.04)}); addEventListener('resize',()=>LENDAS.forEach(lvLoad));
+LENDAS.forEach(L=>{L.st.style.setProperty('--cls',L.cls); holo(L.pn.querySelector('.lv-tilt'),12,.04)}); let lvNear=false; new IntersectionObserver((es,o)=>es.forEach(en=>{if(en.isIntersecting){lvNear=true; LENDAS.forEach(lvLoad); o.disconnect()}}),{rootMargin:'250% 0px'}).observe(lendSec); addEventListener('resize',()=>{if(lvNear) LENDAS.forEach(lvLoad)});
 setTimeout(()=>{LD.vid=Math.max(LD.vid,1)},9000);
 LENDAS.forEach(L=>{const flip=()=>L.card.classList.toggle('flip'); L.card.addEventListener('click',flip); L.card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip()}})});
 function updLendTrack(){if(LENDAS.length<2) return; const r=lendSec.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight) return; const p=prog(lendSec), hx=MC.reduce?(p>.5?1:0):sstep(clamp((p-LR[0][1])/(LR[1][0]-LR[0][1])));
@@ -535,7 +539,7 @@ const ST=STORY.map((B,bi)=>{ const el=document.createElement('div'); el.classNam
   stTxt.appendChild(el);
   if(B.split){const kw=words.find(w=>w.dataset.ref&&w.textContent.startsWith(B.split)); B.splitN=kw?words.indexOf(kw)+1:words.length}
   cards.forEach((c,ci)=>{ const d=document.createElement('div'); d.className='st-card'; const n=cards.length;
-    if(c.ref==='@board'){ d.className='st-bigboard'; d.innerHTML='<img src="assets/misc/tabuleiro2.jpg" alt="">'; c.big=true; stCards.appendChild(d); c.d=d; return }
+    if(c.ref==='@board'){ d.className='st-bigboard'; d.innerHTML='<img src="assets/misc/tabuleiro2.webp" alt="">'; c.big=true; stCards.appendChild(d); c.d=d; return }
     { const pre=bi===0&&ci===0, src=c.ref.startsWith('v:')?`assets/imp/${c.ref.slice(2)}/114-verso.jpg`:IMP(c.ref); const face=c.ref.startsWith('v:')?`<img src="${src}" alt="">`:`<div class="layers">${layersHTML(c.ref,'')}</div>`; d.innerHTML=`<div class="st-ci"><div class="st-face">${face}${fxHTML}</div>${pre?'<div class="st-back"><img src="assets/imp/raizes/114-verso.jpg" alt=""></div>':''}</div>`; if(pre) d.classList.add('pre','in');
       holo(d.querySelector('.st-ci'),12,.06) }
     d.addEventListener('click',()=>{ const S=ST[bi]; if(S.order[S.order.length-1]===ci&&!c.ref.startsWith('v:')){ openCard(c.ref,d); return } S.order=S.order.filter(x=>x!==ci); S.order.push(ci); stackPaint(S) });
@@ -577,7 +581,8 @@ function updStory(){ const r=stSec.getBoundingClientRect(); if(r.bottom<innerHei
   if(!stM||stM.w!==innerWidth||stM.h!==innerHeight) stMeasure();
   const e=bi===0?1:sstep(clamp(q/.28)), endB=bi===N-1, push=bi>0?-stM.S[bi-1]*(1-e):0;
   let cum=0; const Y=[]; for(let i=bi;i>=0;i--){ Y[i]=cum+push; if(i>0) cum+=stM.S[i-1] }
-  ST.forEach((S,i)=>{ let o=0, y=0; if(i===bi){o=e; y=Y[i]} else if(i<bi){ y=Y[i]; const mob=innerWidth<761, dim=i===bi-1?1-(1-(mob?.26:.32))*e:(mob?(i===bi-2?.26*(1-e):0):.32), M=stM.b[i], vis=clamp((stM.top+M.t+y+M.h*.6-90)/(M.h*.6)); o=dim*vis*(endB?1-e:1) }
+  const MOB=innerWidth<761;
+  ST.forEach((S,i)=>{ let o=0, y=0; if(MOB){ if(i===bi){ const fin=i===0?1:clamp(q/.08), fout=i===N-1?1:1-clamp((q-.88)/.12); o=Math.min(fin,fout); y=(1-fin)*40-(1-fout)*40 } } else if(i===bi){o=e; y=Y[i]} else if(i<bi){ y=Y[i]; const mob=innerWidth<761, dim=i===bi-1?1-(1-(mob?.26:.32))*e:(mob?(i===bi-2?.26*(1-e):0):.32), M=stM.b[i], vis=clamp((stM.top+M.t+y+M.h*.6-90)/(M.h*.6)); o=dim*vis*(endB?1-e:1) }
     S.el.style.opacity=o.toFixed(3); S.el.style.transform=`translateY(${y.toFixed(1)}px)`; S.el.style.visibility=o>0.005?'visible':'hidden';
     const n=S.words.length, lit=i<bi?n:i>bi?0:(S.B.end?n*clamp(q/.3):tl(n));
     S.words.forEach((w,j)=>{const a=clamp(lit-j); w.style.setProperty('--a',a.toFixed(3))});
@@ -661,7 +666,7 @@ MC.enter=()=>{};
 {const mark=root=>root.querySelectorAll&&root.querySelectorAll('.layers').forEach(l=>l.classList.toggle('deep',!l.querySelector('.char')));
  mark(document); new MutationObserver(ms=>ms.forEach(m=>{const t=m.target; if(t.classList&&t.classList.contains('layers')) t.classList.toggle('deep',!t.querySelector('.char')); m.addedNodes.forEach(n=>{if(n.nodeType===1){ if(n.classList.contains('layers')) n.classList.toggle('deep',!n.querySelector('.char')); mark(n)}})})).observe(document.body,{childList:true,subtree:true})}
 // 2 giroscópio: inclinar o celular mexe as cartas visíveis
-{const touch=matchMedia('(hover:none)').matches||'ontouchstart' in window; if(touch&&!MC.reduce&&window.DeviceOrientationEvent){
+{const touch=matchMedia('(hover:none)').matches||'ontouchstart' in window; if(false&&touch&&!MC.reduce&&window.DeviceOrientationEvent){ // R4c: giroscópio desligado (cartas tremiam ao abrir no celular)
   let b0=null, raf=0, gx=0, gy=0, fx=0, fy=0, on=false; const D=window.DeviceOrientationEvent, needs=typeof D.requestPermission==='function';
   const ask=()=>{D.requestPermission().then(r=>{ if(r==='granted') on=true; if(r==='granted'||r==='denied') removeEventListener('click',ask,true)}).catch(()=>{})};
   if(needs) addEventListener('click',ask,true); else on=true;
@@ -672,19 +677,20 @@ MC.enter=()=>{};
     const B=land?(e.gamma||0)*sg:e.beta, G=land?-(e.beta||0)*sg:(e.gamma||0);
     if(b0===null) b0=B; b0+=(B-b0)*.01; const dz=v=>Math.abs(v)<.12?0:(v-Math.sign(v)*.12)/.88, rx=dz(clamp(G/25,-1,1)), ry=dz(clamp((B-b0)/25,-1,1)); fx+=(rx-fx)*.12; fy+=(ry-fy)*.12; const nx=Math.abs(fx)<.02?0:fx, ny=Math.abs(fy)<.02?0:fy; if(Math.abs(nx-gx)<.008&&Math.abs(ny-gy)<.008) return; gx=nx; gy=ny; if(!raf) raf=requestAnimationFrame(apply)})}}
 // arco curvo em loop (as peças giram num arco) — usado no "Em breve" (rodada 4)
-function makeRing(st,items){ const N=items.length, step=360/N, prev=items.map(()=>({o:-1,t:'',z:-1}));
+function makeRing(st,items,dir=1,spd=1){ const N=items.length, step=360/N, prev=items.map(()=>({o:-1,t:'',z:-1}));
   let base=0, lastY=scrollY, lt=0, boost=0, R=900, run=false, raf=0;
   const readR=()=>{R=parseFloat(getComputedStyle(st).getPropertyValue('--R'))||900}; readR(); addEventListener('resize',readR);
   const draw=()=>items.forEach((it,i)=>{const a=((i*step+base)%360+540)%360-180, r=a*Math.PI/180, vis=Math.abs(a)<78, P=prev[i];
       const o=vis?Math.min(1,(78-Math.abs(a))/12):0, oS=o.toFixed(2); if(oS!==P.o){it.style.opacity=oS; P.o=oS}
       if(vis){const t=`translate(-50%,-50%) translateX(${(R*Math.sin(r)).toFixed(1)}px) perspective(900px) rotateY(${(-a*.75).toFixed(1)}deg) scale(${(1+(1-Math.cos(r))*.9).toFixed(3)})`; if(t!==P.t){it.style.transform=t; P.t=t}
         const z=Math.round(100-Math.abs(a)); if(z!==P.z){it.style.zIndex=z; P.z=z}}});
-  const tick=now=>{ if(!run){raf=0; return} const dt=lt?Math.min(.05,(now-lt)/1000):0; lt=now; const dy=scrollY-lastY; lastY=scrollY; boost+=(Math.abs(dy)*.06-boost)*.2; base-=(7+boost*18)*dt; draw(); raf=requestAnimationFrame(tick)};
+  const tick=now=>{ if(!run){raf=0; return} const dt=lt?Math.min(.05,(now-lt)/1000):0; lt=now; const dy=scrollY-lastY; lastY=scrollY; boost+=(Math.abs(dy)*.06-boost)*.2; base-=dir*(7*spd+boost*18)*dt; draw(); raf=requestAnimationFrame(tick)};
   draw(); if(!MC.reduce) new IntersectionObserver(es=>es.forEach(en=>{run=en.isIntersecting; if(run&&!raf){lt=0; lastY=scrollY; raf=requestAnimationFrame(tick)}}),{rootMargin:'150px'}).observe(st)}
-{const sg=document.getElementById('sgrid'); if(sg){ const cards=[...sg.children], list=cards.concat(cards.map(c=>c.cloneNode(true)));
-  const st=document.createElement('div'); st.className='ring-stage soon-ring'; st.id='sgrid'; st.setAttribute('aria-hidden','true'); const rg=document.createElement('div'); rg.className='ring'; st.appendChild(rg);
-  list.forEach(c=>{const f=document.createElement('figure'); f.className='ring-item'; f.appendChild(c); rg.appendChild(f)});
-  sg.replaceWith(st); st.addEventListener('contextmenu',e=>e.preventDefault()); makeRing(st,[...rg.children])}}
+{const sg=document.getElementById('sgrid'); if(sg){ const cards=[...sg.children], wrap=document.createElement('div'); wrap.id='sgrid'; wrap.className='soon-rows'; wrap.setAttribute('aria-hidden','true');
+  [0,1,2].forEach(r=>{ const st=document.createElement('div'); st.className='ring-stage soon-ring'; const rg=document.createElement('div'); rg.className='ring'; st.appendChild(rg);
+    cards.forEach((c,k)=>{const f=document.createElement('figure'); f.className='ring-item'; f.appendChild(r===0?c:cards[(k+r*4)%cards.length].cloneNode(true)); rg.appendChild(f)});
+    wrap.appendChild(st); makeRing(st,[...rg.children],r%2?-1:1,[1,.8,1.15][r])});
+  sg.replaceWith(wrap); wrap.addEventListener('contextmenu',e=>e.preventDefault())}}
 // 11 galeria "janela que revela": a foto se corta em faixas que abrem como cortina e mostram a próxima, conforme a rolagem
 {const sec=document.getElementById('galeria'), mo=sec&&sec.querySelector('.mosaic'); if(mo){
   const ph=[...mo.querySelectorAll('img')].map(i=>i.getAttribute('src')), N=ph.length, S=innerWidth<761?5:8;
@@ -728,7 +734,7 @@ function makeRing(st,items){ const N=items.length, step=360/N, prev=items.map(()
    const g=e.target.closest('[data-jgo]'); if(g){const m=g.closest('.modal'); const x=m&&m.querySelector('[data-close]'); x&&x.click()}})}
 
 // 10 liquid glass: refração (filtro SVG no backdrop) só onde o navegador suporta (Chrome/Edge)
-try{ if(matchMedia('(pointer:fine)').matches&&navigator.userAgentData&&navigator.userAgentData.brands.some(b=>/Chromium/i.test(b.brand))) document.documentElement.classList.add('lgr') }catch(e){}
+try{ if(false&&matchMedia('(pointer:fine)').matches&&navigator.userAgentData&&navigator.userAgentData.brands.some(b=>/Chromium/i.test(b.brand))) document.documentElement.classList.add('lgr') }catch(e){}
 
 // 1 cursor próprio + rastro quase imperceptível que deforma o que passa por baixo (lente líquida na cor da lenda)
 {const fine=matchMedia('(pointer:fine)').matches&&matchMedia('(hover:hover)').matches;

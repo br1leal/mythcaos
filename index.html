@@ -1682,7 +1682,6 @@ body[data-theme^="luz"] .modal .mbox,body[data-theme^="luz"] .modal .mbox *{colo
 @media (max-width:520px){#hlogot .mclogo{height:46px}}
 </style><style>
 /* ===== Rodada 4 ===== */
-@font-face{font-family:"Vakantcy";src:url(assets/fonts/vakantcy.woff2) format("woff2");font-display:swap}
 @font-face{font-family:"GumpsOver";src:url(assets/fonts/gumpsover.woff2) format("woff2");font-display:swap}
 /* 9 Limbo e "Cuidado" em Gumps Over */
 .travwarn p,.travwarn p .acc,#limbo .ltxt h2{font-family:"GumpsOver",var(--f-display);font-stretch:normal;font-variation-settings:normal;font-weight:400;text-transform:none;letter-spacing:0}
@@ -1783,10 +1782,43 @@ body[data-theme^="luz"] #mtrail{mix-blend-mode:multiply}
 html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
 #mcur{width:18px;height:18px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
 #mcur.on{width:22px;height:22px}
-</style>
+</style><style>
+/* ===== R4c ===== */
+/* sem barra no topo (nem vidro) */
+.top::before{display:none!important}
+/* rastro do mouse: só o brilho sutil, sem deformar */
+.mlens,html.lgr .mlens{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+/* destaques em Vakantcy maiores */
+@font-face{font-family:"Vakantcy";src:url(assets/fonts/vakantcy.woff2) format("woff2");font-display:swap;size-adjust:132%}
+.deck .dn{line-height:1.25;padding:2px 6px}
+/* palco ocupa a tela toda quando a barra de endereço some (sem buraco embaixo) */
+@supports (height:100lvh){.stage,.grv-st{height:100lvh}
+ @media (max-width:760px){.st-txt{bottom:calc(96px + env(safe-area-inset-bottom,0px) + (100lvh - 100svh))!important}
+  .st-skip{bottom:calc(24px + env(safe-area-inset-bottom,0px) + (100lvh - 100svh))!important}
+  .ltxt{bottom:calc(40px + env(safe-area-inset-bottom,0px) + (100lvh - 100svh))!important}}}
+/* baralhos alinhados */
+.deck .dlock:empty{display:block;visibility:hidden}
+.deck .dlock{min-height:1.2em}
+/* insígnias: destaque ao lado do texto também no celular */
+@media (max-width:1100px){.icol{grid-template-columns:auto minmax(0,1fr)!important;align-items:center!important;justify-items:stretch!important}
+ .icol .ibig{height:clamp(110px,22vw,200px)!important}}
+@media (max-width:520px){.icol{gap:14px!important;padding:20px 16px!important}.icol .ibig{height:104px!important}.icol .itx h3{font-size:34px!important}.icol .itx p{font-size:15px!important}.icol .irow img{height:40px!important}}
+/* limbo no celular: sem a caixa escura atrás do texto */
+@media (max-width:760px){.ltxt{background:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding:0!important}
+ .limbo .lshade{background:linear-gradient(transparent 45%,rgba(0,0,0,.75))}}
+/* em breve: 3 fileiras */
+.soon-rows{margin-top:24px;display:grid;gap:clamp(4px,1vw,12px)}
+.soon-rows .soon-ring{--R:760px;--w:150px;height:clamp(250px,24vw,330px);margin:0}
+@media (max-width:760px){.soon-rows .soon-ring{--R:300px;--w:92px;height:190px}}
+</style><style>
+/* insígnias: destaque ao lado do texto em todas as larguras */
+.icol{grid-template-columns:auto minmax(0,1fr)!important;align-items:center!important}
+@media (min-width:1101px){.icol .ibig{height:clamp(110px,9vw,150px)!important}.icol .irow img{height:clamp(36px,2.8vw,46px)!important}}
+</style><style>.mclogo{filter:none!important} /* a arte da logo já tem sombra */</style>
+
 </head><body><link rel="preload" href="assets/fonts/vakantcy.woff2" as="font" type="font/woff2" crossorigin>
 <div class="loader" id="loader" role="status" aria-live="polite">
-  <div class="ld-in"><p class="ld-logo"><img class="mclogo" src="assets/logo/logo-saci-1000.webp" srcset="assets/logo/logo-saci-480.webp 480w, assets/logo/logo-saci-1000.webp 1000w, assets/logo/logo-saci-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async" fetchpriority="high"></p><p class="ld-sub">O Despertar das Lendas</p>
+  <div class="ld-in"><p class="ld-logo"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async" fetchpriority="high"><script>window.MC_LOGO=function(){var L=["saci","iara","medusa","mula","papainoel","valquiria"],k=window.MC_L||(window.MC_L=L[Math.random()*L.length|0]);document.querySelectorAll("img.mclogo[data-l]").forEach(function(i){i.srcset=i.getAttribute("data-l").replace(/__L__/g,k);i.removeAttribute("data-l")})};MC_LOGO()</script></p><p class="ld-sub">O Despertar das Lendas</p>
     <div class="ld-bar"><i id="ldbar"></i></div><p class="label ld-pct"><span id="ldpct">0</span>% · acordando as lendas</p></div>
   <p class="ld-credit"><span>Criado e desenvolvido por Bruno Leal</span><span class="st-dot"> · </span><span>um jogo 100% brasileiro</span></p>
 </div>
@@ -1802,7 +1834,7 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
 
 <svg class="lgdefs" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute"><filter id="lgf" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.04" numOctaves="2" seed="11" result="n"/><feGaussianBlur in="n" stdDeviation="1.5" result="nb"/><feDisplacementMap in="SourceGraphic" in2="nb" scale="26" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="curf" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <header class="top">
-  <div class="brand"><a class="logo" href="#historia" id="hlogo"><span id="hlogot"><img class="mclogo" src="assets/logo/logo-saci-1000.webp" srcset="assets/logo/logo-saci-480.webp 480w, assets/logo/logo-saci-1000.webp 1000w, assets/logo/logo-saci-1400.webp 1400w" sizes="(max-width:520px) 120px, 160px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"></span><span class="lsub" id="hlogos">O Despertar das Lendas</span></a><button class="dock" id="dock" type="button" aria-label="Ver sua lenda de perto" title="Ver de perto"></button><div class="ptag"><button class="ptag-b" id="ptagb" type="button" aria-expanded="false" aria-controls="ptagm"><i></i><span id="ptagn">Saci</span><em>trocar</em></button><div class="ptag-m" id="ptagm" hidden></div></div></div>
+  <div class="brand"><a class="logo" href="#historia" id="hlogo"><span id="hlogot"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:520px) 120px, 160px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"><script>window.MC_LOGO=function(){var L=["saci","iara","medusa","mula","papainoel","valquiria"],k=window.MC_L||(window.MC_L=L[Math.random()*L.length|0]);document.querySelectorAll("img.mclogo[data-l]").forEach(function(i){i.srcset=i.getAttribute("data-l").replace(/__L__/g,k);i.removeAttribute("data-l")})};MC_LOGO()</script></span><span class="lsub" id="hlogos">O Despertar das Lendas</span></a><button class="dock" id="dock" type="button" aria-label="Ver sua lenda de perto" title="Ver de perto"></button><div class="ptag"><button class="ptag-b" id="ptagb" type="button" aria-expanded="false" aria-controls="ptagm"><i></i><span id="ptagn">Saci</span><em>trocar</em></button><div class="ptag-m" id="ptagm" hidden></div></div></div>
   <nav class="tnav" aria-label="Atalhos"><div class="tlinks" id="tlinks"><button class="tlink" type="button" data-autor>Sobre o autor</button><a class="tlink" href="#quebra">Jogue o desafio</a></div><button class="btn small" type="button" data-lead>Lista de espera</button><button class="tmenu" id="tmenu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="tlinks"><i></i><i></i><i></i></button></nav>
 </header>
 
@@ -1953,7 +1985,7 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
 
 <section id="travessia" class="trav" data-theme="portal" data-mode="portal">
   <div class="stage">
-    <video class="bgv" id="pvid" muted loop playsinline preload="auto" aria-hidden="true"><source media="(max-width:760px)" src="assets/video/portal-m.mp4" type="video/mp4"><source src="assets/video/portal.mp4" type="video/mp4"></video>
+    <video class="bgv" id="pvid" muted loop playsinline preload="none" aria-hidden="true" data-src="assets/video/portal"></video>
     <canvas class="melt" id="melt" aria-hidden="true"></canvas>
     <div class="txt" id="travtxt"><p class="label">Cartas de Portais</p><h2>Atravesse</h2><p>Comprou um Portal? Use na hora e suba de Reino. Ou guarde para o momento certo.</p></div>
     <div class="travflash" id="travflash"></div>
@@ -1963,7 +1995,7 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
 
 <section id="limbo" class="limbo" data-theme="limbo" data-mode="fall">
   <div class="stage" id="limbostage">
-    <video class="bgv" id="lvid" muted loop playsinline autoplay preload="auto" aria-hidden="true"><source media="(max-width:760px)" src="assets/video/limbo-m.mp4" type="video/mp4"><source src="assets/video/limbo.mp4" type="video/mp4"></video>
+    <video class="bgv" id="lvid" muted loop playsinline preload="none" aria-hidden="true" data-src="assets/video/limbo"></video>
     <div class="lshade" aria-hidden="true"></div>
     <div class="slot" data-slot></div>
     <div class="txt ltxt" id="limbotxt"><p class="label">Cartas Limbo</p><h2 id="limbot">Despenque</h2><p>Comprou um Limbo? Volte para as Raízes. Os Reinos altos escondem nove deles, e ninguém vê a queda chegando.</p><p class="lred">Retorne ao Reino I e passe a vez</p></div>
@@ -2088,7 +2120,7 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
   </form>
   <div class="joined" hidden aria-live="polite"><p class="label">Lista de espera</p><h3>Seu lugar na mesa está guardado<span class="jn"></span>!</h3><p>Enviamos um e-mail de boas-vindas. Enquanto isso, que tal o Desafio MythCaos?</p><a class="btn" href="#quebra" data-jgo>Jogue o desafio</a></div>
 </section>
-<footer class="wrap"><div class="credit"><p class="cbig"><img class="mclogo" src="assets/logo/logo-saci-1000.webp" srcset="assets/logo/logo-saci-480.webp 480w, assets/logo/logo-saci-1000.webp 1000w, assets/logo/logo-saci-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"></p><p>Criado e desenvolvido por <strong>Bruno Leal</strong>. Ideia, mecânicas, personagens, peças 3D e site.</p><p class="label">Um jogo 100% brasileiro</p><p class="fnav"><button class="tlink" type="button" data-autor>Sobre o autor</button> · <a class="tlink" href="#quebra">Desafio MythCaos</a></p></div><span>© 2026 Bruno Leal · Todos os direitos reservados</span></footer>
+<footer class="wrap"><div class="credit"><p class="cbig"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"></p><p>Criado e desenvolvido por <strong>Bruno Leal</strong>. Ideia, mecânicas, personagens, peças 3D e site.</p><p class="label">Um jogo 100% brasileiro</p><p class="fnav"><button class="tlink" type="button" data-autor>Sobre o autor</button> · <a class="tlink" href="#quebra">Desafio MythCaos</a></p></div><span>© 2026 Bruno Leal · Todos os direitos reservados</span></footer>
 </main>
 
 <div class="modal" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbn">
@@ -2138,9 +2170,9 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
 </div>
 <div class="modal" id="autorm" hidden role="dialog" aria-modal="true" aria-labelledby="autort">
   <div class="mbg" data-close></div>
-  <div class="mbox autorbox"><figure class="aphoto"><img src="assets/misc/autor-420.webp" srcset="assets/misc/autor-420.webp 420w, assets/misc/autor-760.webp 760w" sizes="(max-width:760px) 62vw, 300px" width="760" height="1013" alt="Bruno Leal com a filha, Aurora, numa mesa cheia de dados e peças de jogo" loading="lazy"></figure>
+  <div class="mbox autorbox"><figure class="aphoto"><img src="assets/misc/autor-420.webp" srcset="assets/misc/autor-420.webp 420w, assets/misc/autor-760.webp 760w" sizes="(max-width:760px) 62vw, 300px" width="760" height="1013" alt="Bruno Leal com a filha, Aurora, numa mesa cheia de dados e peças de jogo" decoding="async" fetchpriority="low"></figure>
     <div class="atext"><p class="label">Sobre o autor</p><h3 id="autort">Bruno Leal</h3>
-    <p>Sou o Bruno, pai da Aurora e apaixonado por jogos de tabuleiro.</p>
+    <p>Pai da Aurora e apaixonado por jogos de tabuleiro.</p>
     <p>Comecei a desenvolver o MythCaos em 2024, quando descobri que seria pai. Queria um jogo para, um dia, apresentar a ela o mundo de lendas e mitos que a gente conhece desde criança.</p>
     <p>Um jogo divertido e disputado, feito para a família inteira.</p>
     <ul class="autorc"><li><a class="achip" href="mailto:contato@mythcaos.com.br"><span class="label">E-mail</span>contato@mythcaos.com.br</a></li><li><a class="achip" href="https://instagram.com/mythcaos" target="_blank" rel="noopener"><span class="label">Instagram</span>@mythcaos</a></li><li><a class="achip" href="https://wa.me/5542998270848" target="_blank" rel="noopener"><span class="label">WhatsApp</span>(42) 99827-0848</a></li></ul>
@@ -2219,7 +2251,7 @@ const find=f=>{const k=WHERE[f]; return k?{k,c:MANI[k].find(x=>x.f===f+'.jpg')}:
 // ---------- peões e tema ----------
 const PAWNS=[['saci','Saci','#c8281e','#e0362a'],['iara','Iara','#2f6fd0','#3f8cff'],['medusa','Medusa','#7a8a34','#9cb03c'],['mula','Mula sem Cabeça','#2a2a30','#ff7a1a'],['papainoel','Klaus','#ede6da','#e6edf5'],['valquiria','Valquíria','#e8b923','#f2c230']];
 try{const s=localStorage.getItem('mc-pawn'); if(PAWNS.some(p=>p[0]===s)) MC.pawn=s}catch(e){}
-function applyPawn(id){const p=PAWNS.find(x=>x[0]===id);MC.pawn=id;document.querySelectorAll('img.mclogo').forEach(i=>{const f=v=>v.replace(/logo-[a-z]+-(\d)/g,'logo-'+id+'-$1'); i.srcset=f(i.srcset); i.src=f(i.src)});document.documentElement.style.setProperty('--accent',p[3]);document.documentElement.style.setProperty('--btn-ink',id==='papainoel'?'#0d1a1c':'#140c08');
+function applyPawn(id){const p=PAWNS.find(x=>x[0]===id);MC.pawn=id;if(MC.pawnReady) document.querySelectorAll('img.mclogo').forEach(i=>{const f=v=>v.replace(/logo-[a-z]+-(\d)/g,'logo-'+id+'-$1'); i.srcset=f(i.srcset); if(i.getAttribute('src')) i.src=f(i.src)});document.documentElement.style.setProperty('--accent',p[3]);document.documentElement.style.setProperty('--btn-ink',id==='papainoel'?'#0d1a1c':'#140c08');
   try{localStorage.setItem('mc-pawn',id)}catch(e){}; $$('#gpick button,#ptagm button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id)); const tn=$('#ptagn'); if(tn) tn.textContent=p[1]; const zn=$('#pzn'); if(zn) zn.textContent=p[1]; MC.onPawn&&MC.onPawn(id); MC.onTheme&&MC.onTheme()}
 const gpick=$('#gpick');
 if(gpick) PAWNS.forEach(([id,name,c])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.style.setProperty('--c',c);b.innerHTML=`<i></i><span>${name.split(' ')[0]}</span>`;b.setAttribute('aria-label',name);b.onclick=()=>applyPawn(id);gpick.appendChild(b)});
@@ -2227,7 +2259,8 @@ const ptm=$('#ptagm'), ptb=$('#ptagb');
 PAWNS.forEach(([id,name,c])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.style.setProperty('--c',c);b.innerHTML=`<i></i>${name}`;b.onclick=()=>{applyPawn(id);togTag(false)};ptm.appendChild(b)});
 function togTag(on){ptm.hidden=!on;ptb.setAttribute('aria-expanded',on)}
 ptb.onclick=e=>{e.stopPropagation();togTag(ptm.hidden)}; document.addEventListener('click',e=>{if(!e.target.closest('.ptag')) togTag(false)}); addEventListener('keydown',e=>{if(e.key==='Escape') togTag(false)});
-applyPawn(MC.pawn);
+applyPawn(MC.pawn); MC.pawnReady=true; // a logo de chegada é sorteada (MC_L); só muda quando a pessoa escolhe uma lenda
+window.MC_LOGO&&window.MC_LOGO();
 
 let mxN=0,myN=0; addEventListener('pointermove',e=>{mxN=e.clientX/innerWidth-.5;myN=e.clientY/innerHeight-.5});
 const gate={hidden:true}; const gateOpen=false;
@@ -2340,7 +2373,7 @@ const ORD=['raizes','mares','tormentas','titas']; let cur='raizes';
 let dMsg='';
 // só o Reino onde você está fica liberado; os outros ficam cinza até um Portal abrir o caminho
 function paintDecks(){ $$('.deck').forEach(d=>{const k=d.dataset.r, on=k===cur; d.classList.toggle('active',on); d.classList.toggle('locked',!on); d.disabled=false; d.removeAttribute('aria-disabled');
-  d.querySelector('.dlock').textContent=on?dMsg:(ORD.indexOf(k)>ORD.indexOf(cur)?'Abre com um Portal':'')}); selDeck=$(`.deck[data-r="${cur}"]`)}
+  d.querySelector('.dlock').textContent=on?dMsg:(ORD.indexOf(k)>ORD.indexOf(cur)?'':'')}); selDeck=$(`.deck[data-r="${cur}"]`)}
 function deckFx(kind,from,to){ const a=$(`.deck[data-r="${from}"] .stack`), b=$(`.deck[data-r="${to}"] .stack`); if(!a||!b) return;
   const ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect(), fx=document.createElement('div'); fx.className='deckfx '+kind;
   const x1=ra.left+ra.width/2, y1=ra.top+ra.height/2, x2=rb.left+rb.width/2, y2=rb.top+rb.height/2;
@@ -2444,7 +2477,9 @@ function updTrav(){const r=trav.getBoundingClientRect(); if(r.bottom<0||r.top>in
 // ---------- Limbo ----------
 const limboSec=$('#limbo'), lst=$('#limbostage'), lvid=$('#lvid'), ltxt=$('#limbotxt'), pvid=$('#pvid'); let wasLimbo=false; limboSec.prepend(lvid); // fora do palco: o tremor (transform) prendia o vídeo fixo à seção
 // vídeos de fundo: fixos na tela (não sobem com a rolagem), entram com fade e só tocam quando visíveis
-[[limboSec,lvid],[trav,pvid]].forEach(([sec,v])=>new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting) v.play().catch(()=>{}); else v.pause()})).observe(sec));
+// vídeos de fundo só baixam quando a seção chega perto (versão leve no celular)
+[[limboSec,lvid],[trav,pvid]].forEach(([sec,v])=>{ new IntersectionObserver((es,o)=>es.forEach(en=>{ if(en.isIntersecting&&!v.src){ v.src=v.dataset.src+(innerWidth<761?'-m':'')+'.mp4'; v.preload='auto'; v.load(); o.disconnect() }}),{rootMargin:'150% 0px'}).observe(sec);
+  new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting) v.play().catch(()=>{}); else v.pause()})).observe(sec)});
 function bgvFade(sec,v,inEnd){const r=sec.getBoundingClientRect(), H=innerHeight; if(r.bottom<0||r.top>H){v.style.opacity=0;return 0}
   const a=clamp((H-r.top)/(H*.9)), b=clamp(r.bottom/(H*.9)); const o=MC.reduce?1:Math.min(sstep(a),inEnd??b); v.style.opacity=o.toFixed(3); return o}
 function updLimbo(now){ const o=bgvFade(limboSec,lvid); if(o<=0) return; const p=prog(limboSec);
@@ -2658,8 +2693,9 @@ function bgDraw(o,p,now,dt){const b=o.bg, cv=b.cv, W=cv.clientWidth, H=cv.client
 // ---------- fundo ambiente que reage ao mouse ----------
 const amb=$('#amb'), actx=amb.getContext('2d'); const motes=[]; let ambW=0,ambH=0, pmx=-999, pmy=-999;
 addEventListener('pointermove',e=>{pmx=e.clientX;pmy=e.clientY});
-function ambDraw(dt){const W=amb.clientWidth,H=amb.clientHeight; if(W!==ambW||H!==ambH){ambW=amb.width=W;ambH=amb.height=H;motes.length=0;for(let i=0;i<70;i++) motes.push({x:rnd(0,W),y:rnd(0,H),vx:rnd(-8,8),vy:rnd(-14,-4),r:rnd(.8,2.4),s:rnd(.3,1)})}
-  const glow=getComputedStyle(document.body).getPropertyValue('--glow').trim()||'#e0362a'; actx.clearRect(0,0,W,H); actx.fillStyle=glow;
+let glowC='#e0362a'; const readGlow=()=>{glowC=getComputedStyle(document.body).getPropertyValue('--glow').trim()||'#e0362a'}; readGlow(); new MutationObserver(()=>requestAnimationFrame(readGlow)).observe(document.body,{attributes:true,attributeFilter:['data-theme']}); // lido só quando o tema muda (antes era a cada quadro)
+function ambDraw(dt){const W=innerWidth,H=innerHeight; if(W!==ambW||H!==ambH){ambW=amb.width=W;ambH=amb.height=H;motes.length=0;for(let i=0;i<70;i++) motes.push({x:rnd(0,W),y:rnd(0,H),vx:rnd(-8,8),vy:rnd(-14,-4),r:rnd(.8,2.4),s:rnd(.3,1)})}
+  actx.clearRect(0,0,W,H); actx.fillStyle=glowC;
   for(const m of motes){const dx=m.x-pmx, dy=m.y-pmy, d2=dx*dx+dy*dy; if(d2<16000){const f=(16000-d2)/16000*220; const d=Math.sqrt(d2)||1; m.vx+=dx/d*f*dt; m.vy+=dy/d*f*dt}
     m.vx*=Math.pow(.6,dt); m.vy=m.vy*Math.pow(.6,dt)+(-8*(1-Math.pow(.6,dt))); m.x+=m.vx*dt; m.y+=m.vy*dt;
     if(m.y<-10){m.y=H+10;m.x=rnd(0,W)} if(m.x<-10)m.x=W+10; if(m.x>W+10)m.x=-10;
@@ -2672,7 +2708,7 @@ MC.modelLoaded=()=>{LD.models=Math.min(1,LD.models+1/12)};
 document.fonts&&document.fonts.ready.then(()=>LD.fonts=1); if(!document.fonts) LD.fonts=1;
 addEventListener('load',()=>LD.page=1); if(document.readyState==='complete') LD.page=1;
 const t0=performance.now();
-function ldTick(){ if(ldDone) return; const pr=(LD.fonts*.15+LD.page*.3+LD.models*.35+LD.vid*.2); ldShown+=(pr-ldShown)*.12; const pc=Math.round(ldShown*100);
+function ldTick(){ if(ldDone) return; const pr=(LD.fonts*.2+LD.page*.4+LD.models*.4); /* o loader não espera vídeo (eles carregam perto da seção) */ ldShown+=(pr-ldShown)*.12; const pc=Math.round(ldShown*100);
   $('#ldbar').parentElement.style.setProperty('--lp',pc+'%'); $('#ldbar').style.width=pc+'%'; $('#ldpct').textContent=pc;
   if((pr>.98&&ldShown>.95)||performance.now()-t0>12000){ if(!LD.tr) LD.tr=performance.now(); }
   if(LD.tr&&performance.now()-LD.tr>(MC.reduce?300:1800)){ ldDone=true; $('#ldbar').style.width='100%'; $('#ldpct').textContent=100;
@@ -2690,9 +2726,9 @@ const LENDAS=[...lendSec.querySelectorAll('.lv-panel')].map((pn,i)=>({sec:lendSe
 LENDAS.forEach(L=>L.pn.querySelectorAll('.layers').forEach(el=>{const f=el.innerHTML.match(/__L:([^_]+)__/); if(f) el.innerHTML=layersHTML(f[1],'Carta '+nameOf(f[1]))}));
 // o vídeo é baixado inteiro (blob) para a rolagem poder ir e voltar sem travar
 function lvLoad(L){ const kind=innerWidth<761?'9x16':'16x9'; if(L.kind===kind) return; L.kind=kind;
-  fetch(`assets/video/${L.name}-${kind}.mp4`).then(r=>r.blob()).then(b=>{ if(L.kind!==kind) return; if(L.url) URL.revokeObjectURL(L.url); L.url=URL.createObjectURL(b); L.v.src=L.url; L.v.load();
+  fetch(`assets/video/${L.name}-${kind}-v2.mp4`).then(r=>r.blob()).then(b=>{ if(L.kind!==kind) return; if(L.url) URL.revokeObjectURL(L.url); L.url=URL.createObjectURL(b); L.v.src=L.url; L.v.load();
     L.v.addEventListener('loadedmetadata',()=>{L.dur=L.v.duration||6},{once:true}); L.v.addEventListener('loadeddata',()=>{LD.vid=1},{once:true})}).catch(()=>{LD.vid=1})}
-LENDAS.forEach(L=>{L.st.style.setProperty('--cls',L.cls); lvLoad(L); holo(L.pn.querySelector('.lv-tilt'),12,.04)}); addEventListener('resize',()=>LENDAS.forEach(lvLoad));
+LENDAS.forEach(L=>{L.st.style.setProperty('--cls',L.cls); holo(L.pn.querySelector('.lv-tilt'),12,.04)}); let lvNear=false; new IntersectionObserver((es,o)=>es.forEach(en=>{if(en.isIntersecting){lvNear=true; LENDAS.forEach(lvLoad); o.disconnect()}}),{rootMargin:'250% 0px'}).observe(lendSec); addEventListener('resize',()=>{if(lvNear) LENDAS.forEach(lvLoad)});
 setTimeout(()=>{LD.vid=Math.max(LD.vid,1)},9000);
 LENDAS.forEach(L=>{const flip=()=>L.card.classList.toggle('flip'); L.card.addEventListener('click',flip); L.card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip()}})});
 function updLendTrack(){if(LENDAS.length<2) return; const r=lendSec.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight) return; const p=prog(lendSec), hx=MC.reduce?(p>.5?1:0):sstep(clamp((p-LR[0][1])/(LR[1][0]-LR[0][1])));
@@ -2724,7 +2760,7 @@ const STORY=[
  {c:'#e0362a',end:true}];
 const stSec=$('#historia'), stTxt=$('#sttxt'), stCards=$('#stcards'), stProg=$('#stprog');
 const ST=STORY.map((B,bi)=>{ const el=document.createElement('div'); el.className='st-block'+(B.end?' st-end':''); const words=[], cards=[];
-  if(B.end){ el.innerHTML=`<p class="st-logo"><img class="mclogo" src="assets/logo/logo-saci-1000.webp" srcset="assets/logo/logo-saci-480.webp 480w, assets/logo/logo-saci-1000.webp 1000w, assets/logo/logo-saci-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"></p>`+'<p class="st-sub">O Despertar das Lendas</p><p class="st-cred"><span>Um jogo 100% brasileiro</span><span class="st-dot"> · </span><span>criado e desenvolvido por Bruno Leal</span></p>'; stTxt.appendChild(el); return {el,words:[...el.children],cards,B,order:[]} }
+  if(B.end){ el.innerHTML=`<p class="st-logo"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"></p>`+'<p class="st-sub">O Despertar das Lendas</p><p class="st-cred"><span>Um jogo 100% brasileiro</span><span class="st-dot"> · </span><span>criado e desenvolvido por Bruno Leal</span></p>'; stTxt.appendChild(el); return {el,words:[...el.children],cards,B,order:[]} }
   B.l.forEach(line=>{ const p=document.createElement('p'); p.className='st-line';
     line.split(/(\{[^}]+\}|\*[^*]+\*)/).filter(Boolean).forEach(tok=>{
       if(tok[0]==='{'){ const [txt,ref]=tok.slice(1,-1).split('|'); const sp=document.createElement('span'); sp.className='st-w kw'; sp.textContent=txt; sp.dataset.ref=ref; p.appendChild(sp); words.push(sp); p.appendChild(document.createTextNode(' '));
@@ -2735,7 +2771,7 @@ const ST=STORY.map((B,bi)=>{ const el=document.createElement('div'); el.classNam
   stTxt.appendChild(el);
   if(B.split){const kw=words.find(w=>w.dataset.ref&&w.textContent.startsWith(B.split)); B.splitN=kw?words.indexOf(kw)+1:words.length}
   cards.forEach((c,ci)=>{ const d=document.createElement('div'); d.className='st-card'; const n=cards.length;
-    if(c.ref==='@board'){ d.className='st-bigboard'; d.innerHTML='<img src="assets/misc/tabuleiro2.jpg" alt="">'; c.big=true; stCards.appendChild(d); c.d=d; return }
+    if(c.ref==='@board'){ d.className='st-bigboard'; d.innerHTML='<img src="assets/misc/tabuleiro2.webp" alt="">'; c.big=true; stCards.appendChild(d); c.d=d; return }
     { const pre=bi===0&&ci===0, src=c.ref.startsWith('v:')?`assets/imp/${c.ref.slice(2)}/114-verso.jpg`:IMP(c.ref); const face=c.ref.startsWith('v:')?`<img src="${src}" alt="">`:`<div class="layers">${layersHTML(c.ref,'')}</div>`; d.innerHTML=`<div class="st-ci"><div class="st-face">${face}${fxHTML}</div>${pre?'<div class="st-back"><img src="assets/imp/raizes/114-verso.jpg" alt=""></div>':''}</div>`; if(pre) d.classList.add('pre','in');
       holo(d.querySelector('.st-ci'),12,.06) }
     d.addEventListener('click',()=>{ const S=ST[bi]; if(S.order[S.order.length-1]===ci&&!c.ref.startsWith('v:')){ openCard(c.ref,d); return } S.order=S.order.filter(x=>x!==ci); S.order.push(ci); stackPaint(S) });
@@ -2777,7 +2813,8 @@ function updStory(){ const r=stSec.getBoundingClientRect(); if(r.bottom<innerHei
   if(!stM||stM.w!==innerWidth||stM.h!==innerHeight) stMeasure();
   const e=bi===0?1:sstep(clamp(q/.28)), endB=bi===N-1, push=bi>0?-stM.S[bi-1]*(1-e):0;
   let cum=0; const Y=[]; for(let i=bi;i>=0;i--){ Y[i]=cum+push; if(i>0) cum+=stM.S[i-1] }
-  ST.forEach((S,i)=>{ let o=0, y=0; if(i===bi){o=e; y=Y[i]} else if(i<bi){ y=Y[i]; const mob=innerWidth<761, dim=i===bi-1?1-(1-(mob?.26:.32))*e:(mob?(i===bi-2?.26*(1-e):0):.32), M=stM.b[i], vis=clamp((stM.top+M.t+y+M.h*.6-90)/(M.h*.6)); o=dim*vis*(endB?1-e:1) }
+  const MOB=innerWidth<761;
+  ST.forEach((S,i)=>{ let o=0, y=0; if(MOB){ if(i===bi){ const fin=i===0?1:clamp(q/.08), fout=i===N-1?1:1-clamp((q-.88)/.12); o=Math.min(fin,fout); y=(1-fin)*40-(1-fout)*40 } } else if(i===bi){o=e; y=Y[i]} else if(i<bi){ y=Y[i]; const mob=innerWidth<761, dim=i===bi-1?1-(1-(mob?.26:.32))*e:(mob?(i===bi-2?.26*(1-e):0):.32), M=stM.b[i], vis=clamp((stM.top+M.t+y+M.h*.6-90)/(M.h*.6)); o=dim*vis*(endB?1-e:1) }
     S.el.style.opacity=o.toFixed(3); S.el.style.transform=`translateY(${y.toFixed(1)}px)`; S.el.style.visibility=o>0.005?'visible':'hidden';
     const n=S.words.length, lit=i<bi?n:i>bi?0:(S.B.end?n*clamp(q/.3):tl(n));
     S.words.forEach((w,j)=>{const a=clamp(lit-j); w.style.setProperty('--a',a.toFixed(3))});
@@ -2861,7 +2898,7 @@ MC.enter=()=>{};
 {const mark=root=>root.querySelectorAll&&root.querySelectorAll('.layers').forEach(l=>l.classList.toggle('deep',!l.querySelector('.char')));
  mark(document); new MutationObserver(ms=>ms.forEach(m=>{const t=m.target; if(t.classList&&t.classList.contains('layers')) t.classList.toggle('deep',!t.querySelector('.char')); m.addedNodes.forEach(n=>{if(n.nodeType===1){ if(n.classList.contains('layers')) n.classList.toggle('deep',!n.querySelector('.char')); mark(n)}})})).observe(document.body,{childList:true,subtree:true})}
 // 2 giroscópio: inclinar o celular mexe as cartas visíveis
-{const touch=matchMedia('(hover:none)').matches||'ontouchstart' in window; if(touch&&!MC.reduce&&window.DeviceOrientationEvent){
+{const touch=matchMedia('(hover:none)').matches||'ontouchstart' in window; if(false&&touch&&!MC.reduce&&window.DeviceOrientationEvent){ // R4c: giroscópio desligado (cartas tremiam ao abrir no celular)
   let b0=null, raf=0, gx=0, gy=0, fx=0, fy=0, on=false; const D=window.DeviceOrientationEvent, needs=typeof D.requestPermission==='function';
   const ask=()=>{D.requestPermission().then(r=>{ if(r==='granted') on=true; if(r==='granted'||r==='denied') removeEventListener('click',ask,true)}).catch(()=>{})};
   if(needs) addEventListener('click',ask,true); else on=true;
@@ -2872,19 +2909,20 @@ MC.enter=()=>{};
     const B=land?(e.gamma||0)*sg:e.beta, G=land?-(e.beta||0)*sg:(e.gamma||0);
     if(b0===null) b0=B; b0+=(B-b0)*.01; const dz=v=>Math.abs(v)<.12?0:(v-Math.sign(v)*.12)/.88, rx=dz(clamp(G/25,-1,1)), ry=dz(clamp((B-b0)/25,-1,1)); fx+=(rx-fx)*.12; fy+=(ry-fy)*.12; const nx=Math.abs(fx)<.02?0:fx, ny=Math.abs(fy)<.02?0:fy; if(Math.abs(nx-gx)<.008&&Math.abs(ny-gy)<.008) return; gx=nx; gy=ny; if(!raf) raf=requestAnimationFrame(apply)})}}
 // arco curvo em loop (as peças giram num arco) — usado no "Em breve" (rodada 4)
-function makeRing(st,items){ const N=items.length, step=360/N, prev=items.map(()=>({o:-1,t:'',z:-1}));
+function makeRing(st,items,dir=1,spd=1){ const N=items.length, step=360/N, prev=items.map(()=>({o:-1,t:'',z:-1}));
   let base=0, lastY=scrollY, lt=0, boost=0, R=900, run=false, raf=0;
   const readR=()=>{R=parseFloat(getComputedStyle(st).getPropertyValue('--R'))||900}; readR(); addEventListener('resize',readR);
   const draw=()=>items.forEach((it,i)=>{const a=((i*step+base)%360+540)%360-180, r=a*Math.PI/180, vis=Math.abs(a)<78, P=prev[i];
       const o=vis?Math.min(1,(78-Math.abs(a))/12):0, oS=o.toFixed(2); if(oS!==P.o){it.style.opacity=oS; P.o=oS}
       if(vis){const t=`translate(-50%,-50%) translateX(${(R*Math.sin(r)).toFixed(1)}px) perspective(900px) rotateY(${(-a*.75).toFixed(1)}deg) scale(${(1+(1-Math.cos(r))*.9).toFixed(3)})`; if(t!==P.t){it.style.transform=t; P.t=t}
         const z=Math.round(100-Math.abs(a)); if(z!==P.z){it.style.zIndex=z; P.z=z}}});
-  const tick=now=>{ if(!run){raf=0; return} const dt=lt?Math.min(.05,(now-lt)/1000):0; lt=now; const dy=scrollY-lastY; lastY=scrollY; boost+=(Math.abs(dy)*.06-boost)*.2; base-=(7+boost*18)*dt; draw(); raf=requestAnimationFrame(tick)};
+  const tick=now=>{ if(!run){raf=0; return} const dt=lt?Math.min(.05,(now-lt)/1000):0; lt=now; const dy=scrollY-lastY; lastY=scrollY; boost+=(Math.abs(dy)*.06-boost)*.2; base-=dir*(7*spd+boost*18)*dt; draw(); raf=requestAnimationFrame(tick)};
   draw(); if(!MC.reduce) new IntersectionObserver(es=>es.forEach(en=>{run=en.isIntersecting; if(run&&!raf){lt=0; lastY=scrollY; raf=requestAnimationFrame(tick)}}),{rootMargin:'150px'}).observe(st)}
-{const sg=document.getElementById('sgrid'); if(sg){ const cards=[...sg.children], list=cards.concat(cards.map(c=>c.cloneNode(true)));
-  const st=document.createElement('div'); st.className='ring-stage soon-ring'; st.id='sgrid'; st.setAttribute('aria-hidden','true'); const rg=document.createElement('div'); rg.className='ring'; st.appendChild(rg);
-  list.forEach(c=>{const f=document.createElement('figure'); f.className='ring-item'; f.appendChild(c); rg.appendChild(f)});
-  sg.replaceWith(st); st.addEventListener('contextmenu',e=>e.preventDefault()); makeRing(st,[...rg.children])}}
+{const sg=document.getElementById('sgrid'); if(sg){ const cards=[...sg.children], wrap=document.createElement('div'); wrap.id='sgrid'; wrap.className='soon-rows'; wrap.setAttribute('aria-hidden','true');
+  [0,1,2].forEach(r=>{ const st=document.createElement('div'); st.className='ring-stage soon-ring'; const rg=document.createElement('div'); rg.className='ring'; st.appendChild(rg);
+    cards.forEach((c,k)=>{const f=document.createElement('figure'); f.className='ring-item'; f.appendChild(r===0?c:cards[(k+r*4)%cards.length].cloneNode(true)); rg.appendChild(f)});
+    wrap.appendChild(st); makeRing(st,[...rg.children],r%2?-1:1,[1,.8,1.15][r])});
+  sg.replaceWith(wrap); wrap.addEventListener('contextmenu',e=>e.preventDefault())}}
 // 11 galeria "janela que revela": a foto se corta em faixas que abrem como cortina e mostram a próxima, conforme a rolagem
 {const sec=document.getElementById('galeria'), mo=sec&&sec.querySelector('.mosaic'); if(mo){
   const ph=[...mo.querySelectorAll('img')].map(i=>i.getAttribute('src')), N=ph.length, S=innerWidth<761?5:8;
@@ -2928,7 +2966,7 @@ function makeRing(st,items){ const N=items.length, step=360/N, prev=items.map(()
    const g=e.target.closest('[data-jgo]'); if(g){const m=g.closest('.modal'); const x=m&&m.querySelector('[data-close]'); x&&x.click()}})}
 
 // 10 liquid glass: refração (filtro SVG no backdrop) só onde o navegador suporta (Chrome/Edge)
-try{ if(matchMedia('(pointer:fine)').matches&&navigator.userAgentData&&navigator.userAgentData.brands.some(b=>/Chromium/i.test(b.brand))) document.documentElement.classList.add('lgr') }catch(e){}
+try{ if(false&&matchMedia('(pointer:fine)').matches&&navigator.userAgentData&&navigator.userAgentData.brands.some(b=>/Chromium/i.test(b.brand))) document.documentElement.classList.add('lgr') }catch(e){}
 
 // 1 cursor próprio + rastro quase imperceptível que deforma o que passa por baixo (lente líquida na cor da lenda)
 {const fine=matchMedia('(pointer:fine)').matches&&matchMedia('(hover:hover)').matches;
@@ -2962,13 +3000,13 @@ const key=new THREE.DirectionalLight('#ffb59e',2.6); key.position.set(-4,5,6); s
 const rim=new THREE.DirectionalLight('#ee6b54',3.2); rim.position.set(4,2,-5); scene.add(rim);
 const fill=new THREE.DirectionalLight('#ffffff',.6); fill.position.set(1,0,8); scene.add(fill);
 const rimColor=new THREE.Color('#ee6b54'), keyColor=new THREE.Color('#ffb59e');
-MC.onTheme=()=>{const g=getComputedStyle(document.body).getPropertyValue('--glow').trim()||'#ee6b54'; try{rimColor.set(g)}catch(e){} keyColor.set(MC.theme==='limbo'?'#ff2a2a':'#ffb59e')}; MC.onTheme();
+MC.onTheme=()=>requestAnimationFrame(()=>{const g=getComputedStyle(document.body).getPropertyValue('--glow').trim()||'#ee6b54'; try{rimColor.set(g)}catch(e){} keyColor.set(MC.theme==='limbo'?'#ff2a2a':'#ffb59e')}); MC.onTheme();
 function size(){const w=innerWidth,h=innerHeight;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()} size(); addEventListener('resize',size);
 
 // tabuleiro com espessura
 const board=new THREE.Group(); scene.add(board);
 const BW=6, BH=6*1767/1800, TH=.32;
-const tex=new THREE.TextureLoader().load('assets/misc/tabuleiro2.jpg'); tex.colorSpace=THREE.SRGBColorSpace; tex.anisotropy=8; tex.repeat.set(.96,.96); tex.offset.set(.02,.02);
+const tex=new THREE.TextureLoader().load('assets/misc/tabuleiro2.webp'); tex.colorSpace=THREE.SRGBColorSpace; tex.anisotropy=8; tex.repeat.set(.96,.96); tex.offset.set(.02,.02);
 const top=new THREE.MeshStandardMaterial({map:tex,roughness:.8,transparent:true,opacity:0});
 const side=new THREE.MeshStandardMaterial({color:'#3a2616',roughness:.85,transparent:true,opacity:0});
 const slab=new THREE.Mesh(new THREE.BoxGeometry(BW,TH,BH),[side,side,top,side,side,side]); slab.position.y=-TH/2; board.add(slab);
