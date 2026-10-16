@@ -2,6 +2,9 @@
 const MANI=__MANI__, CUTS=new Set(__CUTS__);
 const MC=window.MC={pawn:'saci',mode:'hero',p:0,slot:null,free:{sx:0,sy:0,hp:300},theme:'base',lift:0,reduce:matchMedia('(prefers-reduced-motion: reduce)').matches};
 
+// R4d: altura estável da tela (= 100lvh). A barra do navegador aparecendo/sumindo não mexe mais nas contas da rolagem
+{const pr=document.createElement('div'); pr.style.cssText='position:fixed;top:0;left:0;width:1px;height:100vh;height:100lvh;visibility:hidden;pointer-events:none'; document.documentElement.appendChild(pr);
+ let w=0; const touchUI=matchMedia('(hover:none)').matches; const up=()=>{ if(touchUI&&innerWidth===w&&MC.VH) return; /* no desktop a altura sempre acompanha a janela */ w=innerWidth; MC.VH=Math.max(pr.offsetHeight,innerHeight)||innerHeight }; up(); addEventListener('resize',up); addEventListener('orientationchange',()=>setTimeout(()=>{w=0; up()},300))}
 MC.store=window.MC_STORE||Promise.resolve(null); // definido em store.js
 // lead lembrado neste navegador (para preencher sozinho)
 // MODO TESTE: a cada carregamento o contato é esquecido, para testar os fluxos que pedem dados
@@ -18,7 +21,7 @@ const find=f=>{const k=WHERE[f]; return k?{k,c:MANI[k].find(x=>x.f===f+'.jpg')}:
 
 // ---------- peões e tema ----------
 const PAWNS=[['saci','Saci','#c8281e','#e0362a'],['iara','Iara','#2f6fd0','#3f8cff'],['medusa','Medusa','#7a8a34','#9cb03c'],['mula','Mula sem Cabeça','#2a2a30','#ff7a1a'],['papainoel','Klaus','#ede6da','#e6edf5'],['valquiria','Valquíria','#e8b923','#f2c230']];
-try{const s=localStorage.getItem('mc-pawn'); if(PAWNS.some(p=>p[0]===s)) MC.pawn=s}catch(e){}
+if(PAWNS.some(p=>p[0]===window.MC_L)) MC.pawn=window.MC_L; // R4d: o peão que acompanha é o mesmo da logo sorteada na chegada
 function applyPawn(id){const p=PAWNS.find(x=>x[0]===id);MC.pawn=id;if(MC.pawnReady) document.querySelectorAll('img.mclogo').forEach(i=>{const f=v=>v.replace(/logo-[a-z]+-(\d)/g,'logo-'+id+'-$1'); i.srcset=f(i.srcset); if(i.getAttribute('src')) i.src=f(i.src)});document.documentElement.style.setProperty('--accent',p[3]);document.documentElement.style.setProperty('--btn-ink',id==='papainoel'?'#0d1a1c':'#140c08');
   try{localStorage.setItem('mc-pawn',id)}catch(e){}; $$('#gpick button,#ptagm button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id)); const tn=$('#ptagn'); if(tn) tn.textContent=p[1]; const zn=$('#pzn'); if(zn) zn.textContent=p[1]; MC.onPawn&&MC.onPawn(id); MC.onTheme&&MC.onTheme()}
 const gpick=$('#gpick');
@@ -30,7 +33,7 @@ ptb.onclick=e=>{e.stopPropagation();togTag(ptm.hidden)}; document.addEventListen
 applyPawn(MC.pawn); MC.pawnReady=true; // a logo de chegada é sorteada (MC_L); só muda quando a pessoa escolhe uma lenda
 window.MC_LOGO&&window.MC_LOGO();
 
-let mxN=0,myN=0; addEventListener('pointermove',e=>{mxN=e.clientX/innerWidth-.5;myN=e.clientY/innerHeight-.5});
+let mxN=0,myN=0; addEventListener('pointermove',e=>{mxN=e.clientX/innerWidth-.5;myN=e.clientY/MC.VH-.5});
 const gate={hidden:true}; const gateOpen=false;
 
 
@@ -178,9 +181,9 @@ for(const id in R){const sec=document.getElementById(id), fan=sec.querySelector(
     holo(el,9); el.addEventListener('click',()=>openCard(f,el)); el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openCard(f,el)}});
     fan.appendChild(el);cards.push(el)});
   reinos.push({sec,fan,cards,stage:sec.querySelector('.stage'),txt:sec.querySelector('.txt')})}
-const prog=sec=>{const r=sec.getBoundingClientRect();return clamp(-r.top/Math.max(1,r.height-innerHeight))};
+const prog=sec=>{const r=sec.getBoundingClientRect();return clamp(-r.top/Math.max(1,r.height-MC.VH))};
 // Reinos: as cartas entram sozinhas (tempo, não rolagem) e saem subindo quando o bloco vai embora
-function updReino(o,now){const r=o.sec.getBoundingClientRect(), W=innerWidth, H=innerHeight, mob=W<761; if(r.bottom<-50||r.top>H+50){o.st=0;return}
+function updReino(o,now){const r=o.sec.getBoundingClientRect(), W=innerWidth, H=MC.VH, mob=W<761; if(r.bottom<-50||r.top>H+50){o.st=0;return}
   const cw=mob?Math.min(W*.26,140):clamp(W*.13,120,215); o.fan.style.setProperty('--cw',cw+'px');
   const active=r.top<H*.45&&r.bottom>H*.55; if(active&&!o.st){o.st=1;o.t0=now} else if(r.top>H*.6){o.st=0}
   const tin=o.st?(now-o.t0)/1000:0, P=prog(o.sec);
@@ -201,7 +204,7 @@ const DUELS=[
  {a:'38-c-hades',b:'09-g-zeus',atk:'O alvo descarta a mão inteira.',def:'Anula o golpe, e quem tentou recua 2 casas.',lost:1}];
 const duelSec=$('#duelos'), dl=$('#dl'), dr=$('#dr'), dimp=$('#impact'), dvs=duelSec.querySelector('.vs'); let duelIdx=-1;
 function setSide(el,f){el.querySelector('.layers').innerHTML=layersHTML(f,'Carta '+nameOf(f));el.querySelector('.dname').textContent=nameOf(f)}
-function updDuel(){const r=duelSec.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight) return;
+function updDuel(){const r=duelSec.getBoundingClientRect(); if(r.bottom<0||r.top>MC.VH) return;
   const p0=prog(duelSec); duelSec.querySelector('.dhead').style.setProperty('--ds',lerp(1.7,.62,ease(clamp(p0/.07))).toFixed(3));
   const p=p0, seg=Math.min(3.999,p*4), i=Math.floor(seg), f=seg-i, D=DUELS[i];
   if(i!==duelIdx){duelIdx=i;setSide(dl,D.a);setSide(dr,D.b);$('#datk').innerHTML=`<b>Ataque · ${nameOf(D.a)}</b>${D.atk}`;$('#ddef').innerHTML=`<b>Resposta · ${nameOf(D.b)}</b>${D.def}`;$('#dnum').textContent=`Duelo ${i+1} de 4`}
@@ -209,7 +212,7 @@ function updDuel(){const r=duelSec.getBoundingClientRect(); if(r.bottom<0||r.top
   const e=ease(clamp(f/.22)), x=ease(clamp((f-.86)/.14)), ch=clamp((f-.24)/.14), rc=clamp((f-.42)/.1), imp=Math.max(0,1-Math.abs(f-.40)/.05);
   const rest=cw*(mob?.56:.9), near=cw*(mob?.46:.58); let gap=lerp(rest,near,ease(ch)); gap=lerp(gap,rest*1.02,ease(rc));
   const shake=imp>0&&!MC.reduce?(Math.random()-.5)*14*imp:0;
-  [[dl,-1],[dr,1]].forEach(([el,sd])=>{const sx=lerp(sd*W*.75,sd*gap,e), ry=lerp(-sd*70,-sd*18,e)+(-sd*8*imp), y=-x*innerHeight*.7, rot=sd*lerp(0,6,rc);
+  [[dl,-1],[dr,1]].forEach(([el,sd])=>{const sx=lerp(sd*W*.75,sd*gap,e), ry=lerp(-sd*70,-sd*18,e)+(-sd*8*imp), y=-x*MC.VH*.7, rot=sd*lerp(0,6,rc);
     el.style.transform=`translate3d(${sx+shake}px,${y+shake*.6}px,0) rotateY(${ry}deg) rotateZ(${rot}deg)`; el.style.opacity=1-x;
     el.style.setProperty('--lx',(sd*-.6+mxN*.8).toFixed(3)); el.style.setProperty('--ly',(myN*.8).toFixed(3))});
   dl.classList.toggle('lost',!!D.lost&&f>.44&&f<.86); dr.classList.toggle('lost',!D.lost&&f>.44&&f<.86);
@@ -235,7 +238,7 @@ function meltDraw(m){const W=meltCv.width=meltCv.clientWidth, H=meltCv.height=me
   c.globalCompositeOperation='lighter'; c.fillStyle='rgba(197,140,255,.35)';
   for(let i=0;i<N;i+=1){const d=clamp(m*1.5-meltCols[i]), e=d*d; if(e<=0||e>=1) continue; c.fillRect(i*cw,e*H*1.2-4,cw+.6,7)}
   c.globalCompositeOperation='source-over'}
-function updTrav(){const r=trav.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight){pvid.style.opacity=0; return} const p=prog(trav); bgvFade(trav,pvid,p>.47?0:1);
+function updTrav(){const r=trav.getBoundingClientRect(); if(r.bottom<0||r.top>MC.VH){pvid.style.opacity=0; return} const p=prog(trav); bgvFade(trav,pvid,p>.47?0:1);
   // 0–.42 zoom na carta · .42–.48 clarão · .48–.78 a tela derrete · depois o aviso
   const z=MC.reduce?1:1+Math.pow(clamp(p/.44),2.2)*(ZM-1); pvid.style.transform=`scale(${z.toFixed(3)})`;
   ttxt.style.opacity=1-clamp((p-.1)/.14); const fl=Math.max(0,1-Math.abs(p-.46)/.05); tflash.style.opacity=fl*.9;
@@ -248,7 +251,7 @@ const limboSec=$('#limbo'), lst=$('#limbostage'), lvid=$('#lvid'), ltxt=$('#limb
 // vídeos de fundo só baixam quando a seção chega perto (versão leve no celular)
 [[limboSec,lvid],[trav,pvid]].forEach(([sec,v])=>{ new IntersectionObserver((es,o)=>es.forEach(en=>{ if(en.isIntersecting&&!v.src){ v.src=v.dataset.src+(innerWidth<761?'-m':'')+'.mp4'; v.preload='auto'; v.load(); o.disconnect() }}),{rootMargin:'150% 0px'}).observe(sec);
   new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting) v.play().catch(()=>{}); else v.pause()})).observe(sec)});
-function bgvFade(sec,v,inEnd){const r=sec.getBoundingClientRect(), H=innerHeight; if(r.bottom<0||r.top>H){v.style.opacity=0;return 0}
+function bgvFade(sec,v,inEnd){const r=sec.getBoundingClientRect(), H=MC.VH; if(r.bottom<0||r.top>H){v.style.opacity=0;return 0}
   const a=clamp((H-r.top)/(H*.9)), b=clamp(r.bottom/(H*.9)); const o=MC.reduce?1:Math.min(sstep(a),inEnd??b); v.style.opacity=o.toFixed(3); return o}
 function updLimbo(now){ const o=bgvFade(limboSec,lvid); if(o<=0) return; const p=prog(limboSec);
   ltxt.style.opacity=(clamp((p-.02)/.08)*(1-clamp((p-.78)/.15))).toFixed(3)}
@@ -329,7 +332,7 @@ $('#brew').onclick=()=>{
 
 // ---------- efeitos de tela (caldeirão) ----------
 const fxc=$('#fxc'), fctx=fxc.getContext('2d'); let fxRun=null;
-function screenFX(kind){ if(MC.reduce) return; const W=fxc.width=innerWidth, H=fxc.height=innerHeight, t0=performance.now(), D=3400, P=[];
+function screenFX(kind){ if(MC.reduce) return; const W=fxc.width=innerWidth, H=fxc.height=MC.VH, t0=performance.now(), D=3400, P=[];
   const drip=['derreter','lava','gosma'].includes(kind), col={derreter:['#cfd6dc','#8a949c'],lava:['#ffb02e','#d2340f'],gosma:['#8cff4a','#2f8f1a']}[kind];
   if(drip){const N=Math.ceil(W/34); for(let i=0;i<N;i++) P.push({x:i*W/N+Math.random()*12,w:W/N*(.35+Math.random()*.75),sp:Math.random()<.25?.55+Math.random()*.35:.08+Math.random()*.32,dl:Math.random()*.3,b:Math.random()})}
   else for(let i=0;i<(kind==='neve'?260:220);i++) P.push({x:Math.random()*W,y:kind==='neve'?-Math.random()*H:H+Math.random()*H*.6,r:kind==='neve'?1+Math.random()*3.4:4+Math.random()*10,v:kind==='neve'?60+Math.random()*120:180+Math.random()*320,ph:Math.random()*6,l:Math.random()});
@@ -421,7 +424,7 @@ $('#rall').onclick=()=>openModal($('#rankm'));
 async function loadRank(){const st=await MC.store; MC._st=st; let data=[];
   if(st){try{data=await st.scores()}catch(e){}} else {try{const m=JSON.parse(localStorage.getItem('mc-puz')||'null'); if(m) data=[{...m,_me:true}]}catch(e){}}
   rankData=data; paintRank()}
-loadRank(); setInterval(()=>{const r=$('#quebra').getBoundingClientRect(); if(r.bottom>0&&r.top<innerHeight) loadRank()},10000);
+loadRank(); setInterval(()=>{const r=$('#quebra').getBoundingClientRect(); if(r.bottom>0&&r.top<MC.VH) loadRank()},10000);
 
 // ---------- fundos vivos dos Reinos ----------
 const rnd=(a,b)=>a+Math.random()*(b-a);
@@ -462,7 +465,7 @@ function bgDraw(o,p,now,dt){const b=o.bg, cv=b.cv, W=cv.clientWidth, H=cv.client
 const amb=$('#amb'), actx=amb.getContext('2d'); const motes=[]; let ambW=0,ambH=0, pmx=-999, pmy=-999;
 addEventListener('pointermove',e=>{pmx=e.clientX;pmy=e.clientY});
 let glowC='#e0362a'; const readGlow=()=>{glowC=getComputedStyle(document.body).getPropertyValue('--glow').trim()||'#e0362a'}; readGlow(); new MutationObserver(()=>requestAnimationFrame(readGlow)).observe(document.body,{attributes:true,attributeFilter:['data-theme']}); // lido só quando o tema muda (antes era a cada quadro)
-function ambDraw(dt){const W=innerWidth,H=innerHeight; if(W!==ambW||H!==ambH){ambW=amb.width=W;ambH=amb.height=H;motes.length=0;for(let i=0;i<70;i++) motes.push({x:rnd(0,W),y:rnd(0,H),vx:rnd(-8,8),vy:rnd(-14,-4),r:rnd(.8,2.4),s:rnd(.3,1)})}
+function ambDraw(dt){const W=innerWidth,H=MC.VH; if(W!==ambW||H!==ambH){ambW=amb.width=W;ambH=amb.height=H;motes.length=0;for(let i=0;i<70;i++) motes.push({x:rnd(0,W),y:rnd(0,H),vx:rnd(-8,8),vy:rnd(-14,-4),r:rnd(.8,2.4),s:rnd(.3,1)})}
   actx.clearRect(0,0,W,H); actx.fillStyle=glowC;
   for(const m of motes){const dx=m.x-pmx, dy=m.y-pmy, d2=dx*dx+dy*dy; if(d2<16000){const f=(16000-d2)/16000*220; const d=Math.sqrt(d2)||1; m.vx+=dx/d*f*dt; m.vy+=dy/d*f*dt}
     m.vx*=Math.pow(.6,dt); m.vy=m.vy*Math.pow(.6,dt)+(-8*(1-Math.pow(.6,dt))); m.x+=m.vx*dt; m.y+=m.vy*dt;
@@ -499,10 +502,10 @@ function lvLoad(L){ const kind=innerWidth<761?'9x16':'16x9'; if(L.kind===kind) r
 LENDAS.forEach(L=>{L.st.style.setProperty('--cls',L.cls); holo(L.pn.querySelector('.lv-tilt'),12,.04)}); let lvNear=false; new IntersectionObserver((es,o)=>es.forEach(en=>{if(en.isIntersecting){lvNear=true; LENDAS.forEach(lvLoad); o.disconnect()}}),{rootMargin:'250% 0px'}).observe(lendSec); addEventListener('resize',()=>{if(lvNear) LENDAS.forEach(lvLoad)});
 setTimeout(()=>{LD.vid=Math.max(LD.vid,1)},9000);
 LENDAS.forEach(L=>{const flip=()=>L.card.classList.toggle('flip'); L.card.addEventListener('click',flip); L.card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip()}})});
-function updLendTrack(){if(LENDAS.length<2) return; const r=lendSec.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight) return; const p=prog(lendSec), hx=MC.reduce?(p>.5?1:0):sstep(clamp((p-LR[0][1])/(LR[1][0]-LR[0][1])));
+function updLendTrack(){if(LENDAS.length<2) return; const r=lendSec.getBoundingClientRect(); if(r.bottom<0||r.top>MC.VH) return; const p=prog(lendSec), hx=MC.reduce?(p>.5?1:0):sstep(clamp((p-LR[0][1])/(LR[1][0]-LR[0][1])));
   lendTrack.style.transform=`translate3d(${(-hx*100).toFixed(3)}vw,0,0)`; lendDots.forEach((d,i)=>d.classList.toggle('on',(hx>.5?1:0)===i))}
 const eio=t=>-(Math.cos(Math.PI*t)-1)/2;
-function updLenda(L,dt){ const r=L.sec.getBoundingClientRect(), H=innerHeight; if(r.bottom<-50||r.top>H+50) return; const P=prog(L.sec), p=clamp((P-L.r[0])/(L.r[1]-L.r[0])), st=L.st.style; if(P<L.r[0]-.06||P>L.r[1]+.06){ if(!L.v.paused) L.v.pause(); return }
+function updLenda(L,dt){ const r=L.sec.getBoundingClientRect(), H=MC.VH; if(r.bottom<-50||r.top>H+50) return; const P=prog(L.sec), p=clamp((P-L.r[0])/(L.r[1]-L.r[0])), st=L.st.style; if(P<L.r[0]-.06||P>L.r[1]+.06){ if(!L.v.paused) L.v.pause(); return }
   const fin=L.r[0]>0?1:(r.top>0?clamp(1.15-r.top/H):1), vp=clamp((p-.03)/.6); // o vídeo já entra enquanto a seção sobe (sem bloco preto)
   st.setProperty('--lvo',(MC.reduce?1:fin).toFixed(3)); st.setProperty('--lvs',(1.14-.14*sstep(fin)+vp*.05).toFixed(4));
   const g=clamp((p-.62)/.08); st.setProperty('--lvg',g.toFixed(3)); st.setProperty('--lvsh',(g*.9).toFixed(3));
@@ -559,26 +562,26 @@ if(matchMedia('(hover:hover)').matches){ let spT=0;
 stProg.innerHTML=STORY.map(()=>'<i></i>').join(''); const stDots=[...stProg.children];
 {const row=$('#stpickrow'); PAWNS.forEach(([id,name,c])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.style.setProperty('--c',c);b.innerHTML=`<i></i><span>${name}</span>`;b.onclick=()=>applyPawn(id);row.appendChild(b)}); const mark=()=>row.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===MC.pawn)); mark(); const prev=MC.onPawn; setInterval(mark,400)}
 // setas da abertura: bloco anterior/próximo (a rolagem continua valendo)
-$$('#stnav button').forEach(b=>b.onclick=()=>{const N=ST.length, x=prog(stSec)*N, bi=Math.min(N-1,Math.floor(x)), to=clamp(bi+ +b.dataset.d,0,N-1); scrollTo({top:stSec.offsetTop+(stSec.offsetHeight-innerHeight)*Math.min(.985,(to+.04)/N),behavior:'smooth'})});
+$$('#stnav button').forEach(b=>b.onclick=()=>{const N=ST.length, x=prog(stSec)*N, bi=Math.min(N-1,Math.floor(x)), to=clamp(bi+ +b.dataset.d,0,N-1); scrollTo({top:stSec.offsetTop+(stSec.offsetHeight-MC.VH)*Math.min(.985,(to+.04)/N),behavior:'smooth'})});
 // o tabuleiro do fundo acompanha levemente o mouse
-addEventListener('pointermove',e=>{ if(e.pointerType==='touch') return; stSec.style.setProperty('--mx',(e.clientX/innerWidth-.5).toFixed(3)); stSec.style.setProperty('--my',(e.clientY/innerHeight-.5).toFixed(3))},{passive:true});
+addEventListener('pointermove',e=>{ if(e.pointerType==='touch') return; stSec.style.setProperty('--mx',(e.clientX/innerWidth-.5).toFixed(3)); stSec.style.setProperty('--my',(e.clientY/MC.VH-.5).toFixed(3))},{passive:true});
 // logo: o subtítulo sempre na mesma proporção da palavra (topo, abertura, loader)
 function fitLogo(){ [['#hlogot','#hlogos'],['.st-end .st-logo','.st-end .st-sub'],['.ld-logo','.ld-sub']].forEach(([a,b])=>{const L=$(a), S=$(b); if(!L||!S) return; S.style.fontSize=''; const lw=L.offsetWidth, sw=S.offsetWidth; if(!lw||!sw) return; const fs=parseFloat(getComputedStyle(S).fontSize); S.style.fontSize=(fs*lw*.8/sw).toFixed(2)+'px'})}
 fitLogo(); document.fonts&&document.fonts.ready.then(fitLogo); addEventListener('resize',fitLogo); setTimeout(fitLogo,1200);
-$('#stskip').onclick=()=>{const y=stSec.offsetTop+(stSec.offsetHeight-innerHeight)*.985; scrollTo({top:y,behavior:'smooth'})};
+$('#stskip').onclick=()=>{const y=stSec.offsetTop+(stSec.offsetHeight-MC.VH)*.985; scrollTo({top:y,behavior:'smooth'})};
 let stBi=-1, stT0=0;
 const pickH=$('#pickhand');
 let stM=null; const ST_GAP=()=>innerWidth<761?18:34;
 function stMeasure(){ const b=ST.map(S=>{const k=[...S.el.children].filter(c=>c.offsetHeight>0); if(!k.length) return {t:0,h:0,bt:0}; const t=k[0].offsetTop, bt=k[k.length-1].offsetTop+k[k.length-1].offsetHeight; return {t,h:bt-t,bt}});
-  stM={w:innerWidth,h:innerHeight,top:stTxt.getBoundingClientRect().top-(stSec.querySelector('.stage')||stSec).getBoundingClientRect().top, /* topo do texto dentro do palco fixo */b,S:b.map((m,i)=>i<b.length-1?(b[i+1].t-ST_GAP())-m.bt:0)}}
+  stM={w:innerWidth,h:MC.VH,top:stTxt.getBoundingClientRect().top-(stSec.querySelector('.stage')||stSec).getBoundingClientRect().top, /* topo do texto dentro do palco fixo */b,l0:(()=>{const w=ST[0].words.filter(x=>x.offsetHeight>0); if(!w.length) return 0; const t0=w[0].offsetTop; return w.filter(x=>Math.abs(x.offsetTop-t0)<6).length})(),S:b.map((m,i)=>i<b.length-1?(b[i+1].t-ST_GAP())-m.bt:0)}}
 document.fonts&&document.fonts.ready.then(()=>{stM=null});
-function updStory(){ const r=stSec.getBoundingClientRect(); if(r.bottom<innerHeight*.5||r.top>innerHeight){stBi=-1; pickH.style.opacity=0; if(r.bottom<0||r.top>innerHeight) return} const p=prog(stSec), N=ST.length, x=p*N, bi=Math.min(N-1,Math.floor(x)), q=x-bi;
+function updStory(){ const r=stSec.getBoundingClientRect(); if(r.bottom<MC.VH*.5||r.top>MC.VH){stBi=-1; pickH.style.opacity=0; if(r.bottom<0||r.top>MC.VH) return} const p=prog(stSec), N=ST.length, x=p*N, bi=Math.min(N-1,Math.floor(x)), q=x-bi;
   // as palavras acendem junto com a rolagem (sem tempo, sem espera): rolou, acendeu; voltou, apaga
-  if(bi!==stBi){stBi=bi; stT0=performance.now()} const tq=99, tl=n=>{const st=bi===0?.45:0; return (st+(MC.reduce?1:clamp((q-.04)/.56))*(1-st))*n*1.02};
+  if(bi!==stBi){stBi=bi; stT0=performance.now()} const tq=99, tl=n=>{const st=bi===0&&stM&&stM.l0?stM.l0/(n*1.02):0; return (st+(MC.reduce?1:clamp((q-.04)/.56))*(1-st))*n*1.02};
   let sc=STORY[bi].c, red=false; if(STORY[bi].red){const lw=ST[bi].cards.find(c=>c.ref==='57-l-tormenta'); const nn=ST[bi].words.length, lt=tl(nn); red=lw&&lt-ST[bi].words.indexOf(lw.w)>.6&&q<.9} if(red) sc='#ff2a1a';
-  stSec.style.setProperty('--sc',sc); stSec.classList.toggle('st-red',!!red); $('#stskip').style.opacity=bi===N-1?0:1; stProg.style.opacity=bi===N-1?0:1; $('#stskip').style.pointerEvents=bi===N-1?'none':''; {const cu=$('#stcue'); if(cu) cu.style.opacity=(bi===N-1||scrollY>40)?0:1; const nv=$('#stnav'); nv.style.opacity=bi===N-1?0:1; nv.style.pointerEvents=bi===N-1?'none':''; const pr=$('#stpickrow'); if(pr){const k=clamp((r.bottom-innerHeight*.72)/(innerHeight*.22)); pr.style.opacity=bi===N-1?k.toFixed(3):''; pr.style.pointerEvents=k<.5?'none':''}}
+  stSec.style.setProperty('--sc',sc); stSec.classList.toggle('st-red',!!red); $('#stskip').style.opacity=bi===N-1?0:1; stProg.style.opacity=bi===N-1?0:1; $('#stskip').style.pointerEvents=bi===N-1?'none':''; {const cu=$('#stcue'); if(cu) cu.style.opacity=(bi===N-1||scrollY>40)?0:1; const nv=$('#stnav'); nv.style.opacity=bi===N-1?0:1; nv.style.pointerEvents=bi===N-1?'none':''; const pr=$('#stpickrow'); if(pr){const k=clamp((r.bottom-MC.VH*.72)/(MC.VH*.22)); pr.style.opacity=bi===N-1?k.toFixed(3):''; pr.style.pointerEvents=k<.5?'none':''}}
   // R4: os blocos se empilham — o novo entra subindo embaixo, os anteriores sobem e ficam esmaecidos até sair pelo topo
-  if(!stM||stM.w!==innerWidth||stM.h!==innerHeight) stMeasure();
+  if(!stM||stM.w!==innerWidth||stM.h!==MC.VH) stMeasure();
   const e=bi===0?1:sstep(clamp(q/.28)), endB=bi===N-1, push=bi>0?-stM.S[bi-1]*(1-e):0;
   let cum=0; const Y=[]; for(let i=bi;i>=0;i--){ Y[i]=cum+push; if(i>0) cum+=stM.S[i-1] }
   const MOB=innerWidth<761;
@@ -608,20 +611,20 @@ const RVSEL='main > section > .label, main > section > h2, main > section > .lea
 const rvObs=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in'); rvObs.unobserve(en.target)}}),{rootMargin:'0px 0px -8% 0px'});
 $$(RVSEL).forEach(el=>{ if(el.closest('.stage')||el.closest('#inicio')) return; const sib=[...el.parentElement.children].indexOf(el); el.classList.add('rv','d'+Math.min(3,sib%4)); rvObs.observe(el)});
 // Reinos: um esmaece no lugar e o próximo surge por cima (sem a tela rolar entre eles)
-function stageFade(sec){const r=sec.getBoundingClientRect(), H=innerHeight; if(r.bottom<0||r.top>H) return; const pr=sec.previousElementSibling, nx=sec.nextElementSibling;
+function stageFade(sec){const r=sec.getBoundingClientRect(), H=MC.VH; if(r.bottom<0||r.top>H) return; const pr=sec.previousElementSibling, nx=sec.nextElementSibling;
   const a=pr&&pr.classList.contains('reino')?clamp(1-r.top/(H*.3)):clamp((H-r.top)/(H*.55)), b=1-clamp((prog(sec)-.72)/.17);
   const v=MC.reduce?1:Math.min(a,b), st=sec.querySelector('.stage'); st.style.setProperty('--stin',v.toFixed(3)); st.style.pointerEvents=v<.5?'none':''}
 
 // ---------- coreografia do peão ----------
 const sections=$$('main > section'), rail=$$('.rail a');
 let stops=[];
-function buildStops(){const mob=innerWidth<761; stops=[]; for(const s of sections){const k=(mob&&s.dataset.km)||s.dataset.k; if(!k) continue; const v=k.split(',').map(Number), top=s.offsetTop, h=s.offsetHeight, H=innerHeight;
+function buildStops(){const mob=innerWidth<761; stops=[]; for(const s of sections){const k=(mob&&s.dataset.km)||s.dataset.k; if(!k) continue; const v=k.split(',').map(Number), top=s.offsetTop, h=s.offsetHeight, H=MC.VH;
   if(h>H*1.5){stops.push({y:top,k:v});stops.push({y:top+h-H,k:v})} else stops.push({y:Math.max(0,top+h/2-H/2),k:v})}}
 buildStops(); addEventListener('resize',buildStops); addEventListener('load',buildStops); setTimeout(buildStops,1500);
 function freeTarget(){const y=scrollY; let a=stops[0],b=stops[stops.length-1];
   if(y<=a.y) b=a; else if(y>=b.y) a=b; else for(let i=0;i<stops.length-1;i++){if(y>=stops[i].y&&y<=stops[i+1].y){a=stops[i];b=stops[i+1];break}}
   const t=a===b?0:sstep(clamp((y-a.y)/Math.max(1,b.y-a.y))), k=a.k.map((v,i)=>lerp(v,b.k[i],t));
-  MC.free.sx=k[0]*innerWidth; MC.free.sy=k[1]*innerHeight; MC.free.hp=k[2]*innerHeight}
+  MC.free.sx=k[0]*innerWidth; MC.free.sy=k[1]*MC.VH; MC.free.hp=k[2]*MC.VH}
 // peão ampliado ao clicar no peão da logo
 const pz=$('#pzoom'); MC.zoom=false;
 function pzOpen(){ const p=PAWNS.find(x=>x[0]===MC.pawn); $('#pzn').textContent=p[1]; pz.hidden=false; MC.zoom=true; document.documentElement.classList.add('locked'); setTimeout(()=>pz.querySelector('.mx').focus({preventScroll:true}),50)}
@@ -631,31 +634,31 @@ pz.addEventListener('click',e=>{ if(e.target.closest('[data-pzclose]')&&!(e.targ
 addEventListener('keydown',e=>{if(e.key==='Escape') pzClose()});
 const sunEl=$('#sunfx'), dockEl=$('#dock'), pcSec=$('#peca'), pctxt=$('#pctxt'), pchint=$('#pchint'), tabSec=$('#tabuleiro'); let lastT=performance.now();
 function frame(now){const dt=Math.max(0,Math.min(.05,(now-lastT)/1000)); lastT=now;
-  const mid=innerHeight*.5; let act=sections[0]; for(const s of sections){const r=s.getBoundingClientRect(), ov=s.classList.contains('reino')&&s.previousElementSibling&&s.previousElementSibling.classList.contains('reino'); if(r.top<=(ov?innerHeight*.1:mid)&&r.bottom>0) act=s}
+  const mid=MC.VH*.5; let act=sections[0]; for(const s of sections){const r=s.getBoundingClientRect(), ov=s.classList.contains('reino')&&s.previousElementSibling&&s.previousElementSibling.classList.contains('reino'); if(r.top<=(ov?MC.VH*.1:mid)&&r.bottom>0) act=s}
   let th=act.dataset.theme; if(act.id==='tabuleiro'&&(MC.boardOut||0)>.5) th='luz'; if(th!==MC.theme){MC.theme=th; if(th==='base') delete document.body.dataset.theme; else document.body.dataset.theme=th; MC.onTheme&&MC.onTheme()}
   rail.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+act.id));
-  MC.mode=MC.zoom?'zoom':act.dataset.mode; {const top=$('.top'), sr=stSec.getBoundingClientRect(), inStory=sr.bottom>innerHeight*.5; const hv=inStory?MC.storyHead:1; top.classList.toggle('instory',inStory&&hv<.5); top.style.setProperty('--hv',hv.toFixed(3)); top.style.setProperty('--lv',MC.logoLanded?1:0); } MC.p=prog(act); MC.slot=act.querySelector('[data-slot]'); MC.dock=dockEl.getBoundingClientRect();
+  MC.mode=MC.zoom?'zoom':act.dataset.mode; {const top=$('.top'), sr=stSec.getBoundingClientRect(), inStory=sr.bottom>MC.VH*.5; const hv=inStory?MC.storyHead:1; top.classList.toggle('instory',inStory&&hv<.5); top.style.setProperty('--hv',hv.toFixed(3)); top.style.setProperty('--lv',MC.logoLanded?1:0); } MC.p=prog(act); MC.slot=act.querySelector('[data-slot]'); MC.dock=dockEl.getBoundingClientRect();
   MC.baseVis=['hero','show','board','zoom','free','story'].includes(MC.mode)?1:0;
   // a peça: o peão sai da base e fica ao lado; depois entra o texto
   {const q=MC.mode==='show'?MC.p:0; MC.sep=MC.mode==='show'?sstep(clamp((q-.1)/.45)):0;
     const tq=MC.mode==='show'?clamp((q-.58)/.12):0; pctxt.style.opacity=tq.toFixed(3); pctxt.style.transform=`translateY(${((1-tq)*24).toFixed(1)}px)`;
     pchint.style.opacity=(MC.mode==='show'?clamp(q/.06)*(1-tq*.4):0).toFixed(3)}
-  {const tr2=tabSec.getBoundingClientRect(); MC.boardIn=clamp((innerHeight-tr2.top)/innerHeight); MC.boardOut=clamp((innerHeight*.98-tr2.bottom)/(innerHeight*.6))}
+  {const tr2=tabSec.getBoundingClientRect(); MC.boardIn=clamp((MC.VH-tr2.top)/MC.VH); MC.boardOut=clamp((MC.VH*.98-tr2.bottom)/(MC.VH*.6))}
   // chegada ao templo: sol nascente saindo do peão, nuvens entram e o site clareia
-  {const tr3=tabSec.getBoundingClientRect(), on=tr3.top<innerHeight&&tr3.bottom>-innerHeight*.5, sf=sunEl.style;
+  {const tr3=tabSec.getBoundingClientRect(), on=tr3.top<MC.VH&&tr3.bottom>-MC.VH*.5, sf=sunEl.style;
    if(!on||MC.reduce){ if(sunEl.dataset.on){sf.opacity=0; delete sunEl.dataset.on} }
    else { const tp=prog(tabSec), sn=sstep(clamp((tp-.9)/.08)), bo=MC.boardOut||0, cl=sstep(clamp(bo*1.5+clamp((tp-.97)/.03)*.25)), fo=1-clamp((bo-.7)/.3);
-     sunEl.dataset.on=1; sf.opacity=(Math.max(sn,cl)*fo).toFixed(3); const P=MC.pawnScr||{x:innerWidth*.8,y:innerHeight*.15};
+     sunEl.dataset.on=1; sf.opacity=(Math.max(sn,cl)*fo).toFixed(3); const P=MC.pawnScr||{x:innerWidth*.8,y:MC.VH*.15};
      sf.setProperty('--sx',P.x.toFixed(0)+'px'); sf.setProperty('--sy',P.y.toFixed(0)+'px'); sf.setProperty('--sn',sn.toFixed(3)); sf.setProperty('--cl',cl.toFixed(3)); sf.setProperty('--ra',((now*.004)%360).toFixed(2)+'deg') } }
   MC.deckRect=act.id==='decks'?selDeck.querySelector('.stack').getBoundingClientRect():null;
   if(MC.mode==='free') MC.lift=.22; else MC.lift=0;
   freeTarget(); reinos.forEach(o=>updReino(o,now)); reinos.forEach(o=>stageFade(o.sec)); LENDAS.forEach(L=>updLenda(L,dt)); updLendTrack(); updStory(); updDuel(); updTrav(); updLimbo(now); tickHolo(dt);
-  if(!MC.reduce){reinos.forEach(o=>{const r=o.sec.getBoundingClientRect(); if(r.bottom>0&&r.top<innerHeight) bgDraw(o,prog(o.sec),now,dt)}); ambDraw(dt)}
-  const tr=tzs.getBoundingClientRect(); if(tr.bottom>0&&tr.top<innerHeight){const c=clamp(1-Math.abs((tr.top+tr.height/2)-innerHeight/2)/(innerHeight*.9)); const target=MC.reduce?-8:lerp(-30,-6,ease(c))+mxN*10;
+  if(!MC.reduce){reinos.forEach(o=>{const r=o.sec.getBoundingClientRect(); if(r.bottom>0&&r.top<MC.VH) bgDraw(o,prog(o.sec),now,dt)}); ambDraw(dt)}
+  const tr=tzs.getBoundingClientRect(); if(tr.bottom>0&&tr.top<MC.VH){const c=clamp(1-Math.abs((tr.top+tr.height/2)-MC.VH/2)/(MC.VH*.9)); const target=MC.reduce?-8:lerp(-30,-6,ease(c))+mxN*10;
     tzr+=(target-tzr)*(1-Math.exp(-dt*6)); tzf.style.setProperty('--try',tzr+'deg'); tzf.style.setProperty('--trx',(4-myN*8)+'deg'); strip.style.setProperty('--sx',(-mxN*60)+'px')}
   if(MC.mode==='fall'){ if(!wasLimbo&&!MC.reduce){lst.classList.remove('shake');void lst.offsetWidth;lst.classList.add('shake')} } wasLimbo=MC.mode==='fall';
-  {const tb=$('#tabuleiro').getBoundingClientRect(); if(tb.bottom>0&&tb.top<innerHeight){const q=prog($('#tabuleiro')), ti=$('#tintro'), tt=$('#tabtxt');
-    ti.style.opacity=(clamp((innerHeight-tb.top)/(innerHeight*.7))*(1-clamp((q-.08)/.05))).toFixed(3); ti.style.transform=`scale(${(1+q*.6).toFixed(3)})`;
+  {const tb=$('#tabuleiro').getBoundingClientRect(); if(tb.bottom>0&&tb.top<MC.VH){const q=prog($('#tabuleiro')), ti=$('#tintro'), tt=$('#tabtxt');
+    ti.style.opacity=(clamp((MC.VH-tb.top)/(MC.VH*.7))*(1-clamp((q-.08)/.05))).toFixed(3); ti.style.transform=`scale(${(1+q*.6).toFixed(3)})`;
     const a2=clamp((q-.15)/.07); tt.style.opacity=a2.toFixed(3); tt.style.transform=`translateY(${((1-a2)*30).toFixed(1)}px)`}}
   if(MC.mode==='board'){const c=Math.min(36,Math.floor(clamp((MC.p-.22)/.74)*36.999)); if(c!==lastCasa){lastCasa=c;$('#casa').innerHTML=String(c).padStart(2,'0')+'<small> / 36</small>';$('#esp').textContent=SP[c]||''}}
   requestAnimationFrame(frame)}
@@ -670,7 +673,7 @@ MC.enter=()=>{};
   let b0=null, raf=0, gx=0, gy=0, fx=0, fy=0, on=false; const D=window.DeviceOrientationEvent, needs=typeof D.requestPermission==='function';
   const ask=()=>{D.requestPermission().then(r=>{ if(r==='granted') on=true; if(r==='granted'||r==='denied') removeEventListener('click',ask,true)}).catch(()=>{})};
   if(needs) addEventListener('click',ask,true); else on=true;
-  const apply=()=>{raf=0; for(const st of holos){const r=st.el.getBoundingClientRect(), vis=r.bottom>0&&r.top<innerHeight&&r.width>0;
+  const apply=()=>{raf=0; for(const st of holos){const r=st.el.getBoundingClientRect(), vis=r.bottom>0&&r.top<MC.VH&&r.width>0;
       if(!vis){ if(st.gyro){st.tx=st.ty=st.th=0; st.tpx=st.tpy=50; st.gyro=false} continue }
       st.gyro=true; st.tx=gx; st.ty=gy; st.tpx=50+gx*40; st.tpy=50+gy*40; st.th=Math.min(1,Math.hypot(gx,gy)*1.2)}};
   addEventListener('deviceorientation',e=>{ if(!on||e.beta==null) return; const ang=((window.orientation??screen.orientation?.angle??0)+360)%360, land=ang===90||ang===270, sg=ang===90?1:-1;
@@ -691,30 +694,23 @@ function makeRing(st,items,dir=1,spd=1){ const N=items.length, step=360/N, prev=
     cards.forEach((c,k)=>{const f=document.createElement('figure'); f.className='ring-item'; f.appendChild(r===0?c:cards[(k+r*4)%cards.length].cloneNode(true)); rg.appendChild(f)});
     wrap.appendChild(st); makeRing(st,[...rg.children],r%2?-1:1,[1,.8,1.15][r])});
   sg.replaceWith(wrap); wrap.addEventListener('contextmenu',e=>e.preventDefault())}}
-// 11 galeria "janela que revela": a foto se corta em faixas que abrem como cortina e mostram a próxima, conforme a rolagem
+// 11 galeria: volta ao mosaico (R4d); clicar amplia a foto como as cartas
 {const sec=document.getElementById('galeria'), mo=sec&&sec.querySelector('.mosaic'); if(mo){
-  const ph=[...mo.querySelectorAll('img')].map(i=>i.getAttribute('src')), N=ph.length, S=innerWidth<761?5:8;
-  const w=document.createElement('div'); w.className='grv'; w.style.setProperty('--n',N);
-  w.innerHTML=`<div class="grv-st"><div class="grv-fr" role="button" tabindex="0" aria-label="Ampliar foto"><img class="grv-base" alt="" draggable="false"><div class="grv-strips">${Array.from({length:S},(_,k)=>`<i style="--k:${k};--S:${S}"><img alt="" draggable="false"></i>`).join('')}</div><span class="grv-n"></span></div></div>`;
-  mo.replaceWith(w); const fr=w.querySelector('.grv-fr'), base=w.querySelector('.grv-base'), strips=[...w.querySelectorAll('.grv-strips i')], simgs=strips.map(x=>x.querySelector('img')), num=w.querySelector('.grv-n');
-  ph.forEach(u=>{const im=new Image(); im.src=u}); // pré-carrega para a troca não piscar
-  let cur=-1, nxt=-1, raf=0, shownIdx=0; const pad=n=>String(n).padStart(2,'0'), ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-  const draw=()=>{raf=0; const P=prog(w)*(N-1), i=Math.min(N-2,Math.floor(P)), t=clamp(((P-i)-.12)/.76);
-    if(i!==cur){cur=i; simgs.forEach(im=>im.src=ph[i])} if(i+1!==nxt){nxt=i+1; base.src=ph[i+1]}
-    const mid=(S-1)/2; strips.forEach((st,k)=>{const d=Math.abs(k-mid)/mid, lt=MC.reduce?(t>.5?1:0):ease(clamp((t-(1-d)*.3)/.7)), dir=k%2?-1:1;
-      st.style.transform=`translate3d(0,${(dir*lt*104).toFixed(2)}%,0) rotate(${(dir*lt*3).toFixed(2)}deg)`; st.style.opacity=(1-lt*.35).toFixed(3); st.style.setProperty('--lt',lt.toFixed(3))});
-    base.style.transform=`scale(${(1.1-.1*t).toFixed(4)})`; shownIdx=t>.5?i+1:i; num.textContent=`${pad(shownIdx+1)} / ${pad(N)}`};
-  const req=()=>{if(!raf) raf=requestAnimationFrame(draw)}; let on=false;
-  new IntersectionObserver(es=>es.forEach(en=>{on=en.isIntersecting; if(on) req()})).observe(w); addEventListener('scroll',()=>{if(on) req()},{passive:true}); addEventListener('resize',req); draw();
-  // ampliar
+  const figs=[...mo.querySelectorAll('figure')];
   const gm=document.createElement('div'); gm.className='modal galm'; gm.id='galm'; gm.hidden=true; gm.setAttribute('role','dialog'); gm.setAttribute('aria-modal','true'); gm.setAttribute('aria-label','Foto da galeria');
   gm.innerHTML='<div class="mbg" data-close></div><img class="galm-img" alt="Foto do MythCaos na mesa"><button class="mx" type="button" aria-label="Fechar" data-close>×</button>'; document.body.appendChild(gm);
+  const big=gm.querySelector('.galm-img');
   gm.addEventListener('click',e=>{if(e.target.closest('[data-close]')||MC.outside(e)) closeModal(gm)});
-  const open=()=>{gm.querySelector('img').src=ph[shownIdx]; openModal(gm)}; fr.addEventListener('click',open); fr.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault(); open()}})}}
+  figs.forEach(f=>{ f.setAttribute('role','button'); f.tabIndex=0; f.setAttribute('aria-label','Ampliar foto');
+    const open=()=>{ const im=f.querySelector('img'), r=im.getBoundingClientRect(); big.src=im.currentSrc||im.src; openModal(gm);
+      // sai do lugar da foto e cresce até o centro, como as cartas
+      requestAnimationFrame(()=>{ const t=big.getBoundingClientRect(); if(!t.width||MC.reduce) return; const k=r.width/t.width;
+        big.animate([{transform:`translate(${(r.left+r.width/2)-(t.left+t.width/2)}px,${(r.top+r.height/2)-(t.top+t.height/2)}px) scale(${k})`,opacity:.6},{transform:'none',opacity:1}],{duration:520,easing:'cubic-bezier(.2,.8,.2,1)'}) }) };
+    f.addEventListener('click',open); f.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault(); open()}}) })}}
 // 6 em breve: as silhuetas acendem e apagam em loop
 {const cards=[...document.querySelectorAll('#sgrid .scard')]; if(cards.length&&!MC.reduce){ // só acende as que estão à vista no arco
   const shown=()=>cards.filter(c=>+(c.parentElement.style.opacity||1)>.6);
-  const pulse=()=>{const r=document.getElementById('sgrid').getBoundingClientRect(); if(r.bottom>0&&r.top<innerHeight){ const L=shown(); const c=L[Math.floor(Math.random()*L.length)]; if(c&&!c.classList.contains('lit')){c.classList.add('lit'); setTimeout(()=>c.classList.remove('lit'),2200)} } };
+  const pulse=()=>{const r=document.getElementById('sgrid').getBoundingClientRect(); if(r.bottom>0&&r.top<MC.VH){ const L=shown(); const c=L[Math.floor(Math.random()*L.length)]; if(c&&!c.classList.contains('lit')){c.classList.add('lit'); setTimeout(()=>c.classList.remove('lit'),2200)} } };
   setInterval(pulse,700)}}
 
 })();

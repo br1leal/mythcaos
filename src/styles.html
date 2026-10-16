@@ -1785,9 +1785,9 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
 .deck .dn{line-height:1.25;padding:2px 6px}
 /* palco ocupa a tela toda quando a barra de endereço some (sem buraco embaixo) */
 @supports (height:100lvh){.stage,.grv-st{height:100lvh}
- @media (max-width:760px){.st-txt{bottom:calc(96px + env(safe-area-inset-bottom,0px) + (100lvh - 100svh))!important}
-  .st-skip{bottom:calc(24px + env(safe-area-inset-bottom,0px) + (100lvh - 100svh))!important}
-  .ltxt{bottom:calc(40px + env(safe-area-inset-bottom,0px) + (100lvh - 100svh))!important}}}
+ @media (max-width:760px){.st-txt{bottom:calc(96px + env(safe-area-inset-bottom,0px) + (100lvh - 100dvh))!important}
+  .st-skip{bottom:calc(24px + env(safe-area-inset-bottom,0px) + (100lvh - 100dvh))!important}
+  .ltxt{bottom:calc(40px + env(safe-area-inset-bottom,0px) + (100lvh - 100dvh))!important}}}
 /* baralhos alinhados */
 .deck .dlock:empty{display:block;visibility:hidden}
 .deck .dlock{min-height:1.2em}
@@ -1807,3 +1807,17 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
 .icol{grid-template-columns:auto minmax(0,1fr)!important;align-items:center!important}
 @media (min-width:1101px){.icol .ibig{height:clamp(110px,9vw,150px)!important}.icol .irow img{height:clamp(36px,2.8vw,46px)!important}}
 </style><style>.mclogo{filter:none!important} /* a arte da logo já tem sombra */</style>
+<style>
+/* R4d: nome dos reinos sem corte no topo (Safari recorta texto com filtro na caixa do elemento) */
+.deck .dn{padding:10px 10px 4px!important;margin-top:-8px;line-height:1.3!important}
+</style><style>.mosaic figure{cursor:zoom-in} .mosaic figure:focus-visible{outline:3px solid var(--accent);outline-offset:4px}</style>
+
+<style>/* R4d: contatos do autor numa linha só, discretos */
+.autorc{display:flex!important;flex-wrap:wrap;align-items:baseline;gap:4px 0!important;margin:14px 0 0!important;grid-template-columns:none!important}
+.autorc li{display:inline-flex!important}
+.autorc li+li::before{content:"·";margin:0 10px;opacity:.4;color:var(--bone)}
+.achip{display:inline!important;padding:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;font-size:14px!important;opacity:.62;letter-spacing:.02em;transition:opacity .2s,color .2s}
+.achip:hover{opacity:1;color:var(--accent);background:none!important}
+.achip .label{display:none}
+@media (max-width:760px){.achip{font-size:12.5px!important;letter-spacing:0}.anum{display:none}.autorc li+li::before{margin:0 6px}}
+</style>

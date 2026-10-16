@@ -12,7 +12,7 @@ const rim=new THREE.DirectionalLight('#ee6b54',3.2); rim.position.set(4,2,-5); s
 const fill=new THREE.DirectionalLight('#ffffff',.6); fill.position.set(1,0,8); scene.add(fill);
 const rimColor=new THREE.Color('#ee6b54'), keyColor=new THREE.Color('#ffb59e');
 MC.onTheme=()=>requestAnimationFrame(()=>{const g=getComputedStyle(document.body).getPropertyValue('--glow').trim()||'#ee6b54'; try{rimColor.set(g)}catch(e){} keyColor.set(MC.theme==='limbo'?'#ff2a2a':'#ffb59e')}); MC.onTheme();
-function size(){const w=innerWidth,h=innerHeight;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()} size(); addEventListener('resize',size);
+function size(){const w=innerWidth,h=(MC.VH||innerHeight);r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()} size(); addEventListener('resize',size);
 
 // tabuleiro com espessura
 const board=new THREE.Group(); scene.add(board);
@@ -52,10 +52,10 @@ MC.onJoin=()=>{spinBoost=Math.PI*4}; MC.onDraw=c=>{spinBoost=c==='Limbo'?Math.PI
 // girar com o mouse
 const ray=new THREE.Raycaster(), pl=new THREE.Plane(new THREE.Vector3(0,0,1),0), tmp=new THREE.Vector3();
 let drag=null, dragYaw=0, dragPitch=0, vYaw=0, mx=0, my=0, hovering=false, lastPX=0, lastPY=0;
-const ndc=(x,y)=>({x:x/innerWidth*2-1,y:-(y/innerHeight*2-1)});
+const ndc=(x,y)=>({x:x/innerWidth*2-1,y:-(y/(MC.VH||innerHeight)*2-1)});
 const canGrab=()=>['hero','free','show','zoom','story'].includes(MC.mode);
 function hitPawn(x,y){if(!canGrab()) return false; const m=models[MC.pawn]; if(!m||!m.f) return false; ray.setFromCamera(ndc(x,y),cam); return ray.intersectObjects([m.f,m.b].filter(Boolean),true).length>0}
-addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;lastPX=e.clientX;lastPY=e.clientY;
+addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/(MC.VH||innerHeight)-.5;lastPX=e.clientX;lastPY=e.clientY;
   if(drag){const dx=e.clientX-drag.x, dy=e.clientY-drag.y; drag.x=e.clientX; drag.y=e.clientY; dragYaw+=dx*.012; vYaw=dx*.012*.6; dragPitch=Math.max(-.6,Math.min(.6,dragPitch+dy*.006)); e.preventDefault()}});
 addEventListener('pointerdown',e=>{if(e.button>0||e.pointerType==='touch') return; if(e.target.closest('a,button,input,select,label,.card,.hwrap,.modal,.gate,.pz-txt')) return; if(hitPawn(e.clientX,e.clientY)){drag={x:e.clientX,y:e.clientY};document.body.classList.add('dragged');document.body.classList.add('grabbing');e.preventDefault();const h=document.getElementById('hint3d');h&&(h.style.opacity=0)}});
 addEventListener('pointerup',()=>{if(drag){drag=null;document.body.classList.remove('grabbing')}});
@@ -63,7 +63,7 @@ addEventListener('touchstart',e=>{const t=e.touches[0]; if(t&&hitPawn(t.clientX,
 addEventListener('touchmove',e=>{if(!drag)return;const t=e.touches[0];const dx=t.clientX-drag.x;drag.x=t.clientX;dragYaw+=dx*.014;vYaw=dx*.014*.6;e.preventDefault()},{passive:false});
 addEventListener('touchend',()=>{drag=null});
 function toWorld(sx,sy){ray.setFromCamera(ndc(sx,sy),cam);ray.ray.intersectPlane(pl,tmp);return tmp.clone()}
-const wpp=()=>2*CZ*Math.tan(THREE.MathUtils.degToRad(FOV/2))/innerHeight;
+const wpp=()=>2*CZ*Math.tan(THREE.MathUtils.degToRad(FOV/2))/(MC.VH||innerHeight);
 
 const cur={pos:new THREE.Vector3(3,-1,0),s:1,lift:0}; let boardMix=0, spin=0, last=performance.now(), lastScroll=scrollY, vel=0, frameN=0;
 const qSpin=new THREE.Quaternion(), qTilt=new THREE.Quaternion(), qTarget=new THREE.Quaternion(), yAxis=new THREE.Vector3(0,1,0), qCur=new THREE.Quaternion();
@@ -72,7 +72,7 @@ const xAxis=new THREE.Vector3(1,0,0), qInv=new THREE.Quaternion(), qB=new THREE.
 
 function tick(now){
   const dt=Math.max(0,Math.min(.05,(now-last)/1000)); last=now; frameN++;
-  const W=innerWidth,H=innerHeight,mob=W<761,k=1-Math.exp(-dt*6);
+  const W=innerWidth,H=(MC.VH||innerHeight),mob=W<761,k=1-Math.exp(-dt*6);
   const sv=(scrollY-lastScroll)/Math.max(dt,.001); lastScroll=scrollY; vel+=(sv-vel)*(1-Math.exp(-dt*5));
   if(!drag){dragYaw+=vYaw; vYaw*=Math.pow(.04,dt); dragPitch*=Math.pow(.2,dt)}
   MC._tAcc=(MC._tAcc||0)+((MC.faceT&&now-MC.faceT<4200)||MC.reduce?0:dt*1000); spin=MC._tAcc*.00025+scrollY*.0022+dragYaw; MC._ang=spin+mx*.5;
@@ -109,7 +109,7 @@ function tick(now){
     const z=clamp(p/.44); tp=toWorld(W/2,H*.62-z*H*.1); ts=Math.max(.0001,(1-z)*H*.34*wpp()); vis=p<.44; tiltX=z*.4;
   } else if(mode==='fall' && MC.slot){
     // cai no centro do abismo: encolhe girando até sumir; depois reaparece ao lado da logo
-    const d=smooth(clamp(p/.62)); tp=toWorld(W/2,H*((mob?.72:.5)+.04*d)); ts=Math.max(.0001,H*(mob?.3:.38)*(1-d)*wpp()); vis=d<.985; tiltX=d*2.2; tiltZ=d*1.4; posK=1-Math.exp(-dt*8);
+    const d=smooth(clamp(p/.62)); tp=toWorld(W/2,H*((mob?.34:.5)+.04*d)); /* R4d: no celular cai acima do texto */ ts=Math.max(.0001,H*(mob?.3:.38)*(1-d)*wpp()); vis=d<.985; tiltX=d*2.2; tiltZ=d*1.4; posK=1-Math.exp(-dt*8);
   } else {
     tp=toWorld(MC.free.sx,MC.free.sy); ts=MC.free.hp*wpp();
     tiltZ=Math.max(-.35,Math.min(.35,-vel*.0002)); tiltX=Math.max(-.3,Math.min(.3,vel*.0001));
