@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap">
 <style>
 @font-face{font-family:"TerraSans";src:url(data:font/otf;base64,__TERRA__) format("opentype");font-display:swap}
-@font-face{font-family:"RibelNoise";src:url(data:font/ttf;base64,__RIBEL__) format("truetype");font-display:swap}
+
 @font-face{font-family:"DxBurst";src:url(data:font/otf;base64,__DX__) format("opentype");font-display:swap}
 /* Layout: a página é a trilha do jogo. Um peão 3D (o do visitante) atravessa as seções; nos Reinos ele descansa ao lado da logo. Visual escuro, cada Reino troca o ar. */
 :root{
@@ -12,7 +12,7 @@
   --bg:color-mix(in srgb,var(--accent) 12%,#0a1719); --bg2:color-mix(in srgb,var(--accent) 22%,#0f2326); --glow:var(--accent);
   --f-display:"Bricolage Grotesque","Arial Narrow",sans-serif;
   --f-label:"TerraSans","Rockwell","Georgia",serif;
-  --f-accent:"RibelNoise","DxBurst","Brush Script MT",cursive;
+  --f-accent:"Vakantcy","DxBurst","Brush Script MT",cursive;
   --f-body:"Spectral","Georgia",serif;
   --gutter:clamp(16px,4vw,56px); --r:14px;
   color-scheme:dark;
@@ -1302,7 +1302,7 @@ body.dragged .pickhand{opacity:0!important;transition:opacity .3s}
 .conf-t{font-size:clamp(56px,9vw,170px);line-height:.88}
 .conf-t .acc{display:block;font-size:.5em;margin-top:.12em}
 .lenda{height:1000vh}
-.lv-track{position:absolute;inset:0;width:200vw;display:flex;will-change:transform}
+.lv-track{position:absolute;inset:0;width:100vw;display:flex}
 .lv-panel{position:relative;width:100vw;height:100%;flex:none;overflow:hidden}
 .lv-dots{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:8px;z-index:6}
 .lv-dots i{width:26px;height:3px;border-radius:2px;background:rgba(255,255,255,.3);transition:background .3s,width .3s}
@@ -1659,4 +1659,120 @@ body[data-theme^="luz"] .modal .mbox,body[data-theme^="luz"] .modal .mbox *{colo
  .st-pick{padding-top:calc(env(safe-area-inset-top,0px) + 92px)!important}
  .st-pick h2{font-size:9vw}
 }
+</style>
+<style>.st-w{transition:opacity .18s linear,filter .18s linear,transform .18s ease-out,color .18s}</style>
+<style>
+/* logo oficial em imagem (PNG 3D → WebP); o subtítulo já faz parte da arte */
+.mclogo{display:block;height:auto;max-width:100%;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
+.ld-sub,#hlogos,.st-end .st-sub{display:none!important}
+#hlogot,.ld-logo,.cbig,.st-end .st-logo{line-height:0;font-size:0}
+#hlogot .mclogo{height:62px;width:auto;filter:none}
+.ld-logo .mclogo{width:clamp(280px,62vw,900px)}
+.credit .cbig{max-width:none;margin-bottom:10px}
+.cbig .mclogo{width:clamp(240px,34vw,520px)}
+.st-end .st-logo .mclogo{width:clamp(320px,60vw,1000px)}
+@media (max-width:520px){#hlogot .mclogo{height:46px}}
+</style><style>
+/* ===== Rodada 4 ===== */
+@font-face{font-family:"Vakantcy";src:url(assets/fonts/vakantcy.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"GumpsOver";src:url(assets/fonts/gumpsover.woff2) format("woff2");font-display:swap}
+/* 9 Limbo e "Cuidado" em Gumps Over */
+.travwarn p,.travwarn p .acc,#limbo .ltxt h2{font-family:"GumpsOver",var(--f-display);font-stretch:normal;font-variation-settings:normal;font-weight:400;text-transform:none;letter-spacing:0}
+.travwarn p{line-height:1}
+/* 2 logo do loader 50% menor */
+.ld-logo .mclogo{width:clamp(160px,31vw,450px)}
+/* 5/6 só a Medusa: seção mais curta */
+.lenda{height:300vh}
+/* 10 liquid glass (estilo iOS): pílula flutuante, pouca névoa, borda de luz e leve refração */
+.top::before{inset:8px calc(var(--gutter) - 18px) -2px!important;border-radius:999px;border:0!important;
+ background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.02) 55%,rgba(255,255,255,.06)),color-mix(in srgb,var(--bg) 14%,transparent)!important;
+ -webkit-backdrop-filter:blur(3px) saturate(1.9) brightness(1.08)!important;backdrop-filter:blur(3px) saturate(1.9) brightness(1.08)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.38),inset 0 -1px 0 rgba(255,255,255,.10),inset 1px 0 0 rgba(255,255,255,.14),inset -1px 0 0 rgba(255,255,255,.14),inset 0 0 22px rgba(255,255,255,.06),0 10px 30px -12px rgba(0,0,0,.45)}
+html.lgr .top::before{backdrop-filter:url(#lgf) blur(2px) saturate(1.9) brightness(1.08)!important}
+body[data-theme^="luz"] .top::before{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.18) 60%,rgba(255,255,255,.35)),color-mix(in srgb,var(--bg) 18%,transparent)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(0,0,0,.06),inset 0 0 22px rgba(255,255,255,.35),0 10px 30px -14px rgba(60,40,20,.35)}
+@media (max-width:760px){.top::before{inset:6px 6px -2px!important;border-radius:26px}}
+/* 1 cursor próprio + rastro */
+html.cur,html.cur *{cursor:none!important}
+html.cur input,html.cur textarea,html.cur select{cursor:text!important}
+#mtrail{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:2147483646;mix-blend-mode:screen}
+#mcur{position:fixed;left:0;top:0;width:22px;height:22px;pointer-events:none;z-index:2147483647;transform:translate3d(-100px,-100px,0);transition:width .18s,height .18s;filter:drop-shadow(0 0 6px var(--accent)) drop-shadow(0 2px 3px rgba(0,0,0,.6))}
+#mcur svg{width:100%;height:100%;display:block;overflow:visible}
+#mcur path{fill:var(--accent);stroke:#fff;stroke-width:1.4;stroke-linejoin:round;transition:fill .3s}
+#mcur.on{width:28px;height:28px}
+#mcur.down svg{transform:scale(.86);transform-origin:2px 2px}
+body[data-theme^="luz"] #mtrail{mix-blend-mode:multiply}
+/* 13/15 em breve escuro, em arco */
+.soon-ring{--R:720px;--w:165px;height:clamp(420px,42vw,580px);margin-top:20px}
+.soon-ring .ring-item{aspect-ratio:815/1110;border-radius:var(--r);overflow:visible;box-shadow:none;background:none}
+.soon-ring .scard{position:absolute;inset:0}
+@media (max-width:760px){.soon-ring{--R:290px;--w:104px;height:330px}}
+/* 18 confirmação de inscrição */
+.joined{border-radius:24px;padding:clamp(24px,4vw,40px);background:color-mix(in srgb,var(--accent) 12%,color-mix(in srgb,var(--bg2) 70%,transparent));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 35%,transparent),0 30px 60px -30px rgba(0,0,0,.5);animation:jnin .6s cubic-bezier(.2,.8,.2,1)}
+.joined h3{font-size:clamp(34px,4vw,58px);line-height:.95;margin:8px 0 12px;color:var(--bone)}
+.joined p{color:var(--bone-dim);max-width:44ch}
+.joined .btn{margin-top:18px}
+@keyframes jnin{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.joined[hidden],form[hidden]{display:none!important}
+#lead .mbox .joined{background:none;box-shadow:none;padding:6px 0 0}
+</style><style>
+/* 11 galeria: janela que revela */
+.grv{position:relative;height:calc(var(--n,7)*70vh + 30vh);margin-top:clamp(20px,4vh,40px)}
+.grv-st{position:sticky;top:0;height:100svh;display:grid;place-items:center;padding-top:70px}
+.grv-fr{position:relative;width:min(1100px,88vw,calc((100svh - 150px)*4/3));aspect-ratio:4/3;border-radius:22px;overflow:hidden;background:#140f0a;box-shadow:0 50px 90px -40px rgba(40,25,10,.7),0 0 0 1px rgba(255,255,255,.06);cursor:zoom-in;isolation:isolate}
+.grv-base{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:50% 50%;will-change:transform}
+.grv-strips{position:absolute;inset:0;z-index:2}
+.grv-strips i{position:absolute;top:0;bottom:0;left:calc(var(--k)*100%/var(--S));width:calc(100%/var(--S) + 1px);overflow:hidden;will-change:transform;box-shadow:0 0 calc(var(--lt,0)*30px) rgba(0,0,0,calc(var(--lt,0)*.4))}
+.grv-strips img{position:absolute;top:0;height:100%;width:calc(var(--S)*100% - var(--S)*1px);left:calc(var(--k)*(1px - 100%));object-fit:cover;max-width:none}
+.grv-n{position:absolute;right:16px;bottom:14px;z-index:3;font-family:var(--f-label);letter-spacing:.12em;font-size:13px;color:#fff;background:rgba(0,0,0,.45);padding:5px 12px;border-radius:999px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+@media (max-width:760px){.grv{height:calc(var(--n,7)*60vh + 30vh)}.grv-fr{width:92vw;aspect-ratio:4/5;border-radius:18px}}
+.galm .galm-img{position:relative;z-index:2;max-width:min(1400px,94vw);max-height:86svh;border-radius:16px;box-shadow:0 40px 90px -30px #000;cursor:default}
+/* 12 caldeirão: a carta entra em pé e deita na mesa */
+.cx-play .pot{rotate:-90deg;scale:.74;opacity:.0;transition:rotate 1.25s cubic-bezier(.6,-.05,.15,1.15),scale 1.25s cubic-bezier(.6,-.05,.15,1.15),opacity .5s ease}
+.cx-play .pot{pointer-events:none}.cx-play .pot.laid{rotate:0deg;scale:1;opacity:1;pointer-events:auto}
+.cx-play{overflow:visible}
+/* 17 como jogar */
+.phow{font-size:clamp(26px,2.4vw,38px);margin:26px 0 8px}
+.prules li b{color:var(--bone)}
+.phowb{margin-top:10px}
+.ptut{position:absolute;inset:0;z-index:40;display:grid;place-items:end center;padding-bottom:18px;pointer-events:none}
+.tut-b{pointer-events:auto}
+.pgame{position:relative}
+.tut-b{width:min(440px,92%);background:color-mix(in srgb,var(--bg2) 94%,#000);color:var(--bone);border-radius:18px;padding:18px 20px;box-shadow:0 24px 60px -20px #000,inset 0 0 0 1px color-mix(in srgb,var(--accent) 40%,transparent);animation:jnin .35s ease}
+.tut-t{font-size:18px;line-height:1.4;margin:6px 0 12px}
+.tut-a{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.tut-hl{outline:3px solid var(--accent);outline-offset:6px;border-radius:12px;box-shadow:0 0 40px color-mix(in srgb,var(--accent) 60%,transparent)}
+.tut-hand{position:absolute;left:38%;top:30%;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle,#fff 0 30%,color-mix(in srgb,var(--accent) 70%,transparent) 31% 60%,transparent 62%);animation:tuthand 1.8s ease-in-out infinite;pointer-events:none}
+@keyframes tuthand{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1;transform:translate(0,0) scale(.85)}65%{transform:translate(120%,90%) scale(.85);opacity:1}85%{transform:translate(120%,90%) scale(1);opacity:0}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.tut-hand{animation:none}.cx-play .pot{transition:none}}
+</style>
+<style>
+/* R4b — Sobre o autor */
+.autorbox{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:clamp(22px,3vw,40px);align-items:center;width:min(940px,92vw)}
+.aphoto{margin:0;padding:10px 10px 34px;background:#efe6d4;border-radius:14px;transform:rotate(-3.5deg);box-shadow:0 30px 60px -24px rgba(0,0,0,.7),0 2px 0 rgba(0,0,0,.08);position:relative}
+.aphoto::after{content:"";position:absolute;top:-12px;left:50%;width:86px;height:26px;transform:translateX(-50%) rotate(2deg);background:rgba(240,228,200,.55);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.aphoto img{display:block;width:100%;height:auto;border-radius:9px;filter:sepia(.12) saturate(.95) contrast(1.02)}
+.atext p{max-width:46ch}
+.autorc{grid-template-columns:1fr;gap:8px}
+.achip{display:flex;align-items:baseline;gap:10px;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--bone) 6%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--bone) 12%,transparent);text-decoration:none;color:var(--bone);font-size:17px!important;transition:background .2s}
+.achip:hover{background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.achip .label{min-width:84px;color:var(--accent)}
+@media (max-width:760px){.autorbox{grid-template-columns:1fr;justify-items:center;text-align:left}.aphoto{width:62vw;margin-top:8px}.achip{font-size:15px!important}.achip .label{min-width:72px}}
+/* R4b — janela de chamada no celular com respiro nas bordas */
+@media (max-width:760px){
+ #lead{padding:0 12px calc(12px + env(safe-area-inset-bottom,0px))!important;align-content:end}
+ #lead .mbox{margin:0!important}
+ #lead form{max-height:calc(100svh - 40px - env(safe-area-inset-bottom,0px))!important}
+ #lead form,#lead .mbox .joined{border-radius:26px!important;border-bottom:1px solid color-mix(in srgb,var(--bone) 12%,transparent)!important;padding-bottom:22px!important}
+ #lead .mbox .joined{background:var(--bg);padding:26px 20px!important;box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+}
+</style><style>
+/* R4b — rastro do mouse: lente líquida bem sutil */
+#mtrail{position:fixed;inset:0;pointer-events:none;z-index:2147483646;mix-blend-mode:normal;opacity:0;transition:opacity .5s}
+#mtrail.on{opacity:1}
+.mlens{position:absolute;left:0;top:0;border-radius:50%;will-change:transform;opacity:calc(var(--o)*(.25 + var(--sp,0)*.75));
+ background:radial-gradient(circle,color-mix(in srgb,var(--accent) 10%,transparent),transparent 70%);
+ -webkit-backdrop-filter:blur(.6px) saturate(1.15);backdrop-filter:blur(.6px) saturate(1.15)}
+html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
+#mcur{width:18px;height:18px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
+#mcur.on{width:22px;height:22px}
 </style>

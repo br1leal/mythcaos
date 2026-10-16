@@ -1,3 +1,4 @@
+<link rel="preload" href="assets/fonts/vakantcy.woff2" as="font" type="font/woff2" crossorigin>
 <div class="loader" id="loader" role="status" aria-live="polite">
   <div class="ld-in"><p class="ld-logo">__LOGO__</p><p class="ld-sub">O Despertar das Lendas</p>
     <div class="ld-bar"><i id="ldbar"></i></div><p class="label ld-pct"><span id="ldpct">0</span>% · acordando as lendas</p></div>
@@ -13,9 +14,10 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="goo" x="-10%" y="-10%" width="120%" height="140%"><feGaussianBlur in="SourceGraphic" stdDeviation="9" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter></svg>
 
 
+<svg class="lgdefs" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute"><filter id="lgf" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.04" numOctaves="2" seed="11" result="n"/><feGaussianBlur in="n" stdDeviation="1.5" result="nb"/><feDisplacementMap in="SourceGraphic" in2="nb" scale="26" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="curf" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <header class="top">
   <div class="brand"><a class="logo" href="#historia" id="hlogo"><span id="hlogot">__LOGO__</span><span class="lsub" id="hlogos">O Despertar das Lendas</span></a><button class="dock" id="dock" type="button" aria-label="Ver sua lenda de perto" title="Ver de perto"></button><div class="ptag"><button class="ptag-b" id="ptagb" type="button" aria-expanded="false" aria-controls="ptagm"><i></i><span id="ptagn">Saci</span><em>trocar</em></button><div class="ptag-m" id="ptagm" hidden></div></div></div>
-  <nav class="tnav" aria-label="Atalhos"><div class="tlinks" id="tlinks"><button class="tlink" type="button" data-autor>Sobre o autor</button><a class="tlink" href="#quebra">Desafio MythCaos</a></div><button class="btn small" type="button" data-lead>Lista de espera</button><button class="tmenu" id="tmenu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="tlinks"><i></i><i></i><i></i></button></nav>
+  <nav class="tnav" aria-label="Atalhos"><div class="tlinks" id="tlinks"><button class="tlink" type="button" data-autor>Sobre o autor</button><a class="tlink" href="#quebra">Jogue o desafio</a></div><button class="btn small" type="button" data-lead>Lista de espera</button><button class="tmenu" id="tmenu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="tlinks"><i></i><i></i><i></i></button></nav>
 </header>
 
 <nav class="rail" aria-label="Seções">
@@ -83,8 +85,8 @@
 </section>
 
 <section id="confirmadas" class="conf wrap" data-theme="lenda" data-mode="dock">
-  <p class="label">Conheça algumas</p>
-  <h2 class="conf-t">Lendas do jogo</h2>
+  <p class="label">Conheça a</p>
+  <h2 class="conf-t">Lenda mais temida</h2>
 </section>
 
 <section id="lendas" class="lenda" data-theme="lenda" data-mode="dock">
@@ -98,16 +100,7 @@
         <div class="lv-info"><p class="klass" style="--kc:#e0362a">Caos · Titãs</p><h3>Medusa</h3><p class="dpts" style="--kc:#e0362a">−5 pontos</p><p class="def">Um olhar e o alvo perde o próximo turno.</p><p class="label lv-tip">Clique na carta para ver o verso</p></div>
       </div>
     </div>
-    <div class="lv-panel" data-l="mula">
-      <video class="lv" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
-      <div class="lv-shade" aria-hidden="true"></div>
-      <div class="lv-wrap">
-        <div class="lv-card" role="button" tabindex="0" aria-label="Virar a carta da Mula sem Cabeça"><div class="lv-tilt"><div class="lv-in"><div class="lv-f"><div class="layers">__L:28-c-mula-sem-cabeca__</div><div class="fx sheen"></div><div class="fx film"></div><div class="fx glare"></div></div><div class="lv-b"><img src="assets/imp/raizes/114-verso.jpg" alt=""></div></div></div></div>
-        <div class="lv-info"><p class="klass" style="--kc:#e0362a">Caos · Raízes</p><h3>Mula sem Cabeça</h3><p class="dpts" style="--kc:#e0362a">−2 pontos</p><p class="def">O alvo descarta a carta de maior valor, ou 1 ingrediente à sua escolha.</p><p class="label lv-tip">Clique na carta para ver o verso</p></div>
-      </div>
     </div>
-    </div>
-    <div class="lv-dots" aria-hidden="true"><i></i><i></i></div>
   </div>
 </section>
 
@@ -238,7 +231,7 @@
   </div>
 </section>
 
-<section id="caldeirao" class="cald wrap" data-theme="luzm" data-mode="dock">
+<section id="caldeirao" class="cald wrap" data-theme="caldeirao" data-mode="dock">
   <p class="xbig">Conteúdo extra<span>em desenvolvimento</span></p>
   <div class="cgrid2">
     <div class="cx-txt">
@@ -257,13 +250,13 @@
         <p class="cx-hint" id="cxhint">Clique na carta para receber sua Magia secreta e ver a receita.</p>
         <div class="ings" id="ings"></div>
         <div class="cact"><button class="btn" id="brew" type="button">Mexer o caldeirão</button><button class="btn" id="again" type="button" hidden>Jogar de novo</button><button class="btn ghost" id="cclear" type="button">Esvaziar</button></div>
-        <div class="cres" aria-live="polite"><h3 id="cn">Sua Magia espera</h3><p id="ce">Primeiro descubra a receita, depois monte no caldeirão.</p></div>
+        <div class="cres" aria-live="polite"><h3 id="cn">Crie sua Magia</h3><p id="ce">Primeiro descubra a receita, depois monte no caldeirão.</p></div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="embreve" class="soon wrap" data-theme="luz" data-mode="dock">
+<section id="embreve" class="soon wrap" data-theme="duelo" data-mode="dock">
   <p class="label">Na mesa de criação</p>
   <h2>Em breve</h2>
   <p class="lead2">Novas lendas estão sendo desenhadas agora. Algumas ainda são só sombra.</p>
@@ -282,7 +275,7 @@
         <div class="plv"><img src="assets/imp/tormentas/52-o-loki.jpg" alt=""><span class="label">Nível 2 · 12 peças</span><b>Loki</b></div>
         <div class="plv"><img src="assets/imp/mares/05-g-klaus.jpg" alt=""><span class="label">Nível 3 · 20 peças</span><b>Klaus</b></div>
       </div>
-      <ol class="prules"><li>Troque as peças de lugar até a carta aparecer inteira.</li><li>O relógio corre e cada troca conta.</li><li>Seu tempo total entra no ranking.</li></ol>
+      <h3 class="phow">Como jogar</h3><ol class="prules"><li><b>Abra o desafio</b> e deixe seu nome para entrar no ranking.</li><li><b>Troque as peças:</b> arraste uma peça até outra, ou toque em duas, até a carta aparecer inteira.</li><li><b>Contra o relógio:</b> o tempo começa no "Já!" e cada troca conta como movimento.</li><li><b>Três lendas:</b> Bicho-Papão (9 peças), Loki (12) e Klaus (20). A soma dos tempos vai para o ranking.</li></ol><button class="linkb phowb" type="button" data-howto>Ver o tutorial guiado</button>
     </div>
     <aside class="rank" aria-labelledby="rankt">
       <h3 id="rankt">Ranking</h3>
@@ -307,6 +300,7 @@
     <button class="btn" type="submit">Entrar na lista</button>
     <p class="ok" id="ok" aria-live="polite"></p>
   </form>
+  <div class="joined" hidden aria-live="polite"><p class="label">Lista de espera</p><h3>Seu lugar na mesa está guardado<span class="jn"></span>!</h3><p>Enviamos um e-mail de boas-vindas. Enquanto isso, que tal o Desafio MythCaos?</p><a class="btn" href="#quebra" data-jgo>Jogue o desafio</a></div>
 </section>
 <footer class="wrap"><div class="credit"><p class="cbig">__LOGO__</p><p>Criado e desenvolvido por <strong>Bruno Leal</strong>. Ideia, mecânicas, personagens, peças 3D e site.</p><p class="label">Um jogo 100% brasileiro</p><p class="fnav"><button class="tlink" type="button" data-autor>Sobre o autor</button> · <a class="tlink" href="#quebra">Desafio MythCaos</a></p></div><span>© 2026 Bruno Leal · Todos os direitos reservados</span></footer>
 </main>
@@ -358,15 +352,19 @@
 </div>
 <div class="modal" id="autorm" hidden role="dialog" aria-modal="true" aria-labelledby="autort">
   <div class="mbg" data-close></div>
-  <div class="mbox autorbox"><p class="label">Sobre o autor</p><h3 id="autort">Bruno Leal</h3>
-    <p>Designer brasileiro e criador do MythCaos. Ideia, mecânicas, personagens, peças 3D e este site saíram da mesma cabeça, com o folclore, as mitologias e as lendas urbanas que ele cresceu ouvindo.</p>
-    <ul class="autorc"><li><span class="label">E-mail</span><a id="autormail" href="#">[e-mail]</a></li><li><span class="label">WhatsApp</span><a id="autortel" href="#">[telefone]</a></li></ul>
-    <div class="lbbtns"><a class="btn small" href="#quebra" data-close>Jogar o desafio</a><button class="btn ghost small" type="button" data-lead>Lista de espera</button></div></div>
+  <div class="mbox autorbox"><figure class="aphoto"><img src="assets/misc/autor-420.webp" srcset="assets/misc/autor-420.webp 420w, assets/misc/autor-760.webp 760w" sizes="(max-width:760px) 62vw, 300px" width="760" height="1013" alt="Bruno Leal com a filha, Aurora, numa mesa cheia de dados e peças de jogo" loading="lazy"></figure>
+    <div class="atext"><p class="label">Sobre o autor</p><h3 id="autort">Bruno Leal</h3>
+    <p>Sou o Bruno, pai da Aurora e apaixonado por jogos de tabuleiro.</p>
+    <p>Comecei a desenvolver o MythCaos em 2024, quando descobri que seria pai. Queria um jogo para, um dia, apresentar a ela o mundo de lendas e mitos que a gente conhece desde criança.</p>
+    <p>Um jogo divertido e disputado, feito para a família inteira.</p>
+    <ul class="autorc"><li><a class="achip" href="mailto:contato@mythcaos.com.br"><span class="label">E-mail</span>contato@mythcaos.com.br</a></li><li><a class="achip" href="https://instagram.com/mythcaos" target="_blank" rel="noopener"><span class="label">Instagram</span>@mythcaos</a></li><li><a class="achip" href="https://wa.me/5542998270848" target="_blank" rel="noopener"><span class="label">WhatsApp</span>(42) 99827-0848</a></li></ul>
+    <div class="lbbtns"><a class="btn small" href="#quebra" data-close>Jogue o desafio</a><button class="btn ghost small" type="button" data-lead>Lista de espera</button></div></div></div>
   <button class="mx" type="button" aria-label="Fechar" data-close>×</button>
 </div>
 <div class="modal" id="lead" hidden role="dialog" aria-modal="true" aria-labelledby="leadt">
   <div class="mbg" data-close></div>
   <div class="mbox">
+    <div class="joined" hidden aria-live="polite"><p class="label">Lista de espera</p><h3>Seu lugar na mesa está guardado<span class="jn"></span>!</h3><p>Enviamos um e-mail de boas-vindas. Enquanto isso, que tal o Desafio MythCaos?</p><a class="btn" href="#quebra" data-jgo>Jogue o desafio</a></div>
     <form id="leadf" novalidate>
       <p class="label" id="leadk">Novidades</p>
       <h3 id="leadt">Fique por dentro</h3>
