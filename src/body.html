@@ -1,8 +1,8 @@
 <link rel="preload" href="assets/fonts/vakantcy.woff2" as="font" type="font/woff2" crossorigin>
 <div class="loader" id="loader" role="status" aria-live="polite">
   <div class="ld-in"><p class="ld-logo">__LOGO__</p><p class="ld-sub">O Despertar das Lendas</p>
-    <div class="ld-bar"><i id="ldbar"></i></div><p class="label ld-pct"><span id="ldpct">0</span>% · acordando as lendas</p></div>
-  <p class="ld-credit"><span>Criado e desenvolvido por Bruno Leal</span><span class="st-dot"> · </span><span>um jogo 100% brasileiro</span></p>
+    <div class="ld-bar"><i id="ldbar"></i></div><p class="label ld-pct"><span id="ldpct">0</span>% · <span id="ldmsg">Acordando as lendas</span></p></div>
+  <p class="ld-credit"><span>Criado e desenvolvido por Bruno Leal</span><span class="st-dot"> · </span><span class="fbr">Feito no Brasil <svg class="flagbr" viewBox="0 0 20 14" role="img" aria-label="bandeira do Brasil"><rect width="20" height="14" rx="2.2" fill="#009c3b"/><path d="M10 1.7 18 7 10 12.3 2 7z" fill="#ffdf00"/><circle cx="10" cy="7" r="3.05" fill="#002776"/><path d="M7.05 6.35c1.9-.55 4.05-.25 5.9.95" stroke="#fff" stroke-width=".55" fill="none"/></svg></span></p>
 </div>
 <div class="atmo" aria-hidden="true"></div>
 <canvas id="amb" aria-hidden="true"></canvas>
@@ -36,7 +36,7 @@
   <a href="#tabuleiro"><span>Tabuleiro</span><i></i></a>
   <a href="#caixa"><span>Na caixa</span><i></i></a>
   <a href="#galeria"><span>Galeria</span><i></i></a>
-  <a href="#caldeirao"><span>Magias</span><i></i></a>
+  <a href="#caldeirao"><span>Feitiços</span><i></i></a>
   <a href="#embreve"><span>Em breve</span><i></i></a>
   <a href="#quebra"><span>Desafio</span><i></i></a>
   <a href="#lista"><span>Lista</span><i></i></a>
@@ -45,6 +45,7 @@
 <div class="pzoom" id="pzoom" hidden role="dialog" aria-modal="true" aria-labelledby="pzn">
   <div class="pz-bg" data-pzclose></div>
   <div class="pz-txt"><p class="label">Sua lenda</p><h3 id="pzn">Saci</h3><p class="pz-hint"><span class="ghand" role="img" aria-label="Arraste para girar"><svg class="h-open" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg><svg class="h-grab" viewBox="0 0 24 24"><path d="M18 11.5V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1.4"/><path d="M14 10V8a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 9.9V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v5"/><path d="M6 14a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8 2 2 0 1 1 4 0"/></svg><i class="g-arc"></i></span></p></div>
+  <div class="pz-pick" id="pzpick" role="group" aria-label="Trocar de lenda"><p class="label">Trocar de lenda</p></div>
   <button class="mx" type="button" aria-label="Fechar" data-pzclose>×</button>
 </div>
 
@@ -217,17 +218,10 @@
   </div>
 </section>
 
-<section id="galeria" class="gal wrap" data-theme="luz" data-mode="dock">
-  <p class="label">Lugar de lenda é na mesa.</p>
-  <h2 class="one gal-h">Uma rodada vira duas.<br>Duas viram revanche.</h2>
-  <div class="mosaic">
-    <figure class="m-a"><img src="assets/gal/foto3.webp" alt="" loading="lazy"></figure>
-    <figure class="m-b"><img src="assets/gal/foto1.webp" alt="" loading="lazy"></figure>
-    <figure class="m-c"><img src="assets/gal/foto2.webp" alt="" loading="lazy"></figure>
-    <figure class="m-d"><img src="assets/gal/foto4.webp" alt="" loading="lazy"></figure>
-    <figure class="m-g"><img src="assets/gal/foto7.webp" alt="" loading="lazy"></figure>
-    <figure class="m-e"><img src="assets/gal/foto5.webp" alt="" loading="lazy"></figure>
-    <figure class="m-f"><img src="assets/gal/foto6.webp" alt="" loading="lazy"></figure>
+<section id="galeria" class="gal galz" data-theme="luz" data-mode="dock">
+  <div class="gz-stage">
+    <div class="gz-head"><p class="label">Lugar de lenda é na mesa.</p><h2 class="one gal-h">Uma rodada vira duas.<br>Duas viram revanche.</h2></div>
+    <div class="gz-space" id="gzspace"><figure><img src="assets/gal/foto3.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure><figure><img src="assets/gal/foto1.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure><figure><img src="assets/gal/foto2.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure><figure><img src="assets/gal/foto4.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure><figure><img src="assets/gal/foto7.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure><figure><img src="assets/gal/foto5.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure><figure><img src="assets/gal/foto6.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure></div>
   </div>
 </section>
 
@@ -235,10 +229,10 @@
   <p class="xbig">Conteúdo extra<span>em desenvolvimento</span></p>
   <div class="cgrid2">
     <div class="cx-txt">
-      <h2>Magias<span class="acc">confusão na certa</span></h2>
+      <h2>Feitiços<span class="acc">confusão na certa</span></h2>
       <p class="lead2">Já pensou começar a partida com um poder secreto que fica com você até o fim? Se você conseguir realizá-lo, a vantagem é absurda.</p>
       <ol class="msteps">
-        <li><b>Uma Magia só sua</b><span>Todo mundo começa com uma Magia secreta.</span></li>
+        <li><b>Um Feitiço só seu</b><span>Todo mundo começa com um Feitiço secreto.</span></li>
         <li><b>Carta ou ingrediente?</b><span>Crie sua estratégia, compre uma carta ou um ingrediente para realizar o feitiço.</span></li>
         <li><b>Complete a receita</b><span>Junte os ingredientes pedidos, revele a carta e vire o jogo.</span></li>
       </ol>
@@ -247,10 +241,10 @@
       <div class="pot" id="pot"><div class="swirl"></div><div class="inner"><div class="face front"><div class="liq" aria-hidden="true"></div><img src="assets/imp/magia/114-verso.jpg" alt="Verso das cartas de Magia"><div class="slots" id="slots"><span></span><span></span><span></span><span></span></div></div><div class="face back"><div class="mrec" id="mrec"></div><img id="magimg" alt="" hidden></div></div><p class="pothint" id="pothint">Clique na carta</p></div>
       <div class="cx-side">
         <p class="label">Teste uma receita</p>
-        <p class="cx-hint" id="cxhint">Clique na carta para receber sua Magia secreta e ver a receita.</p>
+        <p class="cx-hint" id="cxhint">Clique na carta para receber seu Feitiço secreto e ver a receita.</p>
         <div class="ings" id="ings"></div>
         <div class="cact"><button class="btn" id="brew" type="button">Mexer o caldeirão</button><button class="btn" id="again" type="button" hidden>Jogar de novo</button><button class="btn ghost" id="cclear" type="button">Esvaziar</button></div>
-        <div class="cres" aria-live="polite"><h3 id="cn">Crie sua Magia</h3><p id="ce">Primeiro descubra a receita, depois monte no caldeirão.</p></div>
+        <div class="cres" aria-live="polite"><h3 id="cn">Crie seu Feitiço</h3><p id="ce">Primeiro descubra a receita, depois monte no caldeirão.</p></div>
       </div>
     </div>
   </div>
@@ -291,7 +285,7 @@
   <div class="intro"><p class="label">Lista de espera</p><h2>Guarde seu lugar na mesa</h2>
     <p class="counter" id="counter">Seja um dos primeiros da mesa.</p>
     <p>Veja as cartas novas primeiro, participe dos playtests e saiba antes de todo mundo quando o jogo sair. Se a mesa pedir, abrimos uma campanha no Catarse.</p></div>
-  <form id="form" novalidate>
+  <form id="form" novalidate><div class="hpf" aria-hidden="true"><label>Não preencha<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
     <label for="f-nome">Seu nome<input id="f-nome" name="nome" autocomplete="name" required></label>
     <label for="f-email">E-mail<input id="f-email" name="email" type="email" autocomplete="email" required></label>
     <label for="f-tel">Celular (WhatsApp)<input id="f-tel" name="tel" type="tel" autocomplete="tel" placeholder="(11) 90000-0000"></label>
@@ -302,7 +296,7 @@
   </form>
   <div class="joined" hidden aria-live="polite"><p class="label">Lista de espera</p><h3>Seu lugar na mesa está guardado<span class="jn"></span>!</h3><p>Enviamos um e-mail de boas-vindas. Enquanto isso, que tal o Desafio MythCaos?</p><a class="btn" href="#quebra" data-jgo>Jogue o desafio</a></div>
 </section>
-<footer class="wrap"><div class="credit"><p class="cbig">__LOGO__</p><p>Criado e desenvolvido por <strong>Bruno Leal</strong>. Ideia, mecânicas, personagens, peças 3D e site.</p><p class="label">Um jogo 100% brasileiro</p><p class="fnav"><button class="tlink" type="button" data-autor>Sobre o autor</button> · <a class="tlink" href="#quebra">Desafio MythCaos</a></p></div><span>© 2026 Bruno Leal · Todos os direitos reservados</span></footer>
+<footer class="wrap fcred"><p class="cbig">__LOGO__</p><p class="fline"><span>Criado e desenvolvido por <strong>Bruno Leal</strong></span><span class="st-dot"> · </span><span class="fbr">Feito no Brasil <svg class="flagbr" viewBox="0 0 20 14" role="img" aria-label="bandeira do Brasil"><rect width="20" height="14" rx="2.2" fill="#009c3b"/><path d="M10 1.7 18 7 10 12.3 2 7z" fill="#ffdf00"/><circle cx="10" cy="7" r="3.05" fill="#002776"/><path d="M7.05 6.35c1.9-.55 4.05-.25 5.9.95" stroke="#fff" stroke-width=".55" fill="none"/></svg></span></p><p class="fnav"><button class="tlink" type="button" data-autor>Sobre o autor</button><span class="st-dot"> · </span><a class="tlink" href="#quebra">Desafio MythCaos</a></p><p class="fcopy">© 2026 Bruno Leal · Todos os direitos reservados</p></footer>
 </main>
 
 <div class="modal" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbn">
@@ -321,7 +315,7 @@
         <p class="label">Antes de começar</p>
         <h3>Entre no ranking</h3>
         <p id="pgated">Para seu tempo contar no ranking, precisamos do seu nome, e-mail e celular. Você só preenche uma vez.</p>
-        <form id="pform" novalidate>
+        <form id="pform" novalidate><div class="hpf" aria-hidden="true"><label>Não preencha<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
           <label for="p-nome">Nome no ranking<input id="p-nome" autocomplete="name"></label>
           <label for="p-email">E-mail<input id="p-email" type="email" autocomplete="email"></label>
           <label for="p-tel">Celular (WhatsApp)<input id="p-tel" type="tel" autocomplete="tel" placeholder="(11) 90000-0000"></label>
@@ -365,7 +359,7 @@
   <div class="mbg" data-close></div>
   <div class="mbox">
     <div class="joined" hidden aria-live="polite"><p class="label">Lista de espera</p><h3>Seu lugar na mesa está guardado<span class="jn"></span>!</h3><p>Enviamos um e-mail de boas-vindas. Enquanto isso, que tal o Desafio MythCaos?</p><a class="btn" href="#quebra" data-jgo>Jogue o desafio</a></div>
-    <form id="leadf" novalidate>
+    <form id="leadf" novalidate><div class="hpf" aria-hidden="true"><label>Não preencha<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <p class="label" id="leadk">Novidades</p>
       <h3 id="leadt">Fique por dentro</h3>
       <p id="leadd">Cartas novas, convites para playtest e o aviso de lançamento. Sem spam.</p>

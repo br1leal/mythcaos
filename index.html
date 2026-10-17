@@ -1836,12 +1836,103 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
  .st-card.out{transition:opacity .3s ease-in!important}
  .st-card img,.st-ci .st-face img,.st-ci .st-back img{transition:none!important;box-shadow:0 18px 36px -14px #000!important}
 }</style>
+<style>/* R4f: no celular a história fica parada — cartas e tabuleiro só aparecem/somem, sem movimento, blur ou 3D */
+@media (max-width:760px){
+ .st-card,.st-card.board,.st-card.in,.st-card.out,.st-card.pre{transition:none!important;animation:none!important;will-change:auto!important}
+ #stcards .st-card,#stcards .st-card:not(.in):not(.out):not(.pre),#stcards .st-card.in,#stcards .st-card.out,#stcards .st-card.pre{transform:translate(calc(var(--ic,0)*var(--sp,.48)*62%),calc(var(--i,0)*8px)) rotate(var(--rot)) scale(1)!important}
+ .st-ci{transition:none!important}
+ .st-bigboard{transform:translate(-50%,-50%)!important;transition:none!important;filter:none!important}
+ .st-bigboard img,.st-bigboard::after{clip-path:none!important}
+ .st-block{transition:none!important}
+}</style>
+<style>/* ===== R5 ===== */
+/* carregamento: crédito mais alto + bandeira */
+.ld-credit{bottom:clamp(56px,13vh,130px)!important}
+.flagbr{display:inline-block;width:1.45em;height:1em;vertical-align:-.14em;margin-left:.35em;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.fbr{white-space:nowrap}
+@media (max-width:760px){.ld-credit{bottom:clamp(40px,10vh,90px)!important}}
+/* rodapé na mesma linguagem do carregamento */
+footer.fcred{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:0;padding-block:clamp(56px,9vh,96px) 40px}
+footer.fcred .cbig{margin:0 0 18px}
+footer.fcred .cbig .mclogo{width:clamp(170px,19vw,260px)!important}
+footer.fcred .fline{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.12em;font-size:13px;color:var(--bone-dim);margin:0}
+footer.fcred .fline strong{color:var(--bone);font-weight:inherit}
+footer.fcred .fnav{margin-top:14px;font-size:13px}
+footer.fcred .fnav .st-dot{opacity:.5}
+footer.fcred .fcopy{margin-top:22px;font-size:13px;opacity:.6}
+@media (max-width:760px){footer.fcred .fline span{display:block}footer.fcred .fline .st-dot{display:none}footer.fcred .fline{font-size:11px;line-height:1.8}}
+</style>
+<style>
+/* tela "Sua lenda": trocar de lenda ao lado */
+.pz-pick{position:absolute;right:calc(var(--gutter) + 40px);top:50%;transform:translateY(-50%);display:grid;gap:6px;z-index:3;animation:rise .45s .1s cubic-bezier(.2,.8,.2,1) both}
+.pz-pick .label{margin:0 0 6px 10px;color:var(--bone-dim)}
+.pz-pick button{display:flex;align-items:center;gap:10px;background:color-mix(in srgb,#000 35%,transparent);border:1px solid color-mix(in srgb,var(--bone) 14%,transparent);color:var(--bone);font-family:var(--f-label);text-transform:uppercase;letter-spacing:.08em;font-size:13px;padding:10px 16px 8px 12px;border-radius:999px;cursor:pointer;text-align:left;transition:background .2s,border-color .2s,transform .2s}
+.pz-pick button i{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c)}
+.pz-pick button:hover{transform:translateX(-3px);border-color:color-mix(in srgb,var(--c) 70%,transparent)}
+.pz-pick button[aria-pressed="true"]{background:color-mix(in srgb,var(--c) 30%,#000);border-color:var(--c)}
+@media (max-width:760px){
+ .pz-pick{right:auto;left:0;width:100%;top:calc(clamp(80px,11vh,120px) + 150px);transform:none;display:flex;gap:6px;overflow-x:auto;padding:0 var(--gutter) 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+ .pz-pick::-webkit-scrollbar{display:none}
+ .pz-pick .label{display:none}
+ .pz-pick button{flex:0 0 auto;font-size:11px;padding:8px 12px 6px 10px}
+ .pz-pick button:hover{transform:none}}
+</style>
+<style>
+/* sem peão ao lado da logo: o seletor de lenda encosta na logo */
+.top .dock{transition:width .45s cubic-bezier(.2,.8,.2,1),margin .45s cubic-bezier(.2,.8,.2,1),opacity .3s}
+.top.nodock .dock{width:0;margin-inline:-5px;pointer-events:none}
+</style>
+<style>
+/* limbo: sem a sombra escura subindo */
+.lshade,.limbo .lshade{display:none!important}
+/* reinos: o destaque em Vakantcy alinha com o título (a fonte tem um rabisco que sai pra esquerda) */
+.reino .txt h2 .acc{padding-left:.2em}
+/* feitiços: dica no topo da carta; sem o Esvaziar */
+#cclear{display:none!important}
+.pothint{top:14px!important;bottom:auto!important}
+.pot .liq{display:none!important}
+.pot .front img{animation:none!important}
+@media (max-width:760px){.pothint{top:auto!important;bottom:calc(100% + 12px)!important}.cx-play .pot{margin-bottom:0!important;margin-top:46px!important}}
+</style>
+<style>
+/* em breve: grade parada, cartas maiores, brilho de quase revelação */
+#sgrid.sgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,2.2vw,34px);margin:clamp(30px,5vh,56px) auto 0;max-width:1180px}
+@media (max-width:760px){#sgrid.sgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
+#sgrid .scard{background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--accent) 22%,#17120c),#08080a 72%);box-shadow:0 24px 50px -24px #000,inset 0 0 0 1px color-mix(in srgb,var(--accent) 14%,transparent)}
+#sgrid .scard.sil img{filter:brightness(0) drop-shadow(0 0 16px color-mix(in srgb,var(--accent) 75%,transparent)) drop-shadow(0 0 40px color-mix(in srgb,var(--accent) 35%,transparent))}
+#sgrid .scard.sil.lit img{filter:brightness(.22) drop-shadow(0 0 26px var(--accent)) drop-shadow(0 0 60px color-mix(in srgb,var(--accent) 55%,transparent))}
+#sgrid .scard.bw img{filter:grayscale(1) brightness(.4) contrast(1.15) blur(5px)}
+#sgrid .scard.bw.lit img{filter:grayscale(.3) brightness(.72) contrast(1.1) blur(1.5px)}
+#sgrid .scard span{font-size:13px;bottom:14px;padding:6px 12px 4px}
+#sgrid .scard.sil::after{font-size:40px;top:12px;right:16px;text-shadow:0 0 18px var(--accent)}
+</style>
+<style>.hpf{position:absolute!important;left:-9999px!important;top:auto;width:1px;height:1px;overflow:hidden}</style>
+<style>
+/* galeria em túnel (R5) */
+.galz{height:640vh;position:relative;padding:0!important}
+@media (max-width:760px){.galz{height:560vh}}
+.gz-stage{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden;perspective:1000px;perspective-origin:50% 50%}
+.gz-head{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:0 var(--gutter);z-index:0;pointer-events:none}
+.gz-head h2{margin-top:10px}
+.gz-space{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;z-index:1}
+.gz-space figure{position:absolute;left:0;top:0;margin:0;width:clamp(170px,21vw,340px);aspect-ratio:4/3;border-radius:14px;overflow:hidden;opacity:0;visibility:hidden;cursor:zoom-in;
+ box-shadow:0 30px 60px -28px rgba(30,18,6,.6);will-change:transform,opacity;backface-visibility:hidden}
+.gz-space figure.gz-v{width:clamp(130px,15vw,250px);aspect-ratio:3/4}
+.gz-space img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:760px){.gz-space figure{width:44vw}.gz-space figure.gz-v{width:32vw}}
+</style>
+<style>
+#mtrail{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:2147483646;filter:blur(7px) saturate(1.3);mix-blend-mode:screen;opacity:0;transition:opacity .35s}
+#mtrail.on{opacity:1}
+body[data-theme^="luz"] #mtrail{mix-blend-mode:multiply;opacity:.0}
+body[data-theme^="luz"] #mtrail.on{opacity:.75}
+</style>
 
 </head><body><link rel="preload" href="assets/fonts/vakantcy.woff2" as="font" type="font/woff2" crossorigin>
 <div class="loader" id="loader" role="status" aria-live="polite">
   <div class="ld-in"><p class="ld-logo"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async" fetchpriority="high"><script>window.MC_LOGO=function(){var L=["saci","iara","medusa","mula","papainoel","valquiria"],k=window.MC_L||(window.MC_L=L[Math.random()*L.length|0]);var A={saci:"#e0362a",iara:"#3f8cff",medusa:"#9cb03c",mula:"#ff7a1a",papainoel:"#e6edf5",valquiria:"#f2c230"},R=document.documentElement.style;R.setProperty("--accent",A[k]);R.setProperty("--btn-ink",k==="papainoel"?"#0d1a1c":"#140c08");document.querySelectorAll("img.mclogo[data-l]").forEach(function(i){i.srcset=i.getAttribute("data-l").replace(/__L__/g,k);i.removeAttribute("data-l")})};MC_LOGO()</script></p><p class="ld-sub">O Despertar das Lendas</p>
-    <div class="ld-bar"><i id="ldbar"></i></div><p class="label ld-pct"><span id="ldpct">0</span>% · acordando as lendas</p></div>
-  <p class="ld-credit"><span>Criado e desenvolvido por Bruno Leal</span><span class="st-dot"> · </span><span>um jogo 100% brasileiro</span></p>
+    <div class="ld-bar"><i id="ldbar"></i></div><p class="label ld-pct"><span id="ldpct">0</span>% · <span id="ldmsg">Acordando as lendas</span></p></div>
+  <p class="ld-credit"><span>Criado e desenvolvido por Bruno Leal</span><span class="st-dot"> · </span><span class="fbr">Feito no Brasil <svg class="flagbr" viewBox="0 0 20 14" role="img" aria-label="bandeira do Brasil"><rect width="20" height="14" rx="2.2" fill="#009c3b"/><path d="M10 1.7 18 7 10 12.3 2 7z" fill="#ffdf00"/><circle cx="10" cy="7" r="3.05" fill="#002776"/><path d="M7.05 6.35c1.9-.55 4.05-.25 5.9.95" stroke="#fff" stroke-width=".55" fill="none"/></svg></span></p>
 </div>
 <div class="atmo" aria-hidden="true"></div>
 <canvas id="amb" aria-hidden="true"></canvas>
@@ -1875,7 +1966,7 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
   <a href="#tabuleiro"><span>Tabuleiro</span><i></i></a>
   <a href="#caixa"><span>Na caixa</span><i></i></a>
   <a href="#galeria"><span>Galeria</span><i></i></a>
-  <a href="#caldeirao"><span>Magias</span><i></i></a>
+  <a href="#caldeirao"><span>Feitiços</span><i></i></a>
   <a href="#embreve"><span>Em breve</span><i></i></a>
   <a href="#quebra"><span>Desafio</span><i></i></a>
   <a href="#lista"><span>Lista</span><i></i></a>
@@ -1884,6 +1975,7 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
 <div class="pzoom" id="pzoom" hidden role="dialog" aria-modal="true" aria-labelledby="pzn">
   <div class="pz-bg" data-pzclose></div>
   <div class="pz-txt"><p class="label">Sua lenda</p><h3 id="pzn">Saci</h3><p class="pz-hint"><span class="ghand" role="img" aria-label="Arraste para girar"><svg class="h-open" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg><svg class="h-grab" viewBox="0 0 24 24"><path d="M18 11.5V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1.4"/><path d="M14 10V8a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 9.9V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v5"/><path d="M6 14a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8 2 2 0 1 1 4 0"/></svg><i class="g-arc"></i></span></p></div>
+  <div class="pz-pick" id="pzpick" role="group" aria-label="Trocar de lenda"><p class="label">Trocar de lenda</p></div>
   <button class="mx" type="button" aria-label="Fechar" data-pzclose>×</button>
 </div>
 
@@ -2056,17 +2148,10 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
   </div>
 </section>
 
-<section id="galeria" class="gal wrap" data-theme="luz" data-mode="dock">
-  <p class="label">Lugar de lenda é na mesa.</p>
-  <h2 class="one gal-h">Uma rodada vira duas.<br>Duas viram revanche.</h2>
-  <div class="mosaic">
-    <figure class="m-a"><img src="assets/gal/foto3.webp" alt="" loading="lazy"></figure>
-    <figure class="m-b"><img src="assets/gal/foto1.webp" alt="" loading="lazy"></figure>
-    <figure class="m-c"><img src="assets/gal/foto2.webp" alt="" loading="lazy"></figure>
-    <figure class="m-d"><img src="assets/gal/foto4.webp" alt="" loading="lazy"></figure>
-    <figure class="m-g"><img src="assets/gal/foto7.webp" alt="" loading="lazy"></figure>
-    <figure class="m-e"><img src="assets/gal/foto5.webp" alt="" loading="lazy"></figure>
-    <figure class="m-f"><img src="assets/gal/foto6.webp" alt="" loading="lazy"></figure>
+<section id="galeria" class="gal galz" data-theme="luz" data-mode="dock">
+  <div class="gz-stage">
+    <div class="gz-head"><p class="label">Lugar de lenda é na mesa.</p><h2 class="one gal-h">Uma rodada vira duas.<br>Duas viram revanche.</h2></div>
+    <div class="gz-space" id="gzspace"><figure><img src="assets/gal/foto3.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure><figure><img src="assets/gal/foto1.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure><figure><img src="assets/gal/foto2.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure><figure><img src="assets/gal/foto4.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure><figure><img src="assets/gal/foto7.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure><figure><img src="assets/gal/foto5.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure><figure><img src="assets/gal/foto6.webp" alt="Foto do MythCaos na mesa" loading="lazy" decoding="async"></figure></div>
   </div>
 </section>
 
@@ -2074,10 +2159,10 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
   <p class="xbig">Conteúdo extra<span>em desenvolvimento</span></p>
   <div class="cgrid2">
     <div class="cx-txt">
-      <h2>Magias<span class="acc">confusão na certa</span></h2>
+      <h2>Feitiços<span class="acc">confusão na certa</span></h2>
       <p class="lead2">Já pensou começar a partida com um poder secreto que fica com você até o fim? Se você conseguir realizá-lo, a vantagem é absurda.</p>
       <ol class="msteps">
-        <li><b>Uma Magia só sua</b><span>Todo mundo começa com uma Magia secreta.</span></li>
+        <li><b>Um Feitiço só seu</b><span>Todo mundo começa com um Feitiço secreto.</span></li>
         <li><b>Carta ou ingrediente?</b><span>Crie sua estratégia, compre uma carta ou um ingrediente para realizar o feitiço.</span></li>
         <li><b>Complete a receita</b><span>Junte os ingredientes pedidos, revele a carta e vire o jogo.</span></li>
       </ol>
@@ -2086,10 +2171,10 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
       <div class="pot" id="pot"><div class="swirl"></div><div class="inner"><div class="face front"><div class="liq" aria-hidden="true"></div><img src="assets/imp/magia/114-verso.jpg" alt="Verso das cartas de Magia"><div class="slots" id="slots"><span></span><span></span><span></span><span></span></div></div><div class="face back"><div class="mrec" id="mrec"></div><img id="magimg" alt="" hidden></div></div><p class="pothint" id="pothint">Clique na carta</p></div>
       <div class="cx-side">
         <p class="label">Teste uma receita</p>
-        <p class="cx-hint" id="cxhint">Clique na carta para receber sua Magia secreta e ver a receita.</p>
+        <p class="cx-hint" id="cxhint">Clique na carta para receber seu Feitiço secreto e ver a receita.</p>
         <div class="ings" id="ings"></div>
         <div class="cact"><button class="btn" id="brew" type="button">Mexer o caldeirão</button><button class="btn" id="again" type="button" hidden>Jogar de novo</button><button class="btn ghost" id="cclear" type="button">Esvaziar</button></div>
-        <div class="cres" aria-live="polite"><h3 id="cn">Crie sua Magia</h3><p id="ce">Primeiro descubra a receita, depois monte no caldeirão.</p></div>
+        <div class="cres" aria-live="polite"><h3 id="cn">Crie seu Feitiço</h3><p id="ce">Primeiro descubra a receita, depois monte no caldeirão.</p></div>
       </div>
     </div>
   </div>
@@ -2130,7 +2215,7 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
   <div class="intro"><p class="label">Lista de espera</p><h2>Guarde seu lugar na mesa</h2>
     <p class="counter" id="counter">Seja um dos primeiros da mesa.</p>
     <p>Veja as cartas novas primeiro, participe dos playtests e saiba antes de todo mundo quando o jogo sair. Se a mesa pedir, abrimos uma campanha no Catarse.</p></div>
-  <form id="form" novalidate>
+  <form id="form" novalidate><div class="hpf" aria-hidden="true"><label>Não preencha<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
     <label for="f-nome">Seu nome<input id="f-nome" name="nome" autocomplete="name" required></label>
     <label for="f-email">E-mail<input id="f-email" name="email" type="email" autocomplete="email" required></label>
     <label for="f-tel">Celular (WhatsApp)<input id="f-tel" name="tel" type="tel" autocomplete="tel" placeholder="(11) 90000-0000"></label>
@@ -2141,7 +2226,7 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
   </form>
   <div class="joined" hidden aria-live="polite"><p class="label">Lista de espera</p><h3>Seu lugar na mesa está guardado<span class="jn"></span>!</h3><p>Enviamos um e-mail de boas-vindas. Enquanto isso, que tal o Desafio MythCaos?</p><a class="btn" href="#quebra" data-jgo>Jogue o desafio</a></div>
 </section>
-<footer class="wrap"><div class="credit"><p class="cbig"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"></p><p>Criado e desenvolvido por <strong>Bruno Leal</strong>. Ideia, mecânicas, personagens, peças 3D e site.</p><p class="label">Um jogo 100% brasileiro</p><p class="fnav"><button class="tlink" type="button" data-autor>Sobre o autor</button> · <a class="tlink" href="#quebra">Desafio MythCaos</a></p></div><span>© 2026 Bruno Leal · Todos os direitos reservados</span></footer>
+<footer class="wrap fcred"><p class="cbig"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"></p><p class="fline"><span>Criado e desenvolvido por <strong>Bruno Leal</strong></span><span class="st-dot"> · </span><span class="fbr">Feito no Brasil <svg class="flagbr" viewBox="0 0 20 14" role="img" aria-label="bandeira do Brasil"><rect width="20" height="14" rx="2.2" fill="#009c3b"/><path d="M10 1.7 18 7 10 12.3 2 7z" fill="#ffdf00"/><circle cx="10" cy="7" r="3.05" fill="#002776"/><path d="M7.05 6.35c1.9-.55 4.05-.25 5.9.95" stroke="#fff" stroke-width=".55" fill="none"/></svg></span></p><p class="fnav"><button class="tlink" type="button" data-autor>Sobre o autor</button><span class="st-dot"> · </span><a class="tlink" href="#quebra">Desafio MythCaos</a></p><p class="fcopy">© 2026 Bruno Leal · Todos os direitos reservados</p></footer>
 </main>
 
 <div class="modal" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbn">
@@ -2160,7 +2245,7 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
         <p class="label">Antes de começar</p>
         <h3>Entre no ranking</h3>
         <p id="pgated">Para seu tempo contar no ranking, precisamos do seu nome, e-mail e celular. Você só preenche uma vez.</p>
-        <form id="pform" novalidate>
+        <form id="pform" novalidate><div class="hpf" aria-hidden="true"><label>Não preencha<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
           <label for="p-nome">Nome no ranking<input id="p-nome" autocomplete="name"></label>
           <label for="p-email">E-mail<input id="p-email" type="email" autocomplete="email"></label>
           <label for="p-tel">Celular (WhatsApp)<input id="p-tel" type="tel" autocomplete="tel" placeholder="(11) 90000-0000"></label>
@@ -2204,7 +2289,7 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
   <div class="mbg" data-close></div>
   <div class="mbox">
     <div class="joined" hidden aria-live="polite"><p class="label">Lista de espera</p><h3>Seu lugar na mesa está guardado<span class="jn"></span>!</h3><p>Enviamos um e-mail de boas-vindas. Enquanto isso, que tal o Desafio MythCaos?</p><a class="btn" href="#quebra" data-jgo>Jogue o desafio</a></div>
-    <form id="leadf" novalidate>
+    <form id="leadf" novalidate><div class="hpf" aria-hidden="true"><label>Não preencha<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <p class="label" id="leadk">Novidades</p>
       <h3 id="leadt">Fique por dentro</h3>
       <p id="leadd">Cartas novas, convites para playtest e o aviso de lançamento. Sem spam.</p>
@@ -2276,9 +2361,10 @@ const find=f=>{const k=WHERE[f]; return k?{k,c:MANI[k].find(x=>x.f===f+'.jpg')}:
 const PAWNS=[['saci','Saci','#c8281e','#e0362a'],['iara','Iara','#2f6fd0','#3f8cff'],['medusa','Medusa','#7a8a34','#9cb03c'],['mula','Mula sem Cabeça','#2a2a30','#ff7a1a'],['papainoel','Klaus','#ede6da','#e6edf5'],['valquiria','Valquíria','#e8b923','#f2c230']];
 if(PAWNS.some(p=>p[0]===window.MC_L)) MC.pawn=window.MC_L; // R4d: o peão que acompanha é o mesmo da logo sorteada na chegada
 function applyPawn(id){const p=PAWNS.find(x=>x[0]===id);MC.pawn=id;if(MC.pawnReady) document.querySelectorAll('img.mclogo').forEach(i=>{const f=v=>v.replace(/logo-[a-z]+-(\d)/g,'logo-'+id+'-$1'); i.srcset=f(i.srcset); if(i.getAttribute('src')) i.src=f(i.src)});document.documentElement.style.setProperty('--accent',p[3]);document.documentElement.style.setProperty('--btn-ink',id==='papainoel'?'#0d1a1c':'#140c08');
-  try{localStorage.setItem('mc-pawn',id)}catch(e){}; $$('#gpick button,#ptagm button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id)); const tn=$('#ptagn'); if(tn) tn.textContent=p[1]; const zn=$('#pzn'); if(zn) zn.textContent=p[1]; MC.onPawn&&MC.onPawn(id); MC.onTheme&&MC.onTheme()}
+  try{localStorage.setItem('mc-pawn',id)}catch(e){}; $$('#gpick button,#ptagm button,#pzpick button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id)); const tn=$('#ptagn'); if(tn) tn.textContent=p[1]; const zn=$('#pzn'); if(zn) zn.textContent=p[1]; MC.onPawn&&MC.onPawn(id); MC.onTheme&&MC.onTheme()}
 const gpick=$('#gpick');
 if(gpick) PAWNS.forEach(([id,name,c])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.style.setProperty('--c',c);b.innerHTML=`<i></i><span>${name.split(' ')[0]}</span>`;b.setAttribute('aria-label',name);b.onclick=()=>applyPawn(id);gpick.appendChild(b)});
+{const pp=$('#pzpick'); if(pp) PAWNS.forEach(([id,name,c])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.style.setProperty('--c',c);b.innerHTML=`<i></i><span>${name}</span>`;b.setAttribute('aria-pressed',id===MC.pawn);b.onclick=()=>applyPawn(id);pp.appendChild(b)})}
 const ptm=$('#ptagm'), ptb=$('#ptagb');
 PAWNS.forEach(([id,name,c])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.style.setProperty('--c',c);b.innerHTML=`<i></i>${name}`;b.onclick=()=>{applyPawn(id);togTag(false)};ptm.appendChild(b)});
 function togTag(on){ptm.hidden=!on;ptb.setAttribute('aria-expanded',on)}
@@ -2356,16 +2442,19 @@ updCounter();
 $('#tzplay').addEventListener('click',()=>openLead({k:'Teaser',t:'O teaser está quase pronto',d:'Deixe seu contato e receba o vídeo em primeira mão, antes de ir ao ar.'}));
 const okEmail=v=>/^\S+@\S+\.\S+$/.test(v);
 async function saveLead(d){ MC.rememberLead({nome:d.nome||'',email:d.email,tel:d.tel||''}); MC.onLead&&MC.onLead(); const store=await MC.store; if(!store) return false; try{ await store.saveLead(d); return true }catch(e){ return false } }
+// R5 anti-robô sem captcha visível: campo-isca escondido + tempo mínimo de preenchimento + limite por sessão
+const BOT={t:{},n:0}; ['form','pform','leadf'].forEach(id=>{const f=document.getElementById(id); f&&f.addEventListener('focusin',()=>{BOT.t[id]=BOT.t[id]||performance.now()})});
+MC.isBot=id=>{const f=document.getElementById(id), hp=f&&f.querySelector('.hpf input'); if(hp&&hp.value) return true; const t=BOT.t[id]; if(!t||performance.now()-t<1500) return true; if(++BOT.n>6) return true; return false};
 $('#leadf').addEventListener('submit',async e=>{e.preventDefault();const n=$('#l-nome').value.trim(),m=$('#l-email').value.trim(),t=$('#l-tel').value.trim(),ok=$('#lok');
   if(MC.afterLead&&!n){ok.textContent='Escreva seu nome.';$('#l-nome').focus();return}
   if(!okEmail(m)){ok.textContent='Esse e-mail parece incompleto. Confira e tente de novo.';$('#l-email').focus();return}
   if(MC.afterLead&&t.replace(/\D/g,'').length<10){ok.textContent='Coloque um celular com DDD.';$('#l-tel').focus();return}
-  const saved=await saveLead({nome:n,email:m,tel:t,origem:'popup'}); leadSaved=true;
+  const saved=MC.isBot('leadf')?true:await saveLead({nome:n,email:m,tel:t,origem:'popup'}); leadSaved=true;
   ok.textContent=saved?`Pronto${n?', '+n.split(' ')[0]:''}! Você vai receber as novidades.`:'Recebemos seus dados nesta tela, mas o envio ainda não está ligado nesta prévia.'; MC.onJoin&&MC.onJoin(); updCounter(); const al=MC.afterLead; MC.afterLead=null; al&&al(); setTimeout(()=>closeModal(leadM),al?900:1800)});
 $('#form').addEventListener('submit',async e=>{e.preventDefault();const n=$('#f-nome').value.trim(),m=$('#f-email').value.trim(),ok=$('#ok');
   if(!n){ok.textContent='Escreva seu nome para entrar na lista.';$('#f-nome').focus();return}
   if(!okEmail(m)){ok.textContent='Esse e-mail parece incompleto. Confira e tente de novo.';$('#f-email').focus();return}
-  const saved=await saveLead({nome:n,email:m,tel:$('#f-tel').value.trim(),mesa:$('#f-mesa').value,catarse:$('#f-catarse').checked,origem:'lista'}); leadSaved=true;
+  const saved=MC.isBot('form')?true:await saveLead({nome:n,email:m,tel:$('#f-tel').value.trim(),mesa:$('#f-mesa').value,catarse:$('#f-catarse').checked,origem:'lista'}); leadSaved=true;
   ok.textContent=saved?`Pronto, ${n.split(' ')[0]}. Seu lugar na mesa está guardado.`:'Recebemos seus dados nesta tela, mas o envio ainda não está ligado nesta prévia.'; MC.onJoin&&MC.onJoin()});
 
 // ---------- lightbox: carta centralizada ----------
@@ -2550,21 +2639,21 @@ INGS.forEach(([id,n])=>{const b=document.createElement('button');b.type='button'
 function paintSlots(){slotsEl.forEach((s,i)=>{s.classList.toggle('on',!!mix[i]);s.style.backgroundImage=mix[i]?`url(${TOK(mix[i])})`:''})}
 function recHTML(R){return Object.entries(R.r).map(([k,v])=>`<span class="ri"><img src="${TOK(k)}" alt=""><b>${v}×</b><em>${INGN[k]}</em></span>`).join('')}
 function setM(st){ mstate=st; $('#caldeirao').classList.toggle('playing',st==='play'); const m=target&&MANI.magia.find(c=>c.f===target.f+'.jpg');
-  const T={idle:['Clique na carta para revelar sua Magia','Clique na carta para receber sua Magia secreta e ver a receita.','Crie sua Magia','Primeiro descubra a receita, depois monte no caldeirão.'],
+  const T={idle:['Clique na carta para revelar seu Feitiço','Clique na carta para receber seu Feitiço secreto e ver a receita.','Crie seu Feitiço','Primeiro descubra a receita, depois monte no caldeirão.'],
     recipe:['Clique na carta para virar e começar','Decore a receita. Clique na carta de novo para virar e começar.',m&&m.n,'Essa é a sua Magia secreta.'],
     play:['Clique na carta para rever a receita','Escolha os ingredientes da receita e mexa o caldeirão.',m&&m.n,'Monte a receita: '+(target?Object.entries(target.r).map(([k,v])=>v+' '+INGN[k]).join(' + '):'')],
-    won:['','Magia realizada!',m&&m.n,m?m.e.replace(/Ingredientes:[^.]*\.\s*/,''):'']}[st];
+    won:['','Feitiço realizado!',m&&m.n,m?m.e.replace(/Ingredientes:[^.]*\.\s*/,''):'']}[st];
   $('#pothint').textContent=T[0]; $('#cxhint').textContent=T[1]; $('#cn').textContent=T[2]||''; $('#ce').textContent=T[3]||'';
   ingEls.forEach(b=>b.setAttribute('aria-disabled',st!=='play')); $('#again').hidden=st!=='won'; $('#brew').hidden=st==='won'}
 pot.setAttribute('role','button'); pot.tabIndex=0;
 function potClick(){ if(pot.classList.contains('brew')) return;
   if(mstate==='idle'||mstate==='won'){ mix.length=0; paintSlots(); target=REC[Math.floor(Math.random()*REC.length)]; const m=MANI.magia.find(c=>c.f===target.f+'.jpg');
-    $('#mrec').innerHTML=`<p class="label">Sua Magia secreta</p><h4>${m.n}</h4><div class="rrow">${recHTML(target)}</div>`; $('#mrec').hidden=false; $('#magimg').hidden=true; pot.classList.add('flip'); setM('recipe') }
+    $('#mrec').innerHTML=`<p class="label">Seu Feitiço secreto</p><h4>${m.n}</h4><div class="rrow">${recHTML(target)}</div>`; $('#mrec').hidden=false; $('#magimg').hidden=true; pot.classList.add('flip'); setM('recipe') }
   else if(mstate==='recipe'){ pot.classList.remove('flip'); setM('play') }
   else if(mstate==='play'){ pot.classList.add('flip'); setM('recipe') } }
 $('#again').onclick=()=>{ pot.classList.remove('flip','won'); setTimeout(()=>{mstate='idle'; potClick()},450) };
 {const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){io.disconnect(); setTimeout(()=>pot.classList.add('laid'),350)}}),{threshold:.45}); if(MC.reduce) pot.classList.add('laid'); else io.observe(pot)} // 12 entra em pé e deita na mesa
-holo(pot,16,.05); pot.querySelectorAll('.face').forEach(f=>f.insertAdjacentHTML('beforeend',fxHTML));
+holo(pot,9,.05); pot.querySelectorAll('.face').forEach(f=>f.insertAdjacentHTML('beforeend',fxHTML));
 pot.addEventListener('click',potClick); pot.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();potClick()}});
 function resetPot(){mix.length=0;paintSlots();pot.classList.remove('brew')}
 $('#cclear').onclick=()=>resetPot();
@@ -2625,7 +2714,7 @@ $('#pform').addEventListener('submit',async e=>{e.preventDefault(); const n=$('#
   if(!n){ok.textContent='Escreva o nome que vai aparecer no ranking.';$('#p-nome').focus();return}
   if(!okEmail(m)){ok.textContent='Esse e-mail parece incompleto. Confira e tente de novo.';$('#p-email').focus();return}
   if(t.replace(/\D/g,'').length<10){ok.textContent='Coloque o celular com DDD.';$('#p-tel').focus();return}
-  ok.textContent=''; await saveLead({nome:n,email:m,tel:t,origem:'desafio'}); leadSaved=true; startGame()});
+  ok.textContent=''; if(!MC.isBot('pform')) await saveLead({nome:n,email:m,tel:t,origem:'desafio'}); leadSaved=true; startGame()});
 $('#pgo').onclick=startGame;
 const pmodal=$('#pmodal');
 $('#popen').onclick=()=>{pmodal.hidden=false; document.documentElement.classList.add('locked'); pgate.hidden=false; pgame.hidden=true; pend.hidden=true; gateState()};
@@ -2732,10 +2821,11 @@ MC.modelLoaded=()=>{LD.models=Math.min(1,LD.models+1/12)};
 document.fonts&&document.fonts.ready.then(()=>LD.fonts=1); if(!document.fonts) LD.fonts=1;
 addEventListener('load',()=>LD.page=1); if(document.readyState==='complete') LD.page=1;
 const t0=performance.now();
-function ldTick(){ if(ldDone) return; const pr=(LD.fonts*.2+LD.page*.4+LD.models*.4); /* o loader não espera vídeo (eles carregam perto da seção) */ ldShown+=(pr-ldShown)*.12; const pc=Math.round(ldShown*100);
+function ldTick(){ if(ldDone) return; const pr=(LD.fonts*.2+LD.page*.4+LD.models*.4), el=performance.now()-t0, tg=Math.min(pr,MC.reduce?1:el/4600); /* R5: ~5s, nunca mais rápido que o relógio nem que o carregamento */ ldShown+=(tg-ldShown)*.18; if(tg>=1&&ldShown>.985) ldShown=1; const pc=Math.round(ldShown*100);
+  {const msg=pc<25?'Acordando as lendas':pc<50?'Embaralhando os Reinos':pc<75?'Procurando o gorro do Saci':'Que comece o Caos', me=$('#ldmsg'); if(me&&me.textContent!==msg) me.textContent=msg}
   $('#ldbar').parentElement.style.setProperty('--lp',pc+'%'); $('#ldbar').style.width=pc+'%'; $('#ldpct').textContent=pc;
-  if((pr>.98&&ldShown>.95)||performance.now()-t0>12000){ if(!LD.tr) LD.tr=performance.now(); }
-  if(LD.tr&&performance.now()-LD.tr>(MC.reduce?300:1800)){ ldDone=true; $('#ldbar').style.width='100%'; $('#ldpct').textContent=100;
+  if((pr>.98&&ldShown>=1)||performance.now()-t0>12000){ if(!LD.tr) LD.tr=performance.now(); }
+  if(LD.tr&&performance.now()-LD.tr>(MC.reduce?150:350)){ ldDone=true; $('#ldbar').style.width='100%'; $('#ldpct').textContent=100;
     setTimeout(()=>{ const L=ldEl.querySelector('.ld-logo'), S=ldEl.querySelector('.ld-sub'), HL=$('#hlogot'), HS=$('#hlogos');
       const flyTo=(el,tg)=>{if(!el||!tg) return; const a=el.getBoundingClientRect(), t=tg.getBoundingClientRect(); if(!a.height||!t.height) return; const _=0, k=t.height/a.height; el.style.transformOrigin='50% 50%'; el.style.transform=`translate(${(t.left+t.width/2)-(a.left+a.width/2)}px,${(t.top+t.height/2)-(a.top+a.height/2)}px) scale(${k})`};
       ldEl.classList.add('fly'); document.documentElement.classList.remove('loading'); if(L&&HL&&!MC.reduce){flyTo(L,HL); flyTo(S,HS)}
@@ -2838,14 +2928,14 @@ function updStory(){ const r=stSec.getBoundingClientRect(); if(r.bottom<MC.VH*.5
   const e=bi===0?1:sstep(clamp(q/.28)), endB=bi===N-1, push=bi>0?-stM.S[bi-1]*(1-e):0;
   let cum=0; const Y=[]; for(let i=bi;i>=0;i--){ Y[i]=cum+push; if(i>0) cum+=stM.S[i-1] }
   const MOB=innerWidth<761;
-  ST.forEach((S,i)=>{ let o=0, y=0; if(MOB){ if(i===bi){ const fin=i===0?1:clamp(q/.08), fout=i===N-1?1:1-clamp((q-.88)/.12); o=Math.min(fin,fout); y=(1-fin)*40-(1-fout)*40 } } else if(i===bi){o=e; y=Y[i]} else if(i<bi){ y=Y[i]; const mob=innerWidth<761, dim=i===bi-1?1-(1-(mob?.26:.32))*e:(mob?(i===bi-2?.26*(1-e):0):.32), M=stM.b[i], vis=clamp((stM.top+M.t+y+M.h*.6-90)/(M.h*.6)); o=dim*vis*(endB?1-e:1) }
+  ST.forEach((S,i)=>{ let o=0, y=0; if(MOB){ if(i===bi){ const fin=i===0?1:clamp(q/.08), fout=i===N-1?1:1-clamp((q-.88)/.12); o=Math.min(fin,fout); y=0 } } else if(i===bi){o=e; y=Y[i]} else if(i<bi){ y=Y[i]; const mob=innerWidth<761, dim=i===bi-1?1-(1-(mob?.26:.32))*e:(mob?(i===bi-2?.26*(1-e):0):.32), M=stM.b[i], vis=clamp((stM.top+M.t+y+M.h*.6-90)/(M.h*.6)); o=dim*vis*(endB?1-e:1) }
     S.el.style.opacity=o.toFixed(3); S.el.style.transform=`translateY(${y.toFixed(1)}px)`; S.el.style.visibility=o>0.005?'visible':'hidden';
     const n=S.words.length, lit=i<bi?n:i>bi?0:(S.B.end?n*clamp(q/.3):tl(n));
     S.words.forEach((w,j)=>{const a=clamp(lit-j); w.style.setProperty('--a',a.toFixed(3))});
     S.cards.forEach((c,ci)=>{ const wOn=lit-S.words.indexOf(c.w)>.5||(S.B.early&&c.w===S.cards[0].w&&tq>.15), on=i===bi&&(S.B.red?(lit-S.words.indexOf(c.w)>.5||(S.B.early&&c.w===S.cards[0].w&&tq>.15+ci*.18)):(wOn&&tq>ci*.7)), gone=i<bi||(i===bi&&q>.9), pre=c.d.classList.contains('pre')||c.d.dataset.pre;
       if(c.big){ // o tabuleiro surge aos poucos desde o início, desfocado, e fica nítido no bloco dele
         const bp=i<bi?1:clamp((bi+q)/(i+.35)), gb=i<bi||(i===bi&&q>.9); c.d.style.setProperty('--rv',bp.toFixed(3));
-        c.d.style.opacity=gb?0:(.08+.92*Math.pow(bp,1.6)).toFixed(3); c.d.style.filter=`blur(${((1-bp)*16).toFixed(1)}px)`; c.d.classList.add('in'); return }
+        c.d.style.opacity=gb?0:(.08+.92*Math.pow(bp,1.6)).toFixed(3); c.d.style.filter=innerWidth<761?'none':`blur(${((1-bp)*16).toFixed(1)}px)`; c.d.classList.add('in'); return }
       if(pre){ c.d.dataset.pre=1; c.d.classList.toggle('pre',!on&&!gone&&i===bi); c.d.classList.toggle('in',(i===bi&&!gone)); c.d.classList.toggle('out',gone); return }
       c.d.classList.toggle('in',on&&!gone); c.d.classList.toggle('out',gone) }) });
   stDots.forEach((d,i)=>d.classList.toggle('on',i===bi));
@@ -2890,7 +2980,7 @@ function frame(now){const dt=Math.max(0,Math.min(.05,(now-lastT)/1000)); lastT=n
   const mid=MC.VH*.5; let act=sections[0]; for(const s of sections){const r=s.getBoundingClientRect(), ov=s.classList.contains('reino')&&s.previousElementSibling&&s.previousElementSibling.classList.contains('reino'); if(r.top<=(ov?MC.VH*.1:mid)&&r.bottom>0) act=s}
   let th=act.dataset.theme; if(act.id==='tabuleiro'&&(MC.boardOut||0)>.5) th='luz'; if(th!==MC.theme){MC.theme=th; if(th==='base') delete document.body.dataset.theme; else document.body.dataset.theme=th; MC.onTheme&&MC.onTheme()}
   rail.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+act.id));
-  MC.mode=MC.zoom?'zoom':act.dataset.mode; {const top=$('.top'), sr=stSec.getBoundingClientRect(), inStory=sr.bottom>MC.VH*.5; const hv=inStory?MC.storyHead:1; top.classList.toggle('instory',inStory&&hv<.5); top.style.setProperty('--hv',hv.toFixed(3)); top.style.setProperty('--lv',MC.logoLanded?1:0); } MC.p=prog(act); MC.slot=act.querySelector('[data-slot]'); MC.dock=dockEl.getBoundingClientRect();
+  MC.mode=MC.zoom?'zoom':act.dataset.mode; {const top=$('.top'), sr=stSec.getBoundingClientRect(), inStory=sr.bottom>MC.VH*.5; const hv=inStory?MC.storyHead:1; top.classList.toggle('instory',inStory&&hv<.5); top.style.setProperty('--hv',hv.toFixed(3)); top.style.setProperty('--lv',MC.logoLanded?1:0); top.classList.toggle('nodock',MC.mode!=='dock'); } MC.p=prog(act); MC.slot=act.querySelector('[data-slot]'); MC.dock=dockEl.getBoundingClientRect();
   MC.baseVis=['hero','show','board','zoom','free','story'].includes(MC.mode)?1:0;
   // a peça: o peão sai da base e fica ao lado; depois entra o texto
   {const q=MC.mode==='show'?MC.p:0; MC.sep=MC.mode==='show'?sstep(clamp((q-.1)/.45)):0;
@@ -2942,14 +3032,21 @@ function makeRing(st,items,dir=1,spd=1){ const N=items.length, step=360/N, prev=
         const z=Math.round(100-Math.abs(a)); if(z!==P.z){it.style.zIndex=z; P.z=z}}});
   const tick=now=>{ if(!run){raf=0; return} const dt=lt?Math.min(.05,(now-lt)/1000):0; lt=now; const dy=scrollY-lastY; lastY=scrollY; boost+=(Math.abs(dy)*.06-boost)*.2; base-=dir*(7*spd+boost*18)*dt; draw(); raf=requestAnimationFrame(tick)};
   draw(); if(!MC.reduce) new IntersectionObserver(es=>es.forEach(en=>{run=en.isIntersecting; if(run&&!raf){lt=0; lastY=scrollY; raf=requestAnimationFrame(tick)}}),{rootMargin:'150px'}).observe(st)}
-{const sg=document.getElementById('sgrid'); if(sg){ const cards=[...sg.children], wrap=document.createElement('div'); wrap.id='sgrid'; wrap.className='soon-rows'; wrap.setAttribute('aria-hidden','true');
-  [0,1,2].forEach(r=>{ const st=document.createElement('div'); st.className='ring-stage soon-ring'; const rg=document.createElement('div'); rg.className='ring'; st.appendChild(rg);
-    cards.forEach((c,k)=>{const f=document.createElement('figure'); f.className='ring-item'; f.appendChild(r===0?c:cards[(k+r*4)%cards.length].cloneNode(true)); rg.appendChild(f)});
-    wrap.appendChild(st); makeRing(st,[...rg.children],r%2?-1:1,[1,.8,1.15][r])});
-  sg.replaceWith(wrap); wrap.addEventListener('contextmenu',e=>e.preventDefault())}}
+// R5: em breve volta a ser uma galeria parada (grade maior), com o brilho de quase revelação
+
 // 11 galeria: volta ao mosaico (R4d); clicar amplia a foto como as cartas
-{const sec=document.getElementById('galeria'), mo=sec&&sec.querySelector('.mosaic'); if(mo){
-  const figs=[...mo.querySelectorAll('figure')];
+{const sec=document.getElementById('galeria'), mo=sec&&sec.querySelector('#gzspace'); if(mo){
+  // R5: galeria em túnel — as fotos nascem no centro, crescem rumo às bordas com a rolagem e saem de cena
+  [...mo.children].forEach(f=>mo.appendChild(f.cloneNode(true)));
+  const gzH=sec.querySelector('.gz-head'), figs=[...mo.querySelectorAll('figure')], N=figs.length, GAP=700, PRE=1200, POST=1300;
+  const pos=figs.map((f,i)=>{const a=i*2.39996+.6; return {a, ax:Math.cos(a), ay:Math.sin(a), o:-1, t:''}});
+  figs.forEach((f,i)=>f.classList.add(i%3===1?'gz-v':'gz-h'));
+  const gz=()=>{const r=sec.getBoundingClientRect(); if(r.bottom<0||r.top>MC.VH) return; const P=clamp(-r.top/Math.max(1,r.height-MC.VH)), W=innerWidth, H=MC.VH, mob=W<761;
+    const sx=W*(mob?.3:.33), sy=H*(mob?.26:.27), cam=P*(N*GAP+PRE+POST); {const ho=(1-clamp((P-.03)/.07))+clamp((P-.94)/.05), hs=ho.toFixed(2); if(gzH.style.opacity!==hs) gzH.style.opacity=hs}
+    figs.forEach((f,i)=>{const z=-(i*GAP)-PRE+cam, q=pos[i]; let o=clamp((z+3700)/900)*clamp((900-z)/450); if(MC.reduce) o=o>.05?1:0;
+      const oS=o.toFixed(2); if(oS!==q.o){f.style.opacity=oS; f.style.visibility=o>.01?'visible':'hidden'; f.style.pointerEvents=o>.6?'auto':'none'; q.o=oS}
+      if(o>.01){const t=`translate(-50%,-50%) translate3d(${(q.ax*sx).toFixed(1)}px,${(q.ay*sy).toFixed(1)}px,${z.toFixed(1)}px) rotateY(${(-q.ax*8).toFixed(2)}deg) rotateX(${(q.ay*5).toFixed(2)}deg)`; if(t!==q.t){f.style.transform=t; q.t=t}}})};
+  MC.gz=gz; addEventListener('scroll',()=>requestAnimationFrame(gz),{passive:true}); addEventListener('resize',gz); gz();
   const gm=document.createElement('div'); gm.className='modal galm'; gm.id='galm'; gm.hidden=true; gm.setAttribute('role','dialog'); gm.setAttribute('aria-modal','true'); gm.setAttribute('aria-label','Foto da galeria');
   gm.innerHTML='<div class="mbg" data-close></div><img class="galm-img" alt="Foto do MythCaos na mesa"><button class="mx" type="button" aria-label="Fechar" data-close>×</button>'; document.body.appendChild(gm);
   const big=gm.querySelector('.galm-img');
@@ -2989,13 +3086,25 @@ try{ if(false&&matchMedia('(pointer:fine)').matches&&navigator.userAgentData&&na
 {const fine=matchMedia('(pointer:fine)').matches&&matchMedia('(hover:hover)').matches;
  if(fine&&!MC.reduce){ const de=document.documentElement; de.classList.add('cur'); MC.trailN=0;
   const cur=document.createElement('div'); cur.id='mcur'; cur.setAttribute('aria-hidden','true'); cur.innerHTML='<svg viewBox="0 0 22 22"><path d="M2.5 2 L19.5 9.6 L11.4 11.6 L8.9 19.8 Z"/></svg>';
-  const tr=document.createElement('div'); tr.id='mtrail'; tr.setAttribute('aria-hidden','true');
-  const K=7, L=[...Array(K)].map((_,i)=>{const d=document.createElement('i'); d.className='mlens'; const sz=Math.round(54-i*5.5); d.style.width=d.style.height=sz+'px'; d.style.setProperty('--o',(0.9-i*.1).toFixed(2)); tr.appendChild(d); return {d,x:-200,y:-200,s:sz}});
+  // R5: rastro de fumaça na cor da lenda — fita suave com mola, afina e some (canvas em meia resolução + desfoque na GPU)
+  const tr=document.createElement('canvas'); tr.id='mtrail'; tr.setAttribute('aria-hidden','true'); const tx=tr.getContext('2d');
   document.body.append(tr,cur);
-  let mx=-200,my=-200,raf=0,idle=0;
-  const loop=()=>{ let mv=0; L.forEach((p,i)=>{const tx=i?L[i-1].x:mx, ty=i?L[i-1].y:my, k=i?.32:.38; const dx=tx-p.x, dy=ty-p.y; p.x+=dx*k; p.y+=dy*k; mv+=Math.abs(dx)+Math.abs(dy); p.d.style.transform=`translate3d(${(p.x-p.s/2).toFixed(1)}px,${(p.y-p.s/2).toFixed(1)}px,0)`});
-    const sp=Math.min(1,mv/120); tr.style.setProperty('--sp',sp.toFixed(3)); if(mv<.6){ if(++idle>8){raf=0; tr.classList.remove('on'); return} } else idle=0; raf=requestAnimationFrame(loop)};
-  addEventListener('pointermove',e=>{ if(e.pointerType&&e.pointerType!=='mouse') return; mx=e.clientX; my=e.clientY; MC.trailN++; cur.style.transform=`translate3d(${mx-2.5}px,${my-2}px,0)`; cur.style.opacity=1; tr.classList.add('on'); if(!raf){idle=0; raf=requestAnimationFrame(loop)}},{passive:true});
+  let mx=-200,my=-200,raf=0,W=0,H=0,acc='#e0362a',lastMove=0; const S=.5, pts=[], fo={x:-200,y:-200,vx:0,vy:0};
+  const size=()=>{W=innerWidth; H=innerHeight; tr.width=Math.ceil(W*S); tr.height=Math.ceil(H*S)}; size(); addEventListener('resize',size);
+  const readAcc=()=>{acc=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||acc}; readAcc(); const _ot=MC.onTheme; MC.onTheme=()=>{_ot&&_ot(); readAcc()};
+  const loop=now=>{ // mola: o rastro segue o mouse com atraso e curva natural
+    fo.vx+=(mx-fo.x)*.16; fo.vy+=(my-fo.y)*.16; fo.vx*=.66; fo.vy*=.66; fo.x+=fo.vx; fo.y+=fo.vy;
+    const sp=Math.hypot(fo.vx,fo.vy); if(now-lastMove<120||sp>.4) pts.unshift({x:fo.x,y:fo.y,l:1,w:Math.min(1,.35+sp/22)});
+    for(const p of pts) p.l-=.028; while(pts.length&&pts[pts.length-1].l<=0) pts.pop(); if(pts.length>48) pts.length=48;
+    tx.setTransform(S,0,0,S,0,0); tx.clearRect(0,0,W,H);
+    if(pts.length>2){ tx.lineCap='round'; tx.lineJoin='round'; tx.strokeStyle=acc; tx.fillStyle=acc;
+      for(let k=0;k<2;k++){ // camada larga (fumaça) e núcleo
+        for(let i=1;i<pts.length-1;i++){const a=pts[i-1], b=pts[i], c=pts[i+1], f=1-i/pts.length;
+          tx.globalAlpha=(k?.55:.22)*b.l*f; tx.lineWidth=(k?14:46)*b.w*(.25+.75*f);
+          tx.beginPath(); tx.moveTo((a.x+b.x)/2,(a.y+b.y)/2); tx.quadraticCurveTo(b.x,b.y,(b.x+c.x)/2,(b.y+c.y)/2); tx.stroke()}}
+      tx.globalAlpha=.5*pts[0].l; tx.beginPath(); tx.arc(pts[0].x,pts[0].y,16*pts[0].w,0,6.283); tx.fill(); tx.globalAlpha=1 }
+    if(pts.length||sp>.3){raf=requestAnimationFrame(loop)} else {raf=0; tr.classList.remove('on')} };
+  addEventListener('pointermove',e=>{ if(e.pointerType&&e.pointerType!=='mouse') return; mx=e.clientX; my=e.clientY; lastMove=performance.now(); MC.trailN++; cur.style.transform=`translate3d(${mx-2.5}px,${my-2}px,0)`; cur.style.opacity=1; tr.classList.add('on'); if(fo.x<-100){fo.x=mx; fo.y=my} if(!raf) raf=requestAnimationFrame(loop)},{passive:true});
   const HOV='a,button,[role="button"],label,select,.lv-card,.scard,.rel,.ring-item,.plv,.ing,[data-holo],.grv-fr';
   document.addEventListener('pointerover',e=>cur.classList.toggle('on',!!e.target.closest(HOV)));
   addEventListener('pointerdown',()=>cur.classList.add('down')); addEventListener('pointerup',()=>cur.classList.remove('down'));
@@ -3098,12 +3207,21 @@ function tick(now){
     board.rotation.x=lerp(1.28,.95,mv)-(1-rise)*.5; board.rotation.y=lerp(-1.1+rise*.5+p*1.2,-.3+p*.6,mv);
     const s=Math.min(36,Math.max(0,(p-.22)/.74*36)), i=Math.floor(s), f=smooth(s-i);
     const a=casaLocal[i], b=casaLocal[Math.min(36,i+1)]; const loc=a.clone().lerp(b,f);
+    // R5: peças menores e sem sobrepor — quem divide a mesma casa fica lado a lado
+    const PS=.46, cwB=Math.abs(casaLocal[1].x-casaLocal[0].x)||Math.abs(casaLocal[1].z-casaLocal[0].z)||.3, qR=clamp((p-.22)/.74);
+    const occ=[[MC.pawn,s]]; if(RIV.ready) RIV.ids.forEach(id=>{if(id!==MC.pawn) occ.push([id,rivStep(id,qR)])});
+    // afastamento simples: peças mais perto que minD se empurram até ficarem lado a lado
+    const P0=occ.map(([id,st])=>{if(id===MC.pawn) return {x:loc.x,z:loc.z}; const si=Math.floor(st), sf=smooth(st-si), v=casaLocal[si].clone().lerp(casaLocal[Math.min(36,si+1)],sf); return {x:v.x,z:v.z}}), OF=occ.map(()=>({x:0,z:0})), minD=cwB*.66; MC._slot=MC._slot||{};
+    for(let it=0;it<8;it++) for(let a=0;a<occ.length;a++) for(let c=a+1;c<occ.length;c++){ let dx=(P0[a].x+OF[a].x)-(P0[c].x+OF[c].x), dz=(P0[a].z+OF[a].z)-(P0[c].z+OF[c].z), d=Math.hypot(dx,dz);
+      if(d<minD){ if(d<1e-4){const an=(a*2.4+c*1.3); dx=Math.cos(an); dz=Math.sin(an); d=1} const push=(minD-Math.min(d,minD))/2, ux=dx/(d||1), uz=dz/(d||1); OF[a].x+=ux*push; OF[a].z+=uz*push; OF[c].x-=ux*push; OF[c].z-=uz*push } }
+    occ.forEach(([id],k)=>{const o=MC._slot[id]||(MC._slot[id]={x:OF[k].x,z:OF[k].z}), kk=1-Math.exp(-dt*10); o.x+=(OF[k].x-o.x)*kk; o.z+=(OF[k].z-o.z)*kk});
+    {const o=MC._slot[MC.pawn]; loc.x+=o.x; loc.z+=o.z}
     const hop=Math.sin(Math.PI*f)*.35; hopNow=hop;
-    loc.y=hop; board.updateMatrixWorld(); tp=board.localToWorld(loc); ts=.72*bs; vis=p>.16; posK=1-Math.exp(-dt*14);
+    loc.y=hop; board.updateMatrixWorld(); tp=board.localToWorld(loc); ts=PS*bs; vis=p>.16; posK=1-Math.exp(-dt*14);
     rivBuild(); if(RIV.ready){ const q=clamp((p-.22)/.74), rs=[]; const cw=Math.abs(casaLocal[1].x-casaLocal[0].x)||Math.abs(casaLocal[1].z-casaLocal[0].z)||.3;
       RIV.ids.forEach(id=>{const g=RIV.g[id]; if(id===MC.pawn){g.visible=false; return} const st=rivStep(id,q), si=Math.floor(st), sf=smooth(st-si); rs.push(+st.toFixed(2));
-        const A=casaLocal[si], B=casaLocal[Math.min(36,si+1)], v=A.clone().lerp(B,sf); const [, , ,ox,oz]=RCFG[id]; v.x+=ox*cw; v.z+=oz*cw; v.y=Math.sin(Math.PI*sf)*.3;
-        g.position.copy(v); g.rotation.set(0,-.4+Math.sin(now*.001+st)*.15,0); g.scale.setScalar(.72*(1-(MC.boardOut||0)*.999)); g.visible=p>.16; if(MC.reduce) g.rotation.y=-.4});
+        const A=casaLocal[si], B=casaLocal[Math.min(36,si+1)], v=A.clone().lerp(B,sf); const o=MC._slot[id]||{x:0,z:0}; v.x+=o.x; v.z+=o.z; v.y=Math.sin(Math.PI*sf)*.3;
+        g.position.copy(v); g.rotation.set(0,-.4+Math.sin(now*.001+st)*.15,0); g.scale.setScalar(PS*(1-(MC.boardOut||0)*.999)); g.visible=p>.16; if(MC.reduce) g.rotation.y=-.4});
       MC.boardSteps={me:+s.toFixed(2),rivals:rs} }
   } else if(mode==='story'){
     const sp=MC.storyPawn||0; tp=toWorld(W/2,H*(mob?.6:.8)); ts=Math.max(.0001,H*(mob?.25:.46)*wpp()*(.6+.4*sp)); vis=sp>.02; tiltX=.18; posK=1-Math.exp(-dt*9);

@@ -92,12 +92,21 @@ function tick(now){
     board.rotation.x=lerp(1.28,.95,mv)-(1-rise)*.5; board.rotation.y=lerp(-1.1+rise*.5+p*1.2,-.3+p*.6,mv);
     const s=Math.min(36,Math.max(0,(p-.22)/.74*36)), i=Math.floor(s), f=smooth(s-i);
     const a=casaLocal[i], b=casaLocal[Math.min(36,i+1)]; const loc=a.clone().lerp(b,f);
+    // R5: peças menores e sem sobrepor — quem divide a mesma casa fica lado a lado
+    const PS=.46, cwB=Math.abs(casaLocal[1].x-casaLocal[0].x)||Math.abs(casaLocal[1].z-casaLocal[0].z)||.3, qR=clamp((p-.22)/.74);
+    const occ=[[MC.pawn,s]]; if(RIV.ready) RIV.ids.forEach(id=>{if(id!==MC.pawn) occ.push([id,rivStep(id,qR)])});
+    // afastamento simples: peças mais perto que minD se empurram até ficarem lado a lado
+    const P0=occ.map(([id,st])=>{if(id===MC.pawn) return {x:loc.x,z:loc.z}; const si=Math.floor(st), sf=smooth(st-si), v=casaLocal[si].clone().lerp(casaLocal[Math.min(36,si+1)],sf); return {x:v.x,z:v.z}}), OF=occ.map(()=>({x:0,z:0})), minD=cwB*.66; MC._slot=MC._slot||{};
+    for(let it=0;it<8;it++) for(let a=0;a<occ.length;a++) for(let c=a+1;c<occ.length;c++){ let dx=(P0[a].x+OF[a].x)-(P0[c].x+OF[c].x), dz=(P0[a].z+OF[a].z)-(P0[c].z+OF[c].z), d=Math.hypot(dx,dz);
+      if(d<minD){ if(d<1e-4){const an=(a*2.4+c*1.3); dx=Math.cos(an); dz=Math.sin(an); d=1} const push=(minD-Math.min(d,minD))/2, ux=dx/(d||1), uz=dz/(d||1); OF[a].x+=ux*push; OF[a].z+=uz*push; OF[c].x-=ux*push; OF[c].z-=uz*push } }
+    occ.forEach(([id],k)=>{const o=MC._slot[id]||(MC._slot[id]={x:OF[k].x,z:OF[k].z}), kk=1-Math.exp(-dt*10); o.x+=(OF[k].x-o.x)*kk; o.z+=(OF[k].z-o.z)*kk});
+    {const o=MC._slot[MC.pawn]; loc.x+=o.x; loc.z+=o.z}
     const hop=Math.sin(Math.PI*f)*.35; hopNow=hop;
-    loc.y=hop; board.updateMatrixWorld(); tp=board.localToWorld(loc); ts=.72*bs; vis=p>.16; posK=1-Math.exp(-dt*14);
+    loc.y=hop; board.updateMatrixWorld(); tp=board.localToWorld(loc); ts=PS*bs; vis=p>.16; posK=1-Math.exp(-dt*14);
     rivBuild(); if(RIV.ready){ const q=clamp((p-.22)/.74), rs=[]; const cw=Math.abs(casaLocal[1].x-casaLocal[0].x)||Math.abs(casaLocal[1].z-casaLocal[0].z)||.3;
       RIV.ids.forEach(id=>{const g=RIV.g[id]; if(id===MC.pawn){g.visible=false; return} const st=rivStep(id,q), si=Math.floor(st), sf=smooth(st-si); rs.push(+st.toFixed(2));
-        const A=casaLocal[si], B=casaLocal[Math.min(36,si+1)], v=A.clone().lerp(B,sf); const [, , ,ox,oz]=RCFG[id]; v.x+=ox*cw; v.z+=oz*cw; v.y=Math.sin(Math.PI*sf)*.3;
-        g.position.copy(v); g.rotation.set(0,-.4+Math.sin(now*.001+st)*.15,0); g.scale.setScalar(.72*(1-(MC.boardOut||0)*.999)); g.visible=p>.16; if(MC.reduce) g.rotation.y=-.4});
+        const A=casaLocal[si], B=casaLocal[Math.min(36,si+1)], v=A.clone().lerp(B,sf); const o=MC._slot[id]||{x:0,z:0}; v.x+=o.x; v.z+=o.z; v.y=Math.sin(Math.PI*sf)*.3;
+        g.position.copy(v); g.rotation.set(0,-.4+Math.sin(now*.001+st)*.15,0); g.scale.setScalar(PS*(1-(MC.boardOut||0)*.999)); g.visible=p>.16; if(MC.reduce) g.rotation.y=-.4});
       MC.boardSteps={me:+s.toFixed(2),rivals:rs} }
   } else if(mode==='story'){
     const sp=MC.storyPawn||0; tp=toWorld(W/2,H*(mob?.6:.8)); ts=Math.max(.0001,H*(mob?.25:.46)*wpp()*(.6+.4*sp)); vis=sp>.02; tiltX=.18; posK=1-Math.exp(-dt*9);

@@ -23,9 +23,10 @@ const find=f=>{const k=WHERE[f]; return k?{k,c:MANI[k].find(x=>x.f===f+'.jpg')}:
 const PAWNS=[['saci','Saci','#c8281e','#e0362a'],['iara','Iara','#2f6fd0','#3f8cff'],['medusa','Medusa','#7a8a34','#9cb03c'],['mula','Mula sem Cabeça','#2a2a30','#ff7a1a'],['papainoel','Klaus','#ede6da','#e6edf5'],['valquiria','Valquíria','#e8b923','#f2c230']];
 if(PAWNS.some(p=>p[0]===window.MC_L)) MC.pawn=window.MC_L; // R4d: o peão que acompanha é o mesmo da logo sorteada na chegada
 function applyPawn(id){const p=PAWNS.find(x=>x[0]===id);MC.pawn=id;if(MC.pawnReady) document.querySelectorAll('img.mclogo').forEach(i=>{const f=v=>v.replace(/logo-[a-z]+-(\d)/g,'logo-'+id+'-$1'); i.srcset=f(i.srcset); if(i.getAttribute('src')) i.src=f(i.src)});document.documentElement.style.setProperty('--accent',p[3]);document.documentElement.style.setProperty('--btn-ink',id==='papainoel'?'#0d1a1c':'#140c08');
-  try{localStorage.setItem('mc-pawn',id)}catch(e){}; $$('#gpick button,#ptagm button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id)); const tn=$('#ptagn'); if(tn) tn.textContent=p[1]; const zn=$('#pzn'); if(zn) zn.textContent=p[1]; MC.onPawn&&MC.onPawn(id); MC.onTheme&&MC.onTheme()}
+  try{localStorage.setItem('mc-pawn',id)}catch(e){}; $$('#gpick button,#ptagm button,#pzpick button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id)); const tn=$('#ptagn'); if(tn) tn.textContent=p[1]; const zn=$('#pzn'); if(zn) zn.textContent=p[1]; MC.onPawn&&MC.onPawn(id); MC.onTheme&&MC.onTheme()}
 const gpick=$('#gpick');
 if(gpick) PAWNS.forEach(([id,name,c])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.style.setProperty('--c',c);b.innerHTML=`<i></i><span>${name.split(' ')[0]}</span>`;b.setAttribute('aria-label',name);b.onclick=()=>applyPawn(id);gpick.appendChild(b)});
+{const pp=$('#pzpick'); if(pp) PAWNS.forEach(([id,name,c])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.style.setProperty('--c',c);b.innerHTML=`<i></i><span>${name}</span>`;b.setAttribute('aria-pressed',id===MC.pawn);b.onclick=()=>applyPawn(id);pp.appendChild(b)})}
 const ptm=$('#ptagm'), ptb=$('#ptagb');
 PAWNS.forEach(([id,name,c])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.style.setProperty('--c',c);b.innerHTML=`<i></i>${name}`;b.onclick=()=>{applyPawn(id);togTag(false)};ptm.appendChild(b)});
 function togTag(on){ptm.hidden=!on;ptb.setAttribute('aria-expanded',on)}
@@ -103,16 +104,19 @@ updCounter();
 $('#tzplay').addEventListener('click',()=>openLead({k:'Teaser',t:'O teaser está quase pronto',d:'Deixe seu contato e receba o vídeo em primeira mão, antes de ir ao ar.'}));
 const okEmail=v=>/^\S+@\S+\.\S+$/.test(v);
 async function saveLead(d){ MC.rememberLead({nome:d.nome||'',email:d.email,tel:d.tel||''}); MC.onLead&&MC.onLead(); const store=await MC.store; if(!store) return false; try{ await store.saveLead(d); return true }catch(e){ return false } }
+// R5 anti-robô sem captcha visível: campo-isca escondido + tempo mínimo de preenchimento + limite por sessão
+const BOT={t:{},n:0}; ['form','pform','leadf'].forEach(id=>{const f=document.getElementById(id); f&&f.addEventListener('focusin',()=>{BOT.t[id]=BOT.t[id]||performance.now()})});
+MC.isBot=id=>{const f=document.getElementById(id), hp=f&&f.querySelector('.hpf input'); if(hp&&hp.value) return true; const t=BOT.t[id]; if(!t||performance.now()-t<1500) return true; if(++BOT.n>6) return true; return false};
 $('#leadf').addEventListener('submit',async e=>{e.preventDefault();const n=$('#l-nome').value.trim(),m=$('#l-email').value.trim(),t=$('#l-tel').value.trim(),ok=$('#lok');
   if(MC.afterLead&&!n){ok.textContent='Escreva seu nome.';$('#l-nome').focus();return}
   if(!okEmail(m)){ok.textContent='Esse e-mail parece incompleto. Confira e tente de novo.';$('#l-email').focus();return}
   if(MC.afterLead&&t.replace(/\D/g,'').length<10){ok.textContent='Coloque um celular com DDD.';$('#l-tel').focus();return}
-  const saved=await saveLead({nome:n,email:m,tel:t,origem:'popup'}); leadSaved=true;
+  const saved=MC.isBot('leadf')?true:await saveLead({nome:n,email:m,tel:t,origem:'popup'}); leadSaved=true;
   ok.textContent=saved?`Pronto${n?', '+n.split(' ')[0]:''}! Você vai receber as novidades.`:'Recebemos seus dados nesta tela, mas o envio ainda não está ligado nesta prévia.'; MC.onJoin&&MC.onJoin(); updCounter(); const al=MC.afterLead; MC.afterLead=null; al&&al(); setTimeout(()=>closeModal(leadM),al?900:1800)});
 $('#form').addEventListener('submit',async e=>{e.preventDefault();const n=$('#f-nome').value.trim(),m=$('#f-email').value.trim(),ok=$('#ok');
   if(!n){ok.textContent='Escreva seu nome para entrar na lista.';$('#f-nome').focus();return}
   if(!okEmail(m)){ok.textContent='Esse e-mail parece incompleto. Confira e tente de novo.';$('#f-email').focus();return}
-  const saved=await saveLead({nome:n,email:m,tel:$('#f-tel').value.trim(),mesa:$('#f-mesa').value,catarse:$('#f-catarse').checked,origem:'lista'}); leadSaved=true;
+  const saved=MC.isBot('form')?true:await saveLead({nome:n,email:m,tel:$('#f-tel').value.trim(),mesa:$('#f-mesa').value,catarse:$('#f-catarse').checked,origem:'lista'}); leadSaved=true;
   ok.textContent=saved?`Pronto, ${n.split(' ')[0]}. Seu lugar na mesa está guardado.`:'Recebemos seus dados nesta tela, mas o envio ainda não está ligado nesta prévia.'; MC.onJoin&&MC.onJoin()});
 
 // ---------- lightbox: carta centralizada ----------
@@ -297,21 +301,21 @@ INGS.forEach(([id,n])=>{const b=document.createElement('button');b.type='button'
 function paintSlots(){slotsEl.forEach((s,i)=>{s.classList.toggle('on',!!mix[i]);s.style.backgroundImage=mix[i]?`url(${TOK(mix[i])})`:''})}
 function recHTML(R){return Object.entries(R.r).map(([k,v])=>`<span class="ri"><img src="${TOK(k)}" alt=""><b>${v}×</b><em>${INGN[k]}</em></span>`).join('')}
 function setM(st){ mstate=st; $('#caldeirao').classList.toggle('playing',st==='play'); const m=target&&MANI.magia.find(c=>c.f===target.f+'.jpg');
-  const T={idle:['Clique na carta para revelar sua Magia','Clique na carta para receber sua Magia secreta e ver a receita.','Crie sua Magia','Primeiro descubra a receita, depois monte no caldeirão.'],
+  const T={idle:['Clique na carta para revelar seu Feitiço','Clique na carta para receber seu Feitiço secreto e ver a receita.','Crie seu Feitiço','Primeiro descubra a receita, depois monte no caldeirão.'],
     recipe:['Clique na carta para virar e começar','Decore a receita. Clique na carta de novo para virar e começar.',m&&m.n,'Essa é a sua Magia secreta.'],
     play:['Clique na carta para rever a receita','Escolha os ingredientes da receita e mexa o caldeirão.',m&&m.n,'Monte a receita: '+(target?Object.entries(target.r).map(([k,v])=>v+' '+INGN[k]).join(' + '):'')],
-    won:['','Magia realizada!',m&&m.n,m?m.e.replace(/Ingredientes:[^.]*\.\s*/,''):'']}[st];
+    won:['','Feitiço realizado!',m&&m.n,m?m.e.replace(/Ingredientes:[^.]*\.\s*/,''):'']}[st];
   $('#pothint').textContent=T[0]; $('#cxhint').textContent=T[1]; $('#cn').textContent=T[2]||''; $('#ce').textContent=T[3]||'';
   ingEls.forEach(b=>b.setAttribute('aria-disabled',st!=='play')); $('#again').hidden=st!=='won'; $('#brew').hidden=st==='won'}
 pot.setAttribute('role','button'); pot.tabIndex=0;
 function potClick(){ if(pot.classList.contains('brew')) return;
   if(mstate==='idle'||mstate==='won'){ mix.length=0; paintSlots(); target=REC[Math.floor(Math.random()*REC.length)]; const m=MANI.magia.find(c=>c.f===target.f+'.jpg');
-    $('#mrec').innerHTML=`<p class="label">Sua Magia secreta</p><h4>${m.n}</h4><div class="rrow">${recHTML(target)}</div>`; $('#mrec').hidden=false; $('#magimg').hidden=true; pot.classList.add('flip'); setM('recipe') }
+    $('#mrec').innerHTML=`<p class="label">Seu Feitiço secreto</p><h4>${m.n}</h4><div class="rrow">${recHTML(target)}</div>`; $('#mrec').hidden=false; $('#magimg').hidden=true; pot.classList.add('flip'); setM('recipe') }
   else if(mstate==='recipe'){ pot.classList.remove('flip'); setM('play') }
   else if(mstate==='play'){ pot.classList.add('flip'); setM('recipe') } }
 $('#again').onclick=()=>{ pot.classList.remove('flip','won'); setTimeout(()=>{mstate='idle'; potClick()},450) };
 {const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){io.disconnect(); setTimeout(()=>pot.classList.add('laid'),350)}}),{threshold:.45}); if(MC.reduce) pot.classList.add('laid'); else io.observe(pot)} // 12 entra em pé e deita na mesa
-holo(pot,16,.05); pot.querySelectorAll('.face').forEach(f=>f.insertAdjacentHTML('beforeend',fxHTML));
+holo(pot,9,.05); pot.querySelectorAll('.face').forEach(f=>f.insertAdjacentHTML('beforeend',fxHTML));
 pot.addEventListener('click',potClick); pot.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();potClick()}});
 function resetPot(){mix.length=0;paintSlots();pot.classList.remove('brew')}
 $('#cclear').onclick=()=>resetPot();
@@ -372,7 +376,7 @@ $('#pform').addEventListener('submit',async e=>{e.preventDefault(); const n=$('#
   if(!n){ok.textContent='Escreva o nome que vai aparecer no ranking.';$('#p-nome').focus();return}
   if(!okEmail(m)){ok.textContent='Esse e-mail parece incompleto. Confira e tente de novo.';$('#p-email').focus();return}
   if(t.replace(/\D/g,'').length<10){ok.textContent='Coloque o celular com DDD.';$('#p-tel').focus();return}
-  ok.textContent=''; await saveLead({nome:n,email:m,tel:t,origem:'desafio'}); leadSaved=true; startGame()});
+  ok.textContent=''; if(!MC.isBot('pform')) await saveLead({nome:n,email:m,tel:t,origem:'desafio'}); leadSaved=true; startGame()});
 $('#pgo').onclick=startGame;
 const pmodal=$('#pmodal');
 $('#popen').onclick=()=>{pmodal.hidden=false; document.documentElement.classList.add('locked'); pgate.hidden=false; pgame.hidden=true; pend.hidden=true; gateState()};
@@ -479,10 +483,11 @@ MC.modelLoaded=()=>{LD.models=Math.min(1,LD.models+1/12)};
 document.fonts&&document.fonts.ready.then(()=>LD.fonts=1); if(!document.fonts) LD.fonts=1;
 addEventListener('load',()=>LD.page=1); if(document.readyState==='complete') LD.page=1;
 const t0=performance.now();
-function ldTick(){ if(ldDone) return; const pr=(LD.fonts*.2+LD.page*.4+LD.models*.4); /* o loader não espera vídeo (eles carregam perto da seção) */ ldShown+=(pr-ldShown)*.12; const pc=Math.round(ldShown*100);
+function ldTick(){ if(ldDone) return; const pr=(LD.fonts*.2+LD.page*.4+LD.models*.4), el=performance.now()-t0, tg=Math.min(pr,MC.reduce?1:el/4600); /* R5: ~5s, nunca mais rápido que o relógio nem que o carregamento */ ldShown+=(tg-ldShown)*.18; if(tg>=1&&ldShown>.985) ldShown=1; const pc=Math.round(ldShown*100);
+  {const msg=pc<25?'Acordando as lendas':pc<50?'Embaralhando os Reinos':pc<75?'Procurando o gorro do Saci':'Que comece o Caos', me=$('#ldmsg'); if(me&&me.textContent!==msg) me.textContent=msg}
   $('#ldbar').parentElement.style.setProperty('--lp',pc+'%'); $('#ldbar').style.width=pc+'%'; $('#ldpct').textContent=pc;
-  if((pr>.98&&ldShown>.95)||performance.now()-t0>12000){ if(!LD.tr) LD.tr=performance.now(); }
-  if(LD.tr&&performance.now()-LD.tr>(MC.reduce?300:1800)){ ldDone=true; $('#ldbar').style.width='100%'; $('#ldpct').textContent=100;
+  if((pr>.98&&ldShown>=1)||performance.now()-t0>12000){ if(!LD.tr) LD.tr=performance.now(); }
+  if(LD.tr&&performance.now()-LD.tr>(MC.reduce?150:350)){ ldDone=true; $('#ldbar').style.width='100%'; $('#ldpct').textContent=100;
     setTimeout(()=>{ const L=ldEl.querySelector('.ld-logo'), S=ldEl.querySelector('.ld-sub'), HL=$('#hlogot'), HS=$('#hlogos');
       const flyTo=(el,tg)=>{if(!el||!tg) return; const a=el.getBoundingClientRect(), t=tg.getBoundingClientRect(); if(!a.height||!t.height) return; const _=0, k=t.height/a.height; el.style.transformOrigin='50% 50%'; el.style.transform=`translate(${(t.left+t.width/2)-(a.left+a.width/2)}px,${(t.top+t.height/2)-(a.top+a.height/2)}px) scale(${k})`};
       ldEl.classList.add('fly'); document.documentElement.classList.remove('loading'); if(L&&HL&&!MC.reduce){flyTo(L,HL); flyTo(S,HS)}
@@ -585,14 +590,14 @@ function updStory(){ const r=stSec.getBoundingClientRect(); if(r.bottom<MC.VH*.5
   const e=bi===0?1:sstep(clamp(q/.28)), endB=bi===N-1, push=bi>0?-stM.S[bi-1]*(1-e):0;
   let cum=0; const Y=[]; for(let i=bi;i>=0;i--){ Y[i]=cum+push; if(i>0) cum+=stM.S[i-1] }
   const MOB=innerWidth<761;
-  ST.forEach((S,i)=>{ let o=0, y=0; if(MOB){ if(i===bi){ const fin=i===0?1:clamp(q/.08), fout=i===N-1?1:1-clamp((q-.88)/.12); o=Math.min(fin,fout); y=(1-fin)*40-(1-fout)*40 } } else if(i===bi){o=e; y=Y[i]} else if(i<bi){ y=Y[i]; const mob=innerWidth<761, dim=i===bi-1?1-(1-(mob?.26:.32))*e:(mob?(i===bi-2?.26*(1-e):0):.32), M=stM.b[i], vis=clamp((stM.top+M.t+y+M.h*.6-90)/(M.h*.6)); o=dim*vis*(endB?1-e:1) }
+  ST.forEach((S,i)=>{ let o=0, y=0; if(MOB){ if(i===bi){ const fin=i===0?1:clamp(q/.08), fout=i===N-1?1:1-clamp((q-.88)/.12); o=Math.min(fin,fout); y=0 } } else if(i===bi){o=e; y=Y[i]} else if(i<bi){ y=Y[i]; const mob=innerWidth<761, dim=i===bi-1?1-(1-(mob?.26:.32))*e:(mob?(i===bi-2?.26*(1-e):0):.32), M=stM.b[i], vis=clamp((stM.top+M.t+y+M.h*.6-90)/(M.h*.6)); o=dim*vis*(endB?1-e:1) }
     S.el.style.opacity=o.toFixed(3); S.el.style.transform=`translateY(${y.toFixed(1)}px)`; S.el.style.visibility=o>0.005?'visible':'hidden';
     const n=S.words.length, lit=i<bi?n:i>bi?0:(S.B.end?n*clamp(q/.3):tl(n));
     S.words.forEach((w,j)=>{const a=clamp(lit-j); w.style.setProperty('--a',a.toFixed(3))});
     S.cards.forEach((c,ci)=>{ const wOn=lit-S.words.indexOf(c.w)>.5||(S.B.early&&c.w===S.cards[0].w&&tq>.15), on=i===bi&&(S.B.red?(lit-S.words.indexOf(c.w)>.5||(S.B.early&&c.w===S.cards[0].w&&tq>.15+ci*.18)):(wOn&&tq>ci*.7)), gone=i<bi||(i===bi&&q>.9), pre=c.d.classList.contains('pre')||c.d.dataset.pre;
       if(c.big){ // o tabuleiro surge aos poucos desde o início, desfocado, e fica nítido no bloco dele
         const bp=i<bi?1:clamp((bi+q)/(i+.35)), gb=i<bi||(i===bi&&q>.9); c.d.style.setProperty('--rv',bp.toFixed(3));
-        c.d.style.opacity=gb?0:(.08+.92*Math.pow(bp,1.6)).toFixed(3); c.d.style.filter=`blur(${((1-bp)*16).toFixed(1)}px)`; c.d.classList.add('in'); return }
+        c.d.style.opacity=gb?0:(.08+.92*Math.pow(bp,1.6)).toFixed(3); c.d.style.filter=innerWidth<761?'none':`blur(${((1-bp)*16).toFixed(1)}px)`; c.d.classList.add('in'); return }
       if(pre){ c.d.dataset.pre=1; c.d.classList.toggle('pre',!on&&!gone&&i===bi); c.d.classList.toggle('in',(i===bi&&!gone)); c.d.classList.toggle('out',gone); return }
       c.d.classList.toggle('in',on&&!gone); c.d.classList.toggle('out',gone) }) });
   stDots.forEach((d,i)=>d.classList.toggle('on',i===bi));
@@ -637,7 +642,7 @@ function frame(now){const dt=Math.max(0,Math.min(.05,(now-lastT)/1000)); lastT=n
   const mid=MC.VH*.5; let act=sections[0]; for(const s of sections){const r=s.getBoundingClientRect(), ov=s.classList.contains('reino')&&s.previousElementSibling&&s.previousElementSibling.classList.contains('reino'); if(r.top<=(ov?MC.VH*.1:mid)&&r.bottom>0) act=s}
   let th=act.dataset.theme; if(act.id==='tabuleiro'&&(MC.boardOut||0)>.5) th='luz'; if(th!==MC.theme){MC.theme=th; if(th==='base') delete document.body.dataset.theme; else document.body.dataset.theme=th; MC.onTheme&&MC.onTheme()}
   rail.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+act.id));
-  MC.mode=MC.zoom?'zoom':act.dataset.mode; {const top=$('.top'), sr=stSec.getBoundingClientRect(), inStory=sr.bottom>MC.VH*.5; const hv=inStory?MC.storyHead:1; top.classList.toggle('instory',inStory&&hv<.5); top.style.setProperty('--hv',hv.toFixed(3)); top.style.setProperty('--lv',MC.logoLanded?1:0); } MC.p=prog(act); MC.slot=act.querySelector('[data-slot]'); MC.dock=dockEl.getBoundingClientRect();
+  MC.mode=MC.zoom?'zoom':act.dataset.mode; {const top=$('.top'), sr=stSec.getBoundingClientRect(), inStory=sr.bottom>MC.VH*.5; const hv=inStory?MC.storyHead:1; top.classList.toggle('instory',inStory&&hv<.5); top.style.setProperty('--hv',hv.toFixed(3)); top.style.setProperty('--lv',MC.logoLanded?1:0); top.classList.toggle('nodock',MC.mode!=='dock'); } MC.p=prog(act); MC.slot=act.querySelector('[data-slot]'); MC.dock=dockEl.getBoundingClientRect();
   MC.baseVis=['hero','show','board','zoom','free','story'].includes(MC.mode)?1:0;
   // a peça: o peão sai da base e fica ao lado; depois entra o texto
   {const q=MC.mode==='show'?MC.p:0; MC.sep=MC.mode==='show'?sstep(clamp((q-.1)/.45)):0;
@@ -689,14 +694,21 @@ function makeRing(st,items,dir=1,spd=1){ const N=items.length, step=360/N, prev=
         const z=Math.round(100-Math.abs(a)); if(z!==P.z){it.style.zIndex=z; P.z=z}}});
   const tick=now=>{ if(!run){raf=0; return} const dt=lt?Math.min(.05,(now-lt)/1000):0; lt=now; const dy=scrollY-lastY; lastY=scrollY; boost+=(Math.abs(dy)*.06-boost)*.2; base-=dir*(7*spd+boost*18)*dt; draw(); raf=requestAnimationFrame(tick)};
   draw(); if(!MC.reduce) new IntersectionObserver(es=>es.forEach(en=>{run=en.isIntersecting; if(run&&!raf){lt=0; lastY=scrollY; raf=requestAnimationFrame(tick)}}),{rootMargin:'150px'}).observe(st)}
-{const sg=document.getElementById('sgrid'); if(sg){ const cards=[...sg.children], wrap=document.createElement('div'); wrap.id='sgrid'; wrap.className='soon-rows'; wrap.setAttribute('aria-hidden','true');
-  [0,1,2].forEach(r=>{ const st=document.createElement('div'); st.className='ring-stage soon-ring'; const rg=document.createElement('div'); rg.className='ring'; st.appendChild(rg);
-    cards.forEach((c,k)=>{const f=document.createElement('figure'); f.className='ring-item'; f.appendChild(r===0?c:cards[(k+r*4)%cards.length].cloneNode(true)); rg.appendChild(f)});
-    wrap.appendChild(st); makeRing(st,[...rg.children],r%2?-1:1,[1,.8,1.15][r])});
-  sg.replaceWith(wrap); wrap.addEventListener('contextmenu',e=>e.preventDefault())}}
+// R5: em breve volta a ser uma galeria parada (grade maior), com o brilho de quase revelação
+
 // 11 galeria: volta ao mosaico (R4d); clicar amplia a foto como as cartas
-{const sec=document.getElementById('galeria'), mo=sec&&sec.querySelector('.mosaic'); if(mo){
-  const figs=[...mo.querySelectorAll('figure')];
+{const sec=document.getElementById('galeria'), mo=sec&&sec.querySelector('#gzspace'); if(mo){
+  // R5: galeria em túnel — as fotos nascem no centro, crescem rumo às bordas com a rolagem e saem de cena
+  [...mo.children].forEach(f=>mo.appendChild(f.cloneNode(true)));
+  const gzH=sec.querySelector('.gz-head'), figs=[...mo.querySelectorAll('figure')], N=figs.length, GAP=700, PRE=1200, POST=1300;
+  const pos=figs.map((f,i)=>{const a=i*2.39996+.6; return {a, ax:Math.cos(a), ay:Math.sin(a), o:-1, t:''}});
+  figs.forEach((f,i)=>f.classList.add(i%3===1?'gz-v':'gz-h'));
+  const gz=()=>{const r=sec.getBoundingClientRect(); if(r.bottom<0||r.top>MC.VH) return; const P=clamp(-r.top/Math.max(1,r.height-MC.VH)), W=innerWidth, H=MC.VH, mob=W<761;
+    const sx=W*(mob?.3:.33), sy=H*(mob?.26:.27), cam=P*(N*GAP+PRE+POST); {const ho=(1-clamp((P-.03)/.07))+clamp((P-.94)/.05), hs=ho.toFixed(2); if(gzH.style.opacity!==hs) gzH.style.opacity=hs}
+    figs.forEach((f,i)=>{const z=-(i*GAP)-PRE+cam, q=pos[i]; let o=clamp((z+3700)/900)*clamp((900-z)/450); if(MC.reduce) o=o>.05?1:0;
+      const oS=o.toFixed(2); if(oS!==q.o){f.style.opacity=oS; f.style.visibility=o>.01?'visible':'hidden'; f.style.pointerEvents=o>.6?'auto':'none'; q.o=oS}
+      if(o>.01){const t=`translate(-50%,-50%) translate3d(${(q.ax*sx).toFixed(1)}px,${(q.ay*sy).toFixed(1)}px,${z.toFixed(1)}px) rotateY(${(-q.ax*8).toFixed(2)}deg) rotateX(${(q.ay*5).toFixed(2)}deg)`; if(t!==q.t){f.style.transform=t; q.t=t}}})};
+  MC.gz=gz; addEventListener('scroll',()=>requestAnimationFrame(gz),{passive:true}); addEventListener('resize',gz); gz();
   const gm=document.createElement('div'); gm.className='modal galm'; gm.id='galm'; gm.hidden=true; gm.setAttribute('role','dialog'); gm.setAttribute('aria-modal','true'); gm.setAttribute('aria-label','Foto da galeria');
   gm.innerHTML='<div class="mbg" data-close></div><img class="galm-img" alt="Foto do MythCaos na mesa"><button class="mx" type="button" aria-label="Fechar" data-close>×</button>'; document.body.appendChild(gm);
   const big=gm.querySelector('.galm-img');
@@ -736,13 +748,25 @@ try{ if(false&&matchMedia('(pointer:fine)').matches&&navigator.userAgentData&&na
 {const fine=matchMedia('(pointer:fine)').matches&&matchMedia('(hover:hover)').matches;
  if(fine&&!MC.reduce){ const de=document.documentElement; de.classList.add('cur'); MC.trailN=0;
   const cur=document.createElement('div'); cur.id='mcur'; cur.setAttribute('aria-hidden','true'); cur.innerHTML='<svg viewBox="0 0 22 22"><path d="M2.5 2 L19.5 9.6 L11.4 11.6 L8.9 19.8 Z"/></svg>';
-  const tr=document.createElement('div'); tr.id='mtrail'; tr.setAttribute('aria-hidden','true');
-  const K=7, L=[...Array(K)].map((_,i)=>{const d=document.createElement('i'); d.className='mlens'; const sz=Math.round(54-i*5.5); d.style.width=d.style.height=sz+'px'; d.style.setProperty('--o',(0.9-i*.1).toFixed(2)); tr.appendChild(d); return {d,x:-200,y:-200,s:sz}});
+  // R5: rastro de fumaça na cor da lenda — fita suave com mola, afina e some (canvas em meia resolução + desfoque na GPU)
+  const tr=document.createElement('canvas'); tr.id='mtrail'; tr.setAttribute('aria-hidden','true'); const tx=tr.getContext('2d');
   document.body.append(tr,cur);
-  let mx=-200,my=-200,raf=0,idle=0;
-  const loop=()=>{ let mv=0; L.forEach((p,i)=>{const tx=i?L[i-1].x:mx, ty=i?L[i-1].y:my, k=i?.32:.38; const dx=tx-p.x, dy=ty-p.y; p.x+=dx*k; p.y+=dy*k; mv+=Math.abs(dx)+Math.abs(dy); p.d.style.transform=`translate3d(${(p.x-p.s/2).toFixed(1)}px,${(p.y-p.s/2).toFixed(1)}px,0)`});
-    const sp=Math.min(1,mv/120); tr.style.setProperty('--sp',sp.toFixed(3)); if(mv<.6){ if(++idle>8){raf=0; tr.classList.remove('on'); return} } else idle=0; raf=requestAnimationFrame(loop)};
-  addEventListener('pointermove',e=>{ if(e.pointerType&&e.pointerType!=='mouse') return; mx=e.clientX; my=e.clientY; MC.trailN++; cur.style.transform=`translate3d(${mx-2.5}px,${my-2}px,0)`; cur.style.opacity=1; tr.classList.add('on'); if(!raf){idle=0; raf=requestAnimationFrame(loop)}},{passive:true});
+  let mx=-200,my=-200,raf=0,W=0,H=0,acc='#e0362a',lastMove=0; const S=.5, pts=[], fo={x:-200,y:-200,vx:0,vy:0};
+  const size=()=>{W=innerWidth; H=innerHeight; tr.width=Math.ceil(W*S); tr.height=Math.ceil(H*S)}; size(); addEventListener('resize',size);
+  const readAcc=()=>{acc=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||acc}; readAcc(); const _ot=MC.onTheme; MC.onTheme=()=>{_ot&&_ot(); readAcc()};
+  const loop=now=>{ // mola: o rastro segue o mouse com atraso e curva natural
+    fo.vx+=(mx-fo.x)*.16; fo.vy+=(my-fo.y)*.16; fo.vx*=.66; fo.vy*=.66; fo.x+=fo.vx; fo.y+=fo.vy;
+    const sp=Math.hypot(fo.vx,fo.vy); if(now-lastMove<120||sp>.4) pts.unshift({x:fo.x,y:fo.y,l:1,w:Math.min(1,.35+sp/22)});
+    for(const p of pts) p.l-=.028; while(pts.length&&pts[pts.length-1].l<=0) pts.pop(); if(pts.length>48) pts.length=48;
+    tx.setTransform(S,0,0,S,0,0); tx.clearRect(0,0,W,H);
+    if(pts.length>2){ tx.lineCap='round'; tx.lineJoin='round'; tx.strokeStyle=acc; tx.fillStyle=acc;
+      for(let k=0;k<2;k++){ // camada larga (fumaça) e núcleo
+        for(let i=1;i<pts.length-1;i++){const a=pts[i-1], b=pts[i], c=pts[i+1], f=1-i/pts.length;
+          tx.globalAlpha=(k?.55:.22)*b.l*f; tx.lineWidth=(k?14:46)*b.w*(.25+.75*f);
+          tx.beginPath(); tx.moveTo((a.x+b.x)/2,(a.y+b.y)/2); tx.quadraticCurveTo(b.x,b.y,(b.x+c.x)/2,(b.y+c.y)/2); tx.stroke()}}
+      tx.globalAlpha=.5*pts[0].l; tx.beginPath(); tx.arc(pts[0].x,pts[0].y,16*pts[0].w,0,6.283); tx.fill(); tx.globalAlpha=1 }
+    if(pts.length||sp>.3){raf=requestAnimationFrame(loop)} else {raf=0; tr.classList.remove('on')} };
+  addEventListener('pointermove',e=>{ if(e.pointerType&&e.pointerType!=='mouse') return; mx=e.clientX; my=e.clientY; lastMove=performance.now(); MC.trailN++; cur.style.transform=`translate3d(${mx-2.5}px,${my-2}px,0)`; cur.style.opacity=1; tr.classList.add('on'); if(fo.x<-100){fo.x=mx; fo.y=my} if(!raf) raf=requestAnimationFrame(loop)},{passive:true});
   const HOV='a,button,[role="button"],label,select,.lv-card,.scard,.rel,.ring-item,.plv,.ing,[data-holo],.grv-fr';
   document.addEventListener('pointerover',e=>cur.classList.toggle('on',!!e.target.closest(HOV)));
   addEventListener('pointerdown',()=>cur.classList.add('down')); addEventListener('pointerup',()=>cur.classList.remove('down'));
