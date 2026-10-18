@@ -1957,10 +1957,17 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
 #autorm .lbbtns{margin-top:26px!important}
 @media (max-width:760px){#autorm a.achip{font-size:12.5px!important;letter-spacing:0!important}#autorm ul.autorc li+li::before{margin:0 7px}#autorm .anum{display:none!important}#autorm .awa{display:inline}}
 </style>
+<style>/* R10: carregamento que queima de baixo para cima */
+.loader.burn{background:transparent!important;transition:none!important}
+.loader .ld-burn{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.loader .ld-in,.loader .ld-credit{position:relative;z-index:1}
+.loader .ld-credit{position:absolute}
+.loader.burn{pointer-events:none}
+</style>
 
 </head><body><link rel="preload" href="assets/fonts/vakantcy.woff2" as="font" type="font/woff2" crossorigin>
 <div class="loader" id="loader" role="status" aria-live="polite">
-  <div class="ld-in"><p class="ld-logo"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async" fetchpriority="high"><script>window.MC_LOGO=function(){var L=["saci","iara","medusa","mula","papainoel","valquiria"],k=window.MC_L||(window.MC_L=L[Math.random()*L.length|0]);var A={saci:"#e0362a",iara:"#3f8cff",medusa:"#9cb03c",mula:"#ff7a1a",papainoel:"#e6edf5",valquiria:"#f2c230"},R=document.documentElement.style;R.setProperty("--accent",A[k]);R.setProperty("--btn-ink",k==="papainoel"?"#0d1a1c":"#140c08");document.querySelectorAll("img.mclogo[data-l]").forEach(function(i){i.srcset=i.getAttribute("data-l").replace(/__L__/g,k);i.removeAttribute("data-l")})};MC_LOGO()</script></p><p class="ld-sub">O Despertar das Lendas</p>
+  <div class="ld-in"><p class="ld-logo"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async" fetchpriority="high"><script>window.MC_LOGO=function(){var L=["saci","iara","medusa","mula","papainoel","valquiria"],k=window.MC_L||(window.MC_L="saci");var A={saci:"#e0362a",iara:"#3f8cff",medusa:"#9cb03c",mula:"#ff7a1a",papainoel:"#e6edf5",valquiria:"#f2c230"},R=document.documentElement.style;R.setProperty("--accent",A[k]);R.setProperty("--btn-ink",k==="papainoel"?"#0d1a1c":"#140c08");document.querySelectorAll("img.mclogo[data-l]").forEach(function(i){i.srcset=i.getAttribute("data-l").replace(/__L__/g,k);i.removeAttribute("data-l")})};MC_LOGO()</script></p><p class="ld-sub">O Despertar das Lendas</p>
     <div class="ld-bar"><i id="ldbar"></i></div><p class="label ld-pct"><span id="ldpct">0</span>% · <span id="ldmsg">Acordando as lendas</span></p></div>
   <p class="ld-credit"><span>Criado e desenvolvido por Bruno Leal</span><span class="st-dot"> · </span><span class="fbr">Feito no Brasil <svg class="flagbr" viewBox="0 0 20 14" role="img" aria-label="bandeira do Brasil"><rect width="20" height="14" rx="2.2" fill="#009c3b"/><path d="M10 1.7 18 7 10 12.3 2 7z" fill="#ffdf00"/><circle cx="10" cy="7" r="3.05" fill="#002776"/><path d="M7.05 6.35c1.9-.55 4.05-.25 5.9.95" stroke="#fff" stroke-width=".55" fill="none"/></svg></span></p>
 </div>
@@ -1976,7 +1983,7 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
 
 <svg class="lgdefs" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute"><filter id="lgf" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.04" numOctaves="2" seed="11" result="n"/><feGaussianBlur in="n" stdDeviation="1.5" result="nb"/><feDisplacementMap in="SourceGraphic" in2="nb" scale="26" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="curf" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <header class="top">
-  <div class="brand"><a class="logo" href="#historia" id="hlogo"><span id="hlogot"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:520px) 120px, 160px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"><script>window.MC_LOGO=function(){var L=["saci","iara","medusa","mula","papainoel","valquiria"],k=window.MC_L||(window.MC_L=L[Math.random()*L.length|0]);var A={saci:"#e0362a",iara:"#3f8cff",medusa:"#9cb03c",mula:"#ff7a1a",papainoel:"#e6edf5",valquiria:"#f2c230"},R=document.documentElement.style;R.setProperty("--accent",A[k]);R.setProperty("--btn-ink",k==="papainoel"?"#0d1a1c":"#140c08");document.querySelectorAll("img.mclogo[data-l]").forEach(function(i){i.srcset=i.getAttribute("data-l").replace(/__L__/g,k);i.removeAttribute("data-l")})};MC_LOGO()</script></span><span class="lsub" id="hlogos">O Despertar das Lendas</span></a><button class="dock" id="dock" type="button" aria-label="Ver sua lenda de perto" title="Ver de perto"></button><div class="ptag"><button class="ptag-b" id="ptagb" type="button" aria-expanded="false" aria-controls="ptagm"><i></i><span id="ptagn">Saci</span><em>trocar</em></button><div class="ptag-m" id="ptagm" hidden></div></div></div>
+  <div class="brand"><a class="logo" href="#historia" id="hlogo"><span id="hlogot"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:520px) 120px, 160px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"><script>window.MC_LOGO=function(){var L=["saci","iara","medusa","mula","papainoel","valquiria"],k=window.MC_L||(window.MC_L="saci");var A={saci:"#e0362a",iara:"#3f8cff",medusa:"#9cb03c",mula:"#ff7a1a",papainoel:"#e6edf5",valquiria:"#f2c230"},R=document.documentElement.style;R.setProperty("--accent",A[k]);R.setProperty("--btn-ink",k==="papainoel"?"#0d1a1c":"#140c08");document.querySelectorAll("img.mclogo[data-l]").forEach(function(i){i.srcset=i.getAttribute("data-l").replace(/__L__/g,k);i.removeAttribute("data-l")})};MC_LOGO()</script></span><span class="lsub" id="hlogos">O Despertar das Lendas</span></a><button class="dock" id="dock" type="button" aria-label="Ver sua lenda de perto" title="Ver de perto"></button><div class="ptag"><button class="ptag-b" id="ptagb" type="button" aria-expanded="false" aria-controls="ptagm"><i></i><span id="ptagn">Saci</span><em>trocar</em></button><div class="ptag-m" id="ptagm" hidden></div></div></div>
   <nav class="tnav" aria-label="Atalhos"><div class="tlinks" id="tlinks"><button class="tlink" type="button" data-autor>Sobre o autor</button><a class="tlink" href="#quebra">Jogue o desafio</a></div><button class="btn small" type="button" data-lead>Lista de espera</button><button class="tmenu" id="tmenu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="tlinks"><i></i><i></i><i></i></button></nav>
 </header>
 
@@ -2844,6 +2851,25 @@ function ambDraw(dt){const W=innerWidth,H=MC.VH; if(W!==ambW||H!==ambH){ambW=amb
     if(m.y<-10){m.y=H+10;m.x=rnd(0,W)} if(m.x<-10)m.x=W+10; if(m.x>W+10)m.x=-10;
     actx.globalAlpha=.35*m.s; actx.beginPath(); actx.arc(m.x,m.y,m.r,0,Math.PI*2); actx.fill()} actx.globalAlpha=1}
 
+// R10: a tela de carregamento "queima" de baixo para cima (borda de brasa na cor da lenda) e revela o site
+window.MC_BURN=function(host,dur){ const cv=document.createElement('canvas'); cv.className='ld-burn'; host.prepend(cv);
+  const gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false}); if(!gl){cv.remove(); return null}
+  const W=Math.round(innerWidth*Math.min(devicePixelRatio,1.5)), H=Math.round(innerHeight*Math.min(devicePixelRatio,1.5)); cv.width=W; cv.height=H;
+  const sh=(t,src)=>{const o=gl.createShader(t); gl.shaderSource(o,src); gl.compileShader(o); return o};
+  const p=gl.createProgram(); gl.attachShader(p,sh(gl.VERTEX_SHADER,'attribute vec2 a;varying vec2 u;void main(){u=a*.5+.5;gl_Position=vec4(a,0.,1.);}'));
+  gl.attachShader(p,sh(gl.FRAGMENT_SHADER,`precision highp float;varying vec2 u;uniform float t,ar;uniform vec3 bg,ac;
+    float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+    float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+    float fb(vec2 p){float v=0.,a=.5;for(int k=0;k<5;k++){v+=a*n(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return v;}
+    void main(){vec2 q=vec2(u.x*ar,u.y);float nz=fb(q*3.2+vec2(0.,t*.25));float e=mix(-.35,1.35,t);float d=e-(u.y+(nz-.5)*.42);
+      if(d>.0){float ember=smoothstep(.16,0.,d);vec3 c=ac*(1.5*exp(-d*95.)+.32*ember);float a=clamp(max(max(c.r,c.g),c.b),0.,1.);gl_FragColor=vec4(min(c,vec3(a)),a);}
+      else{float glow=exp(d*150.);vec3 c=mix(bg,ac*1.6,glow*.9);gl_FragColor=vec4(c,1.);}}`));
+  gl.bindAttribLocation(p,0,'a'); gl.linkProgram(p); if(!gl.getProgramParameter(p,gl.LINK_STATUS)){cv.remove(); return null}
+  gl.useProgram(p); gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW); gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0); gl.enableVertexAttribArray(0);
+  const hex=c=>{const m=/#?([\da-f]{2})([\da-f]{2})([\da-f]{2})/i.exec(c||'')||[0,'e0','36','2a']; return [1,2,3].map(i=>parseInt(m[i],16)/255)};
+  const U=k=>gl.getUniformLocation(p,k); gl.uniform1f(U('ar'),W/H); gl.uniform3fv(U('bg'),hex('#0a0d0e')); gl.uniform3fv(U('ac'),hex(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()));
+  gl.viewport(0,0,W,H); const t0=performance.now();
+  return new Promise(res=>{ const f=now=>{ const k=Math.min(1,(now-t0)/dur), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; gl.uniform1f(U('t'),e); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); if(k<1) requestAnimationFrame(f); else {cv.remove(); res()} }; requestAnimationFrame(f) }) };
 // ---------- loading ----------
 document.documentElement.classList.add('loading');
 const LD={fonts:0,page:0,models:0,vid:0}, ldEl=$('#loader'); let ldDone=false, ldShown=0;
@@ -2858,8 +2884,8 @@ function ldTick(){ if(ldDone) return; const pr=(LD.fonts*.2+LD.page*.4+LD.models
   if(LD.tr&&performance.now()-LD.tr>(MC.reduce?150:350)){ ldDone=true; $('#ldbar').style.width='100%'; $('#ldpct').textContent=100;
     setTimeout(()=>{ const L=ldEl.querySelector('.ld-logo'), S=ldEl.querySelector('.ld-sub'), HL=$('#hlogot'), HS=$('#hlogos');
       const flyTo=(el,tg)=>{if(!el||!tg) return; const a=el.getBoundingClientRect(), t=tg.getBoundingClientRect(); if(!a.height||!t.height) return; const _=0, k=t.height/a.height; el.style.transformOrigin='50% 50%'; el.style.transform=`translate(${(t.left+t.width/2)-(a.left+a.width/2)}px,${(t.top+t.height/2)-(a.top+a.height/2)}px) scale(${k})`};
-      ldEl.classList.add('fly'); document.documentElement.classList.remove('loading'); if(L&&HL&&!MC.reduce){flyTo(L,HL); flyTo(S,HS)}
-      setTimeout(()=>{MC.logoLanded=true; ldEl.classList.add('out')},MC.reduce?0:1050); setTimeout(()=>ldEl.classList.add('gone'),MC.reduce?600:1700); MC.loaded=performance.now()},250); return}
+      ldEl.classList.add('fly'); let BURN=null; if(!MC.reduce){ try{ BURN=window.MC_BURN(ldEl,3000) }catch(e){ BURN=null } } if(BURN) ldEl.classList.add('burn'); document.documentElement.classList.remove('loading'); if(L&&HL&&!MC.reduce){flyTo(L,HL); flyTo(S,HS)}
+      setTimeout(()=>{MC.logoLanded=true; if(!BURN) ldEl.classList.add('out')},MC.reduce?0:1050); if(BURN) BURN.then(()=>{ldEl.classList.add('out'); setTimeout(()=>ldEl.classList.add('gone'),300)}); else setTimeout(()=>ldEl.classList.add('gone'),MC.reduce?600:1700); MC.loaded=performance.now()},250); return}
   requestAnimationFrame(ldTick)}
 requestAnimationFrame(ldTick);
 

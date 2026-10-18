@@ -476,6 +476,25 @@ function ambDraw(dt){const W=innerWidth,H=MC.VH; if(W!==ambW||H!==ambH){ambW=amb
     if(m.y<-10){m.y=H+10;m.x=rnd(0,W)} if(m.x<-10)m.x=W+10; if(m.x>W+10)m.x=-10;
     actx.globalAlpha=.35*m.s; actx.beginPath(); actx.arc(m.x,m.y,m.r,0,Math.PI*2); actx.fill()} actx.globalAlpha=1}
 
+// R10: a tela de carregamento "queima" de baixo para cima (borda de brasa na cor da lenda) e revela o site
+window.MC_BURN=function(host,dur){ const cv=document.createElement('canvas'); cv.className='ld-burn'; host.prepend(cv);
+  const gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false}); if(!gl){cv.remove(); return null}
+  const W=Math.round(innerWidth*Math.min(devicePixelRatio,1.5)), H=Math.round(innerHeight*Math.min(devicePixelRatio,1.5)); cv.width=W; cv.height=H;
+  const sh=(t,src)=>{const o=gl.createShader(t); gl.shaderSource(o,src); gl.compileShader(o); return o};
+  const p=gl.createProgram(); gl.attachShader(p,sh(gl.VERTEX_SHADER,'attribute vec2 a;varying vec2 u;void main(){u=a*.5+.5;gl_Position=vec4(a,0.,1.);}'));
+  gl.attachShader(p,sh(gl.FRAGMENT_SHADER,`precision highp float;varying vec2 u;uniform float t,ar;uniform vec3 bg,ac;
+    float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+    float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+    float fb(vec2 p){float v=0.,a=.5;for(int k=0;k<5;k++){v+=a*n(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return v;}
+    void main(){vec2 q=vec2(u.x*ar,u.y);float nz=fb(q*3.2+vec2(0.,t*.25));float e=mix(-.35,1.35,t);float d=e-(u.y+(nz-.5)*.42);
+      if(d>.0){float ember=smoothstep(.16,0.,d);vec3 c=ac*(1.5*exp(-d*95.)+.32*ember);float a=clamp(max(max(c.r,c.g),c.b),0.,1.);gl_FragColor=vec4(min(c,vec3(a)),a);}
+      else{float glow=exp(d*150.);vec3 c=mix(bg,ac*1.6,glow*.9);gl_FragColor=vec4(c,1.);}}`));
+  gl.bindAttribLocation(p,0,'a'); gl.linkProgram(p); if(!gl.getProgramParameter(p,gl.LINK_STATUS)){cv.remove(); return null}
+  gl.useProgram(p); gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW); gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0); gl.enableVertexAttribArray(0);
+  const hex=c=>{const m=/#?([\da-f]{2})([\da-f]{2})([\da-f]{2})/i.exec(c||'')||[0,'e0','36','2a']; return [1,2,3].map(i=>parseInt(m[i],16)/255)};
+  const U=k=>gl.getUniformLocation(p,k); gl.uniform1f(U('ar'),W/H); gl.uniform3fv(U('bg'),hex('#0a0d0e')); gl.uniform3fv(U('ac'),hex(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()));
+  gl.viewport(0,0,W,H); const t0=performance.now();
+  return new Promise(res=>{ const f=now=>{ const k=Math.min(1,(now-t0)/dur), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; gl.uniform1f(U('t'),e); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); if(k<1) requestAnimationFrame(f); else {cv.remove(); res()} }; requestAnimationFrame(f) }) };
 // ---------- loading ----------
 document.documentElement.classList.add('loading');
 const LD={fonts:0,page:0,models:0,vid:0}, ldEl=$('#loader'); let ldDone=false, ldShown=0;
@@ -490,8 +509,8 @@ function ldTick(){ if(ldDone) return; const pr=(LD.fonts*.2+LD.page*.4+LD.models
   if(LD.tr&&performance.now()-LD.tr>(MC.reduce?150:350)){ ldDone=true; $('#ldbar').style.width='100%'; $('#ldpct').textContent=100;
     setTimeout(()=>{ const L=ldEl.querySelector('.ld-logo'), S=ldEl.querySelector('.ld-sub'), HL=$('#hlogot'), HS=$('#hlogos');
       const flyTo=(el,tg)=>{if(!el||!tg) return; const a=el.getBoundingClientRect(), t=tg.getBoundingClientRect(); if(!a.height||!t.height) return; const _=0, k=t.height/a.height; el.style.transformOrigin='50% 50%'; el.style.transform=`translate(${(t.left+t.width/2)-(a.left+a.width/2)}px,${(t.top+t.height/2)-(a.top+a.height/2)}px) scale(${k})`};
-      ldEl.classList.add('fly'); document.documentElement.classList.remove('loading'); if(L&&HL&&!MC.reduce){flyTo(L,HL); flyTo(S,HS)}
-      setTimeout(()=>{MC.logoLanded=true; ldEl.classList.add('out')},MC.reduce?0:1050); setTimeout(()=>ldEl.classList.add('gone'),MC.reduce?600:1700); MC.loaded=performance.now()},250); return}
+      ldEl.classList.add('fly'); let BURN=null; if(!MC.reduce){ try{ BURN=window.MC_BURN(ldEl,3000) }catch(e){ BURN=null } } if(BURN) ldEl.classList.add('burn'); document.documentElement.classList.remove('loading'); if(L&&HL&&!MC.reduce){flyTo(L,HL); flyTo(S,HS)}
+      setTimeout(()=>{MC.logoLanded=true; if(!BURN) ldEl.classList.add('out')},MC.reduce?0:1050); if(BURN) BURN.then(()=>{ldEl.classList.add('out'); setTimeout(()=>ldEl.classList.add('gone'),300)}); else setTimeout(()=>ldEl.classList.add('gone'),MC.reduce?600:1700); MC.loaded=performance.now()},250); return}
   requestAnimationFrame(ldTick)}
 requestAnimationFrame(ldTick);
 
