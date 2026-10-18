@@ -1967,3 +1967,19 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
 #quebra .pq-steps li::before{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 60%,transparent)}
 @media (max-width:900px){#quebra .pq-head{grid-template-columns:1fr;gap:18px}}
 </style>
+<style>/* R14: celular — cartas da história 100% planas.
+   Vídeo do iPhone: com a página parada, as cartas trocam de ordem e uma carta ainda escondida (opacity 0) aparece por cima
+   por alguns quadros. Isso é o compositor do WebKit "brigando" pela profundidade de camadas 3D (perspective() + preserve-3d +
+   backface-visibility + will-change em camadas sobrepostas). Os Reinos não têm perspective() nem opacity animada, e não piscam. */
+@media (max-width:760px){
+ #stcards .st-card{will-change:auto!important;backface-visibility:visible!important;transform-style:flat!important}
+ #stcards .st-ci{transform:none!important;transform-style:flat!important;perspective:none!important;transition:none!important}
+ #stcards .st-ci .st-face,#stcards .st-ci .st-back{backface-visibility:visible!important;transform:none!important}
+ #stcards .st-card:not(.pre) .st-back{display:none!important}
+ #stcards .st-card.pre .st-face{opacity:0}
+ #stcards .st-card.pre .st-back{display:block}
+ #stcards .st-card:not(.in):not(.pre),#stcards .st-card.out{visibility:hidden;transition:transform .5s cubic-bezier(.5,0,.75,0),opacity .45s ease-in,visibility 0s .5s!important}
+ #stcards .st-card.in,#stcards .st-card.pre{visibility:visible}
+ #stcards .layers .char,#stcards .layers .plate,#stcards .layers img{transform:none!important;filter:none!important;transition:none!important}
+ #stcards .fx{display:none!important}
+}</style>
