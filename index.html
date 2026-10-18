@@ -1836,14 +1836,25 @@ html.lgr .mlens{backdrop-filter:url(#curf) saturate(1.12)}
  .st-card.out{transition:opacity .3s ease-in!important}
  .st-card img,.st-ci .st-face img,.st-ci .st-back img{transition:none!important;box-shadow:0 18px 36px -14px #000!important}
 }</style>
-<style>/* R4f: no celular a história fica parada — cartas e tabuleiro só aparecem/somem, sem movimento, blur ou 3D */
+<style>/* R7: no celular a história mantém o efeito, mas leve.
+   Causa provável do tremor no iPhone: o fundo da história tinha 3 bolhas gigantes animadas dentro de um blur(60px),
+   e cada palavra tinha blur próprio — o Safari/Chrome do iOS refaz esses desfoques a cada quadro. Os Reinos não têm nada disso. */
 @media (max-width:760px){
- .st-card,.st-card.board,.st-card.in,.st-card.out,.st-card.pre{transition:none!important;animation:none!important;will-change:auto!important}
- #stcards .st-card,#stcards .st-card:not(.in):not(.out):not(.pre),#stcards .st-card.in,#stcards .st-card.out,#stcards .st-card.pre{transform:translate(calc(var(--ic,0)*var(--sp,.48)*62%),calc(var(--i,0)*8px)) rotate(var(--rot)) scale(1)!important}
- .st-ci{transition:none!important}
- .st-bigboard{transform:translate(-50%,-50%)!important;transition:none!important;filter:none!important}
+ .st-bg,.story.st-red .st-bg{filter:none!important;animation:none!important}
+ .st-bg i{animation:none!important;background:radial-gradient(circle,color-mix(in srgb,var(--sc,#e0362a) 32%,transparent),transparent 70%)!important}
+ .story .stage::after{animation:none!important}
+ .story .st-line{text-shadow:none!important}
+ .st-w{filter:none!important;transition:opacity .18s linear,transform .18s ease-out,color .18s!important}
+ .st-w.kw{text-shadow:none!important}
+ /* cartas entram pela lateral (só transform/opacity, como nos Reinos) */
+ #stcards .st-card,#stcards .st-card:not(.in):not(.out):not(.pre){animation:none!important;will-change:transform,opacity;
+  transform:translate(calc(var(--ic,0)*var(--sp,.48)*62% + 75vw),calc(var(--i,0)*8px)) rotate(calc(var(--rot) + 10deg))!important;
+  transition:transform .65s cubic-bezier(.2,.8,.2,1),opacity .35s ease-out!important}
+ #stcards .st-card.in,#stcards .st-card.pre{transform:translate(calc(var(--ic,0)*var(--sp,.48)*62%),calc(var(--i,0)*8px)) rotate(var(--rot))!important}
+ #stcards .st-card.out{transform:translate(calc(var(--ic,0)*var(--sp,.48)*62% - 75vw),calc(var(--i,0)*8px)) rotate(calc(var(--rot) - 10deg))!important;transition:transform .5s cubic-bezier(.5,0,.75,0),opacity .45s ease-in!important}
+ .st-card img,.st-ci .st-face img,.st-ci .st-back img{box-shadow:0 14px 28px -12px #000!important}
+ .st-bigboard{transform:translate(-50%,-50%)!important;transition:opacity .5s!important;filter:none!important}
  .st-bigboard img,.st-bigboard::after{clip-path:none!important}
- .st-block{transition:none!important}
 }</style>
 <style>/* ===== R5 ===== */
 /* carregamento: crédito mais alto + bandeira */
@@ -1927,29 +1938,6 @@ footer.fcred .fcopy{margin-top:22px;font-size:13px;opacity:.6}
 body[data-theme^="luz"] #mtrail{mix-blend-mode:multiply;opacity:.0}
 body[data-theme^="luz"] #mtrail.on{opacity:.75}
 </style>
-<style>/* ===== R6: História no celular rola como texto normal ===== */
-html.stflow #historia.story{height:auto!important;padding:calc(env(safe-area-inset-top,0px) + 96px) 0 56px}
-html.stflow #historia .stage{position:relative!important;height:auto!important;min-height:0!important;overflow:visible!important;display:block!important;background:#07090a!important;perspective:none!important}
-html.stflow #historia .stage::after,html.stflow #historia .st-bg,html.stflow #stskip,html.stflow #stprog,html.stflow #stcue,html.stflow #stnav,html.stflow #stcards,html.stflow #pickhand{display:none!important}
-html.stflow #sttxt{position:relative!important;inset:auto!important;transform:none!important;padding:0 var(--gutter)!important;display:block!important;height:auto!important;max-width:none!important}
-html.stflow #sttxt .st-block{position:relative!important;inset:auto!important;opacity:1!important;visibility:visible!important;transform:none!important;margin:0 0 64px!important;transition:none!important}
-html.stflow #sttxt .st-end{display:none!important}
-html.stflow #sttxt .st-w{--a:1;opacity:1!important;filter:none!important;transform:none!important;transition:none!important}
-html.stflow #sttxt .st-line{font-size:calc(9.4vw - 4px)!important}
-html.stflow .st-row{display:flex;justify-content:center;align-items:flex-start;margin-top:22px;padding:0 6px}
-html.stflow .st-row .st-card,html.stflow .st-row .st-card.in{position:relative!important;left:auto!important;top:auto!important;margin:0 -5vw!important;width:31vw!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;transition:none!important;animation:none!important;transform:rotate(var(--rot,0deg))!important;flex:0 0 auto;z-index:auto!important}
-html.stflow .st-row .st-card:first-child{margin-left:0!important}html.stflow .st-row .st-card:last-child{margin-right:0!important}
-html.stflow .st-row .st-ci{transition:none!important;--flip:0deg!important}
-html.stflow .st-row .st-card img{box-shadow:0 14px 28px -12px #000!important}
-html.stflow .st-row.st-rowb .st-bigboard{position:relative!important;left:auto!important;top:auto!important;width:100%!important;transform:none!important;opacity:1!important;filter:none!important;margin:0!important}
-html.stflow .st-row.st-rowb .st-bigboard img{clip-path:none!important;filter:none!important;border-radius:16px}
-html.stflow .st-row.st-rowb .st-bigboard::after{display:none!important}
-html.stflow #stpick{position:relative!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;transform:none!important;padding:8px var(--gutter) 0!important;display:block!important;height:auto!important}
-html.stflow #stpick h2{font-size:9vw;text-align:center}
-html.stflow #stpickrow{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px}
-</style>
-<style>html.stflow .st-row{width:100%;box-sizing:border-box}
-html.stflow #historia.story{padding-bottom:38vh!important}</style>
 
 </head><body><link rel="preload" href="assets/fonts/vakantcy.woff2" as="font" type="font/woff2" crossorigin>
 <div class="loader" id="loader" role="status" aria-live="polite">
@@ -2941,16 +2929,7 @@ let stM=null; const ST_GAP=()=>innerWidth<761?18:34;
 function stMeasure(){ const b=ST.map(S=>{const k=[...S.el.children].filter(c=>c.offsetHeight>0); if(!k.length) return {t:0,h:0,bt:0}; const t=k[0].offsetTop, bt=k[k.length-1].offsetTop+k[k.length-1].offsetHeight; return {t,h:bt-t,bt}});
   stM={w:innerWidth,h:MC.VH,top:stTxt.getBoundingClientRect().top-(stSec.querySelector('.stage')||stSec).getBoundingClientRect().top, /* topo do texto dentro do palco fixo */b,l0:(()=>{const w=ST[0].words.filter(x=>x.offsetHeight>0); if(!w.length) return 0; const t0=w[0].offsetTop; return w.filter(x=>Math.abs(x.offsetTop-t0)<6).length})(),S:b.map((m,i)=>i<b.length-1?(b[i+1].t-ST_GAP())-m.bt:0)}}
 document.fonts&&document.fonts.ready.then(()=>{stM=null});
-// R6: no celular a História é um texto que rola normalmente (nada preso na tela, nada ligado à rolagem) — não tem como tremer
-const ST_FLOW=matchMedia('(max-width:760px)').matches; MC.stFlow=ST_FLOW;
-if(ST_FLOW){ document.documentElement.classList.add('stflow'); stSec.dataset.mode='dock';
-  ST.forEach(S=>{ S.words.forEach(w=>w.style.setProperty('--a',1)); const row=document.createElement('div'); row.className='st-row';
-    S.cards.forEach(c=>{ if(!c.d) return; c.d.classList.remove('pre','out'); c.d.classList.add('in'); c.d.removeAttribute('data-pre'); c.d.style.cssText=''; if(c.big) c.d.style.setProperty('--rv',1); row.appendChild(c.d);
-      if(!c.big&&!c.ref.startsWith('v:')){ c.d.setAttribute('role','button'); c.d.tabIndex=0; c.d.setAttribute('aria-label','Ver carta de perto') } });
-    if(row.children.length){ row.classList.toggle('st-rowb',!!S.cards.find(c=>c.big)); S.el.appendChild(row) } });
-  stTxt.addEventListener('click',e=>{const d=e.target.closest('.st-card'); if(!d) return; const c=ST.flatMap(S=>S.cards).find(c=>c.d===d); if(c&&!c.big&&!c.ref.startsWith('v:')){e.stopImmediatePropagation(); openCard(c.ref,d)}},true);
-  stTxt.appendChild(ST[ST.length-1].el); MC.storyHead=1; MC.storyPawn=0 }
-function updStory(){ const r=stSec.getBoundingClientRect(); if(ST_FLOW){MC.storyHead=1; MC.storyPawn=0; return} if(r.bottom<MC.VH*.5||r.top>MC.VH){stBi=-1; pickH.style.opacity=0; if(r.bottom<0||r.top>MC.VH) return} const p=prog(stSec), N=ST.length, x=p*N, bi=Math.min(N-1,Math.floor(x)), q=x-bi;
+function updStory(){ const r=stSec.getBoundingClientRect(); if(r.bottom<MC.VH*.5||r.top>MC.VH){stBi=-1; pickH.style.opacity=0; if(r.bottom<0||r.top>MC.VH) return} const p=prog(stSec), N=ST.length, x=p*N, bi=Math.min(N-1,Math.floor(x)), q=x-bi;
   // as palavras acendem junto com a rolagem (sem tempo, sem espera): rolou, acendeu; voltou, apaga
   if(bi!==stBi){stBi=bi; stT0=performance.now()} const tq=99, tl=n=>{const st=bi===0&&stM&&stM.l0?stM.l0/(n*1.02):0; return (st+(MC.reduce?1:clamp((q-.04)/.56))*(1-st))*n*1.02};
   let sc=STORY[bi].c, red=false; if(STORY[bi].red){const lw=ST[bi].cards.find(c=>c.ref==='57-l-tormenta'); const nn=ST[bi].words.length, lt=tl(nn); red=lw&&lt-ST[bi].words.indexOf(lw.w)>.6&&q<.9} if(red) sc='#ff2a1a';
@@ -2979,7 +2958,7 @@ function updStory(){ const r=stSec.getBoundingClientRect(); if(ST_FLOW){MC.story
   stSec.style.setProperty('--mv',(bi===last?mv:0).toFixed(3));
   const pk=bi===last?clamp((qe-.06)/.12):0; $('#stpick').style.opacity=pk.toFixed(3); $('#pickhand').style.opacity=pk.toFixed(3); $('#stpick').style.pointerEvents=pk>.5?'auto':'none';
   MC.storyLogo=bi===last&&mv>.98?1:0; MC.storyHead=hd; MC.storyPawn=bi===last?sstep(clamp(qe/.2)):0}
-MC.storyHead=ST_FLOW?1:0; MC.storyPawn=0;
+MC.storyHead=0; MC.storyPawn=0;
 
 // ---------- transições entre seções ----------
 const RVSEL='main > section > .label, main > section > h2, main > section > .lead2, main > section > p, .intro > *, .verbs > div, .deckrow, .igrid, .rgrid, .sgrid, .vgrid, .pwrap, .ings, .pot, .scratch > div, .tz-txt > *, .lista form, footer .credit';

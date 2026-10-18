@@ -580,16 +580,7 @@ let stM=null; const ST_GAP=()=>innerWidth<761?18:34;
 function stMeasure(){ const b=ST.map(S=>{const k=[...S.el.children].filter(c=>c.offsetHeight>0); if(!k.length) return {t:0,h:0,bt:0}; const t=k[0].offsetTop, bt=k[k.length-1].offsetTop+k[k.length-1].offsetHeight; return {t,h:bt-t,bt}});
   stM={w:innerWidth,h:MC.VH,top:stTxt.getBoundingClientRect().top-(stSec.querySelector('.stage')||stSec).getBoundingClientRect().top, /* topo do texto dentro do palco fixo */b,l0:(()=>{const w=ST[0].words.filter(x=>x.offsetHeight>0); if(!w.length) return 0; const t0=w[0].offsetTop; return w.filter(x=>Math.abs(x.offsetTop-t0)<6).length})(),S:b.map((m,i)=>i<b.length-1?(b[i+1].t-ST_GAP())-m.bt:0)}}
 document.fonts&&document.fonts.ready.then(()=>{stM=null});
-// R6: no celular a História é um texto que rola normalmente (nada preso na tela, nada ligado à rolagem) — não tem como tremer
-const ST_FLOW=matchMedia('(max-width:760px)').matches; MC.stFlow=ST_FLOW;
-if(ST_FLOW){ document.documentElement.classList.add('stflow'); stSec.dataset.mode='dock';
-  ST.forEach(S=>{ S.words.forEach(w=>w.style.setProperty('--a',1)); const row=document.createElement('div'); row.className='st-row';
-    S.cards.forEach(c=>{ if(!c.d) return; c.d.classList.remove('pre','out'); c.d.classList.add('in'); c.d.removeAttribute('data-pre'); c.d.style.cssText=''; if(c.big) c.d.style.setProperty('--rv',1); row.appendChild(c.d);
-      if(!c.big&&!c.ref.startsWith('v:')){ c.d.setAttribute('role','button'); c.d.tabIndex=0; c.d.setAttribute('aria-label','Ver carta de perto') } });
-    if(row.children.length){ row.classList.toggle('st-rowb',!!S.cards.find(c=>c.big)); S.el.appendChild(row) } });
-  stTxt.addEventListener('click',e=>{const d=e.target.closest('.st-card'); if(!d) return; const c=ST.flatMap(S=>S.cards).find(c=>c.d===d); if(c&&!c.big&&!c.ref.startsWith('v:')){e.stopImmediatePropagation(); openCard(c.ref,d)}},true);
-  stTxt.appendChild(ST[ST.length-1].el); MC.storyHead=1; MC.storyPawn=0 }
-function updStory(){ const r=stSec.getBoundingClientRect(); if(ST_FLOW){MC.storyHead=1; MC.storyPawn=0; return} if(r.bottom<MC.VH*.5||r.top>MC.VH){stBi=-1; pickH.style.opacity=0; if(r.bottom<0||r.top>MC.VH) return} const p=prog(stSec), N=ST.length, x=p*N, bi=Math.min(N-1,Math.floor(x)), q=x-bi;
+function updStory(){ const r=stSec.getBoundingClientRect(); if(r.bottom<MC.VH*.5||r.top>MC.VH){stBi=-1; pickH.style.opacity=0; if(r.bottom<0||r.top>MC.VH) return} const p=prog(stSec), N=ST.length, x=p*N, bi=Math.min(N-1,Math.floor(x)), q=x-bi;
   // as palavras acendem junto com a rolagem (sem tempo, sem espera): rolou, acendeu; voltou, apaga
   if(bi!==stBi){stBi=bi; stT0=performance.now()} const tq=99, tl=n=>{const st=bi===0&&stM&&stM.l0?stM.l0/(n*1.02):0; return (st+(MC.reduce?1:clamp((q-.04)/.56))*(1-st))*n*1.02};
   let sc=STORY[bi].c, red=false; if(STORY[bi].red){const lw=ST[bi].cards.find(c=>c.ref==='57-l-tormenta'); const nn=ST[bi].words.length, lt=tl(nn); red=lw&&lt-ST[bi].words.indexOf(lw.w)>.6&&q<.9} if(red) sc='#ff2a1a';
@@ -618,7 +609,7 @@ function updStory(){ const r=stSec.getBoundingClientRect(); if(ST_FLOW){MC.story
   stSec.style.setProperty('--mv',(bi===last?mv:0).toFixed(3));
   const pk=bi===last?clamp((qe-.06)/.12):0; $('#stpick').style.opacity=pk.toFixed(3); $('#pickhand').style.opacity=pk.toFixed(3); $('#stpick').style.pointerEvents=pk>.5?'auto':'none';
   MC.storyLogo=bi===last&&mv>.98?1:0; MC.storyHead=hd; MC.storyPawn=bi===last?sstep(clamp(qe/.2)):0}
-MC.storyHead=ST_FLOW?1:0; MC.storyPawn=0;
+MC.storyHead=0; MC.storyPawn=0;
 
 // ---------- transições entre seções ----------
 const RVSEL='main > section > .label, main > section > h2, main > section > .lead2, main > section > p, .intro > *, .verbs > div, .deckrow, .igrid, .rgrid, .sgrid, .vgrid, .pwrap, .ings, .pot, .scratch > div, .tz-txt > *, .lista form, footer .credit';
