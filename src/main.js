@@ -42,13 +42,21 @@ const gate={hidden:true}; const gateOpen=false;
 const holos=[];
 function holo(el,max=16,grow=.05){el.classList.add('holo');const st={el,tx:0,ty:0,x:0,y:0,px:50,py:50,tpx:50,tpy:50,h:0,th:0,max,grow};holos.push(st);el._holo=st;
   el.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;const r=el.getBoundingClientRect();const x=clamp((e.clientX-r.left)/r.width),y=clamp((e.clientY-r.top)/r.height);st.tx=(x-.5)*2;st.ty=(y-.5)*2;st.tpx=x*100;st.tpy=y*100;st.th=1;el.style.zIndex=40});
-  el.addEventListener('pointerleave',()=>{st.tx=st.ty=0;st.tpx=st.tpy=50;st.th=0;el.style.zIndex=''});return st}
+  el.addEventListener('pointerleave',()=>{st.tx=st.ty=0;st.tpx=st.tpy=50;st.th=0;el.style.zIndex=''});
+  if(TOUCHUI){ /* R16: no toque, o dedo faz parallax dentro da carta e estica levemente a carta na direção do arrasto */
+    let t0=null; const rel=()=>{t0=null; st.tx=st.ty=0; st.th=0; el.style.setProperty('--tsx','1'); el.style.setProperty('--tsy','1')};
+    el.addEventListener('touchstart',e=>{const t=e.touches[0]; t0={x:t.clientX,y:t.clientY}; st.th=1},{passive:true});
+    el.addEventListener('touchmove',e=>{if(!t0) return; const t=e.touches[0], r=el.getBoundingClientRect(); const x=clamp((t.clientX-r.left)/r.width),y=clamp((t.clientY-r.top)/r.height); st.tx=(x-.5)*2; st.ty=(y-.5)*2; st.tpx=x*100; st.tpy=y*100;
+      const dx=(t.clientX-t0.x)/r.width, dy=(t.clientY-t0.y)/r.height; el.style.setProperty('--tsx',(1+Math.min(.06,Math.abs(dx)*.12)).toFixed(3)); el.style.setProperty('--tsy',(1+Math.min(.06,Math.abs(dy)*.12)).toFixed(3))},{passive:true});
+    el.addEventListener('touchend',rel,{passive:true}); el.addEventListener('touchcancel',rel,{passive:true}) }
+  return st}
 function tickHolo(dt){const k=1-Math.exp(-dt*6);
   for(const s of holos){ if(s.th===0&&s.h<.002&&Math.abs(s.x)<.002&&Math.abs(s.y)<.002) continue;
     s.x+=(s.tx-s.x)*k;s.y+=(s.ty-s.y)*k;s.px+=(s.tpx-s.px)*k;s.py+=(s.tpy-s.py)*k;s.h+=(s.th-s.h)*k;const e=s.el.style;
     e.setProperty('--ry',(s.x*s.max)+'deg');e.setProperty('--rx',(-s.y*s.max)+'deg');e.setProperty('--px',s.px+'%');e.setProperty('--py',s.py+'%');e.setProperty('--hov',s.h.toFixed(3));e.setProperty('--ang',(115+s.x*25)+'deg');e.setProperty('--hs',(1+s.h*s.grow).toFixed(3));e.setProperty('--lx',s.x.toFixed(3));e.setProperty('--ly',s.y.toFixed(3))}}
 // carta em camadas: fundo sem o personagem + personagem recortado (parallax sutil)
-function layersHTML(f,alt){ if(CUTS.has(f)) return `<img class="plate" src="assets/plate/${f}.jpg" alt=""><img class="char" src="assets/cut/${f}.webp" alt="${alt}">`; return `<img src="${IMP(f)}" alt="${alt}">`}
+const TOUCHUI=matchMedia('(hover:none)').matches; MC.touchUI=TOUCHUI;
+function layersHTML(f,alt){ if(CUTS.has(f)&&!TOUCHUI) return `<img class="plate" src="assets/plate/${f}.jpg" alt=""><img class="char" src="assets/cut/${f}.webp" alt="${alt}">`; return `<img src="${IMP(f)}" alt="${alt}">`}
 const fxHTML='<div class="fx sheen"></div><div class="fx film"></div><div class="fx glare"></div>';
 const nameOf=f=>{const d=find(f);return d?d.c.n:f};
 
@@ -104,6 +112,7 @@ updCounter();
 $('#tzplay').addEventListener('click',()=>openLead({k:'Teaser',t:'O teaser está quase pronto',d:'Deixe seu contato e receba o vídeo em primeira mão, antes de ir ao ar.'}));
 const okEmail=v=>/^\S+@\S+\.\S+$/.test(v);
 async function saveLead(d){ MC.rememberLead({nome:d.nome||'',email:d.email,tel:d.tel||''}); MC.onLead&&MC.onLead(); const store=await MC.store; if(!store) return false; try{ await store.saveLead(d); return true }catch(e){ return false } }
+document.querySelectorAll('[data-jclose]').forEach(b=>b.addEventListener('click',()=>{ const j=b.closest('.joined'); const m=j.closest('.modal'); if(m) closeModal(m); else { j.hidden=true; const f=document.getElementById('form'); if(f){ f.hidden=false; f.reset(); const ok=document.getElementById('ok'); if(ok) ok.textContent='' } } }));
 // R5 anti-robô sem captcha visível: campo-isca escondido + tempo mínimo de preenchimento + limite por sessão
 const BOT={t:{},n:0}; ['form','pform','leadf'].forEach(id=>{const f=document.getElementById(id); f&&f.addEventListener('focusin',()=>{BOT.t[id]=BOT.t[id]||performance.now()})});
 MC.isBot=id=>{const f=document.getElementById(id), hp=f&&f.querySelector('.hpf input'); if(hp&&hp.value) return true; const t=BOT.t[id]; if(!t||performance.now()-t<1500) return true; if(++BOT.n>6) return true; return false};
@@ -112,7 +121,7 @@ $('#leadf').addEventListener('submit',async e=>{e.preventDefault();const n=$('#l
   if(!okEmail(m)){ok.textContent='Esse e-mail parece incompleto. Confira e tente de novo.';$('#l-email').focus();return}
   if(MC.afterLead&&t.replace(/\D/g,'').length<10){ok.textContent='Coloque um celular com DDD.';$('#l-tel').focus();return}
   const saved=MC.isBot('leadf')?true:await saveLead({nome:n,email:m,tel:t,origem:'popup'}); leadSaved=true;
-  ok.textContent=saved?`Pronto${n?', '+n.split(' ')[0]:''}! Você vai receber as novidades.`:'Recebemos seus dados nesta tela, mas o envio ainda não está ligado nesta prévia.'; MC.onJoin&&MC.onJoin(); updCounter(); const al=MC.afterLead; MC.afterLead=null; al&&al(); setTimeout(()=>closeModal(leadM),al?900:1800)});
+  ok.textContent=saved?`Pronto${n?', '+n.split(' ')[0]:''}! Você vai receber as novidades.`:'Recebemos seus dados nesta tela, mas o envio ainda não está ligado nesta prévia.'; MC.onJoin&&MC.onJoin(); updCounter(); const al=MC.afterLead; MC.afterLead=null; al&&al(); if(al) setTimeout(()=>closeModal(leadM),900)}); /* R16: a confirmação fica até a pessoa fechar */
 $('#form').addEventListener('submit',async e=>{e.preventDefault();const n=$('#f-nome').value.trim(),m=$('#f-email').value.trim(),ok=$('#ok');
   if(!n){ok.textContent='Escreva seu nome para entrar na lista.';$('#f-nome').focus();return}
   if(!okEmail(m)){ok.textContent='Esse e-mail parece incompleto. Confira e tente de novo.';$('#f-email').focus();return}
@@ -125,8 +134,16 @@ const EXPL={'Guardião':'Defende você do Caos e soma pontos positivos.','Caos':
 const RN={raizes:'Raízes',mares:'Marés',tormentas:'Tormentas',titas:'Titãs'};
 const ptsTxt=(cls,pts)=>['Relíquia','Portal','Limbo'].includes(cls)?'':(pts>0?'+':'')+pts+(Math.abs(pts)===1?' ponto':' pontos');
 const lb=$('#lb'), lbt=$('#lbtilt'), lbl=$('#lblayers'); holo(lbt,10); let lbToken=0;
+// R16: no celular, deslizar o dedo na carta aberta passa para a próxima/anterior da mesma lista
+if(TOUCHUI){ let sx=0,sy=0,sw=false; const card=lb.querySelector('.lb-card');
+  card.addEventListener('touchstart',e=>{const t=e.touches[0]; sx=t.clientX; sy=t.clientY; sw=true},{passive:true});
+  card.addEventListener('touchend',e=>{ if(!sw) return; sw=false; const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy; if(Math.abs(dx)<56||Math.abs(dx)<Math.abs(dy)*1.2||!lbList||lbList.length<2) return;
+    const i=lbList.indexOf(lbCur), n=(i+(dx<0?1:-1)+lbList.length)%lbList.length; const nf=lbList[n];
+    card.animate([{transform:`translateX(${dx<0?-18:18}px)`,opacity:.6},{transform:'none',opacity:1}],{duration:320,easing:'cubic-bezier(.2,.8,.2,1)'}); openCard(nf,null) },{passive:true}) }
+let lbList=null, lbCur=null;
 async function openCard(f,fromEl,flip){
-  const d=find(f); if(!d) return; const {k,c}=d, cls=c.c, pts=parseInt(c.p)||0, my=++lbToken;
+  const d=find(f); if(!d) return; lbCur=f;
+  if(fromEl){ const fan=fromEl.closest&&fromEl.closest('.fan'); const st=fromEl.closest&&fromEl.closest('#stcards'); lbList=fan?R[fan.closest('section').id]:st?ST.flatMap(S=>S.cards.filter(c=>!c.big&&!c.ref.startsWith('v:')).map(c=>c.ref)):scPool } else if(!lbList) lbList=scPool; const {k,c}=d, cls=c.c, pts=parseInt(c.p)||0, my=++lbToken;
   lb.classList.remove('ready'); lb.style.setProperty('--kc',KC[cls]||'var(--accent)');
   $('#lbback').src=`assets/imp/${k}/114-verso.jpg`;
   lbl.innerHTML=layersHTML(f,'Carta '+c.n);
@@ -173,11 +190,12 @@ $$('.deck').forEach(btn=>btn.addEventListener('click',()=>{ if(drawing) return; 
 paintDecks();
 
 // ---------- Reinos ----------
+// R16: 3 cartas por Reino (maiores), nenhuma repetida da História
 const R={
- raizes:['01-g-curupira','28-c-mula-sem-cabeca','19-c-saci','25-c-bloody-mary','03-g-boitata'],
- mares:['30-c-holandes-voador','15-g-poseidon','02-g-iara','49-o-boto','33-c-dracula'],
- tormentas:['40-c-yuki-onna','52-o-loki','07-g-thor','46-o-merlin','10-g-freya'],
- titas:['11-g-valkyria','34-c-minotauro','09-g-zeus','38-c-hades','12-g-odin']};
+ raizes:['04-g-caipora','28-c-mula-sem-cabeca','03-g-boitata'],
+ mares:['15-g-poseidon','02-g-iara','49-o-boto'],
+ tormentas:['52-o-loki','40-c-yuki-onna','10-g-freya'],
+ titas:['11-g-valkyria','34-c-minotauro','12-g-odin']};
 const reinos=[];
 for(const id in R){const sec=document.getElementById(id), fan=sec.querySelector('.fan'), cards=[];
   R[id].forEach(f=>{const el=document.createElement('div');el.className='card';el.tabIndex=0;el.setAttribute('role','button');el.setAttribute('aria-label','Ver a carta '+nameOf(f));
@@ -188,13 +206,13 @@ for(const id in R){const sec=document.getElementById(id), fan=sec.querySelector(
 const prog=sec=>{const r=sec.getBoundingClientRect();return clamp(-r.top/Math.max(1,r.height-MC.VH))};
 // Reinos: as cartas entram sozinhas (tempo, não rolagem) e saem subindo quando o bloco vai embora
 function updReino(o,now){const r=o.sec.getBoundingClientRect(), W=innerWidth, H=MC.VH, mob=W<761; if(r.bottom<-50||r.top>H+50){o.st=0;return}
-  const cw=mob?Math.min(W*.26,140):clamp(W*.13,120,215); o.fan.style.setProperty('--cw',cw+'px');
+  const cw=mob?Math.min(W*.40,210):clamp(W*.19,180,320); o.fan.style.setProperty('--cw',cw+'px');
   const active=r.top<H*.45&&r.bottom>H*.55; if(active&&!o.st){o.st=1;o.t0=now} else if(r.top>H*.6){o.st=0}
   const tin=o.st?(now-o.t0)/1000:0, P=prog(o.sec);
   // saída presa à rolagem: as cartas se espalham, sobem girando e somem
   o.cards.forEach((el,i)=>{const off=i-(o.cards.length-1)/2, dir=off||(i%2?.6:-.6);
     const t=MC.reduce?(o.st?1:0):1-Math.pow(1-clamp((tin-i*.08)/.95),3), X=MC.reduce?0:Math.pow(clamp((P-.58-Math.abs(off)*.03)/.34),1.6);
-    const spread=mob?.6:.8;
+    const spread=mob?.68:.92;
     const x=lerp(0,off*cw*spread,t)+X*dir*cw*1.6, y=lerp(H*.8,off*off*cw*.045,t)-X*H*(.9+Math.abs(off)*.12), rz=lerp(-off*10,off*(mob?5:6.5),t)+X*dir*28, ry=lerp(180,0,t)+X*dir*25;
     el.style.opacity=(clamp(t*3)*(1-clamp((X-.45)/.5))).toFixed(3);
     el.style.transform=`translate3d(${x}px,${y}px,0) rotateZ(${rz}deg) rotateY(${ry}deg) scale(var(--hs,1)) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))`});
@@ -360,6 +378,7 @@ function screenFX(kind){ if(MC.reduce) return; const W=fxc.width=innerWidth, H=f
 
 // ---------- Em breve ----------
 const SOON=[['29-c-freira','sil'],['18-g-mecha','bw'],['22-c-charlotte','sil'],['14-g-arcanjo','bw'],['48-o-kimera','sil'],['36-c-pesadelo','bw'],['35-c-furias','sil'],['21-c-veio-do-saco','bw'],['53-o-sun-wukong','sil'],['42-o-jurumim','bw'],['24-c-et','sil'],['06-g-rocco','bw']];
+(()=>{for(let i=SOON.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[SOON[i],SOON[j]]=[SOON[j],SOON[i]]}})(); /* R16: ordem aleatória */
 $('#sgrid').innerHTML=SOON.map(([f,t])=>`<div class="scard ${t}" aria-hidden="true"><img src="${t==='sil'?`assets/cut/${f}.webp`:IMP(f)}" alt="" draggable="false"><span>${t==='sil'?'Em breve':'Em produção'}</span></div>`).join('');
 $('#sgrid').addEventListener('contextmenu',e=>e.preventDefault());
 
@@ -445,12 +464,13 @@ function bgGen(b){const w=b.w,h=b.h; b.parts=[]; b.roots=[]; b.vines=[];
   else {for(let i=0;i<90;i++) b.parts.push({x:rnd(0,w),y:rnd(0,h),r:rnd(.8,2.6),v:rnd(12,40),ph:rnd(0,6)}); for(let i=0;i<5;i++) b.vines.push({x:rnd(0,w),y:rnd(h*.2,h),r:rnd(h*.3,h*.6),ph:rnd(0,6)})}}
 function bgDraw(o,p,now,dt){const b=o.bg, cv=b.cv, W=cv.clientWidth, H=cv.clientHeight; if(!W) return;
   if(W!==b.w||H!==b.h){b.w=cv.width=W;b.h=cv.height=H;bgGen(b)} const c=b.ctx, t=now/1000; c.clearRect(0,0,W,H);
-  if(b.type==='raizes'){
-    for(const r of b.roots){const g=clamp(p*1.5+.3-r.delay), n=Math.floor(r.pts.length*g); if(n<2) continue;
+  if(b.type==='raizes'){ /* R16: cipós e raízes nascem quando a seção encaixa (tempo), não presos à rolagem */
+    const tin=o.st?(now-o.t0)/1000:0, ez=x=>1-Math.pow(1-clamp(x),3);
+    for(const r of b.roots){const g=ez((tin-r.delay*2)/1.6), n=Math.floor(r.pts.length*g); if(n<2) continue;
       for(let pass=0;pass<2;pass++){c.strokeStyle=pass?'rgba(92,140,60,.35)':'#1c140b';c.lineCap='round';
         for(let j=1;j<n;j++){const k=1-j/r.pts.length;c.lineWidth=Math.max(.6,(pass?r.w0*.25:r.w0)*k);c.beginPath();c.moveTo(r.pts[j-1][0],r.pts[j-1][1]);c.lineTo(r.pts[j][0]+(pass?-1:0),r.pts[j][1]);c.stroke()}}}
-    for(const v of b.vines){const sw=Math.sin(t*.8+v.ph)*12+mxN*20;c.strokeStyle='#1d3320';c.lineWidth=2;c.beginPath();c.moveTo(v.x,0);c.quadraticCurveTo(v.x+sw,v.len*.5,v.x+sw*1.6,v.len);c.stroke();
-      c.fillStyle='#24452a';for(let y=14;y<v.len;y+=18){const q=y/v.len, lx=v.x+sw*1.6*q*q*1.2;c.beginPath();c.ellipse(lx+((y/18)%2?7:-7),y,7,3.4,((y/18)%2?.6:-.6),0,Math.PI*2);c.fill()}}
+    b.vines.forEach((v,vi)=>{const vg=ez((tin-.1-vi*.07)/1.1); if(vg<=0) return; const L=v.len*vg, sw=(Math.sin(t*.8+v.ph)*12+mxN*20)*vg;c.strokeStyle='#1d3320';c.lineWidth=2;c.beginPath();c.moveTo(v.x,0);c.quadraticCurveTo(v.x+sw,L*.5,v.x+sw*1.6,L);c.stroke();
+      c.fillStyle='#24452a';for(let y=14;y<L-6;y+=18){const q=y/v.len, lx=v.x+sw*1.6*q*q*1.2;c.beginPath();c.ellipse(lx+((y/18)%2?7:-7),y,7,3.4,((y/18)%2?.6:-.6),0,Math.PI*2);c.fill()}});
     for(const f of b.parts){f.x+=Math.sin(t+f.ph)*.3;f.y+=Math.cos(t*.7+f.ph)*.25;const a=(Math.sin(t*2+f.ph)*.5+.5)*f.s;c.fillStyle=`rgba(214,255,120,${a*.9})`;c.shadowColor='#d6ff78';c.shadowBlur=12;c.beginPath();c.arc(f.x,f.y,1.8,0,Math.PI*2);c.fill()} c.shadowBlur=0}
   else if(b.type==='mares'){
     for(let k=0;k<4;k++){const a=c.createLinearGradient(0,0,0,H*.8);a.addColorStop(0,'rgba(120,230,230,.10)');a.addColorStop(1,'rgba(120,230,230,0)');c.fillStyle=a;const x0=W*(.15+k*.22)+Math.sin(t*.3+k)*40+mxN*40;c.beginPath();c.moveTo(x0,0);c.lineTo(x0+70,0);c.lineTo(x0+200,H*.8);c.lineTo(x0+40,H*.8);c.fill()}
@@ -623,8 +643,8 @@ function updStory(){ const r=stSec.getBoundingClientRect(); if(r.bottom<MC.VH*.5
     S.words.forEach((w,j)=>{const a=clamp(lit-j); w.style.setProperty('--a',a.toFixed(3))});
     S.cards.forEach((c,ci)=>{ /* R15: tudo booleano — quando S.B.early era undefined, `on` virava undefined e classList.toggle('in',undefined) ALTERNAVA a classe a cada quadro (a carta piscava) */ const wOn=lit-S.words.indexOf(c.w)>.5||!!(S.B.early&&c.w===S.cards[0].w&&tq>.15), on=!!(i===bi&&(S.B.red?(lit-S.words.indexOf(c.w)>.5||!!(S.B.early&&c.w===S.cards[0].w&&tq>.15+ci*.18)):(wOn&&tq>ci*.7))), gone=i<bi||(i===bi&&q>.9), pre=c.d.classList.contains('pre')||c.d.dataset.pre;
       if(c.big){ // o tabuleiro surge aos poucos desde o início, desfocado, e fica nítido no bloco dele
-        const bp=i<bi?1:clamp((bi+q)/(i+.35)), gb=i<bi||(i===bi&&q>.9); c.d.style.setProperty('--rv',bp.toFixed(3));
-        c.d.style.opacity=gb?0:(.08+.92*Math.pow(bp,1.6)).toFixed(3); c.d.style.filter=innerWidth<761?'none':`blur(${((1-bp)*16).toFixed(1)}px)`; c.d.classList.add('in'); return }
+        const bp=i<bi?1:(i===bi?clamp(q/.35):0), gb=i<bi||(i===bi&&q>.9); /* R16: o tabuleiro só surge no bloco dele */ c.d.style.setProperty('--rv',bp.toFixed(3));
+        c.d.style.opacity=gb||i!==bi?0:Math.pow(bp,1.4).toFixed(3); c.d.style.filter=innerWidth<761?'none':`blur(${((1-bp)*16).toFixed(1)}px)`; c.d.classList.add('in'); return }
       if(pre){ c.d.dataset.pre=1; c.d.classList.toggle('pre',!!(!on&&!gone&&i===bi)); c.d.classList.toggle('in',!!(i===bi&&!gone)); c.d.classList.toggle('out',!!gone); return }
       c.d.classList.toggle('in',!!(on&&!gone)); c.d.classList.toggle('out',!!gone) }) });
   stDots.forEach((d,i)=>d.classList.toggle('on',i===bi));
@@ -672,8 +692,8 @@ function frame(now){const dt=Math.max(0,Math.min(.05,(now-lastT)/1000)); lastT=n
   MC.mode=MC.zoom?'zoom':act.dataset.mode; {const top=$('.top'), sr=stSec.getBoundingClientRect(), inStory=sr.bottom>MC.VH*.5; const hv=inStory?MC.storyHead:1; top.classList.toggle('instory',inStory&&hv<.5); top.style.setProperty('--hv',hv.toFixed(3)); top.style.setProperty('--lv',MC.logoLanded?1:0); top.classList.toggle('nodock',MC.mode!=='dock'); } MC.p=prog(act); MC.slot=act.querySelector('[data-slot]'); MC.dock=dockEl.getBoundingClientRect();
   MC.baseVis=['hero','show','board','zoom','free','story'].includes(MC.mode)?1:0;
   // a peça: o peão sai da base e fica ao lado; depois entra o texto
-  {const q=MC.mode==='show'?MC.p:0; MC.sep=MC.mode==='show'?sstep(clamp((q-.1)/.45)):0;
-    const tq=MC.mode==='show'?clamp((q-.58)/.12):0; pctxt.style.opacity=tq.toFixed(3); pctxt.style.transform=`translateY(${((1-tq)*24).toFixed(1)}px)`;
+  {const q=MC.mode==='show'?MC.p:0; /* R16: no fim da seção a peça se encaixa de novo e sobe sumindo com o texto */ const back=MC.mode==='show'?sstep(clamp((q-.78)/.14)):0; MC.sep=MC.mode==='show'?sstep(clamp((q-.1)/.45))*(1-back):0; MC.showUp=back;
+    const tq=MC.mode==='show'?clamp((q-.58)/.12)*(1-back):0; pctxt.style.opacity=tq.toFixed(3); pctxt.style.transform=`translateY(${((1-tq)*24-back*60).toFixed(1)}px)`;
     pchint.style.opacity=(MC.mode==='show'?clamp(q/.06)*(1-tq*.4):0).toFixed(3)}
   {const tr2=tabSec.getBoundingClientRect(); MC.boardIn=clamp((MC.VH-tr2.top)/MC.VH); MC.boardOut=clamp((MC.VH*.98-tr2.bottom)/(MC.VH*.6))}
   // chegada ao templo: sol nascente saindo do peão, nuvens entram e o site clareia
@@ -731,8 +751,8 @@ function makeRing(st,items,dir=1,spd=1){ const N=items.length, step=360/N, prev=
   const pos=figs.map((f,i)=>{const a=i*2.39996+.6; return {a, ax:Math.cos(a), ay:Math.sin(a), o:-1, t:''}});
   figs.forEach((f,i)=>f.classList.add(i%3===1?'gz-v':'gz-h'));
   const gz=()=>{const r=sec.getBoundingClientRect(); if(r.bottom<0||r.top>MC.VH) return; const P=clamp(-r.top/Math.max(1,r.height-MC.VH)), W=innerWidth, H=MC.VH, mob=W<761;
-    const sx=W*(mob?.3:.33), sy=H*(mob?.26:.27), cam=P*(N*GAP+PRE+POST); {const ho=(1-clamp((P-.03)/.07))+clamp((P-.94)/.05), hs=ho.toFixed(2); if(gzH.style.opacity!==hs) gzH.style.opacity=hs}
-    figs.forEach((f,i)=>{const z=-(i*GAP)-PRE+cam, q=pos[i]; let o=clamp((z+3700)/900)*clamp((900-z)/450); if(MC.reduce) o=o>.05?1:0;
+    const sx=W*(mob?.3:.33), sy=H*(mob?.26:.27), T0=.18, Pz=clamp((P-T0)/(1-T0)), cam=Pz*(N*GAP+PRE+POST); /* R16: primeiro o texto (sem fotos), depois o túnel */ {const ho=(1-clamp((P-T0+.04)/.08))+clamp((P-.94)/.05), hs=ho.toFixed(2); if(gzH.style.opacity!==hs) gzH.style.opacity=hs}
+    figs.forEach((f,i)=>{const z=-(i*GAP)-PRE+cam, q=pos[i]; let o=clamp((z+3700)/900)*clamp((900-z)/450)*clamp((P-T0)/.03); if(MC.reduce) o=o>.05?1:0;
       const oS=o.toFixed(2); if(oS!==q.o){f.style.opacity=oS; f.style.visibility=o>.01?'visible':'hidden'; f.style.pointerEvents=o>.6?'auto':'none'; q.o=oS}
       if(o>.01){const t=`translate(-50%,-50%) translate3d(${(q.ax*sx).toFixed(1)}px,${(q.ay*sy).toFixed(1)}px,${z.toFixed(1)}px) rotateY(${(-q.ax*8).toFixed(2)}deg) rotateX(${(q.ay*5).toFixed(2)}deg)`; if(t!==q.t){f.style.transform=t; q.t=t}}})};
   MC.gz=gz; addEventListener('scroll',()=>requestAnimationFrame(gz),{passive:true}); addEventListener('resize',gz); gz();

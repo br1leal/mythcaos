@@ -93,19 +93,21 @@ function tick(now){
     const s=Math.min(36,Math.max(0,(p-.22)/.74*36)), i=Math.floor(s), f=smooth(s-i);
     const a=casaLocal[i], b=casaLocal[Math.min(36,i+1)]; const loc=a.clone().lerp(b,f);
     // R5: peças menores e sem sobrepor — quem divide a mesma casa fica lado a lado
-    const PS=.46, cwB=Math.abs(casaLocal[1].x-casaLocal[0].x)||Math.abs(casaLocal[1].z-casaLocal[0].z)||.3, qR=clamp((p-.22)/.74);
+    const PS=.72, cwB=Math.abs(casaLocal[1].x-casaLocal[0].x)||Math.abs(casaLocal[1].z-casaLocal[0].z)||.3, qR=clamp((p-.22)/.74);
     const occ=[[MC.pawn,s]]; if(RIV.ready) RIV.ids.forEach(id=>{if(id!==MC.pawn) occ.push([id,rivStep(id,qR)])});
     // afastamento simples: peças mais perto que minD se empurram até ficarem lado a lado
-    const P0=occ.map(([id,st])=>{if(id===MC.pawn) return {x:loc.x,z:loc.z}; const si=Math.floor(st), sf=smooth(st-si), v=casaLocal[si].clone().lerp(casaLocal[Math.min(36,si+1)],sf); return {x:v.x,z:v.z}}), OF=occ.map(()=>({x:0,z:0})), minD=cwB*.66; MC._slot=MC._slot||{};
+    const P0=occ.map(([id,st])=>{if(id===MC.pawn) return {x:loc.x,z:loc.z}; const si=Math.floor(st), sf=smooth(st-si), v=casaLocal[si].clone().lerp(casaLocal[Math.min(36,si+1)],sf); return {x:v.x,z:v.z}}), OF=occ.map(()=>({x:0,z:0})), minD=cwB*.95; MC._slot=MC._slot||{};
     for(let it=0;it<8;it++) for(let a=0;a<occ.length;a++) for(let c=a+1;c<occ.length;c++){ let dx=(P0[a].x+OF[a].x)-(P0[c].x+OF[c].x), dz=(P0[a].z+OF[a].z)-(P0[c].z+OF[c].z), d=Math.hypot(dx,dz);
       if(d<minD){ if(d<1e-4){const an=(a*2.4+c*1.3); dx=Math.cos(an); dz=Math.sin(an); d=1} const push=(minD-Math.min(d,minD))/2, ux=dx/(d||1), uz=dz/(d||1); OF[a].x+=ux*push; OF[a].z+=uz*push; OF[c].x-=ux*push; OF[c].z-=uz*push } }
     occ.forEach(([id],k)=>{const o=MC._slot[id]||(MC._slot[id]={x:OF[k].x,z:OF[k].z}), kk=1-Math.exp(-dt*10); o.x+=(OF[k].x-o.x)*kk; o.z+=(OF[k].z-o.z)*kk});
-    {const o=MC._slot[MC.pawn]; loc.x+=o.x; loc.z+=o.z}
-    const hop=Math.sin(Math.PI*f)*.35; hopNow=hop;
+    // R16: antes de andar, as peças ficam no centro do tabuleiro em roda (hexágono); conforme a rolagem avança, vão para a trilha
+    const HEXR=cwB*1.15, hexK=smooth(clamp(qR/.14)), ALL=['saci','iara','medusa','mula','papainoel','valquiria'], hexOf=id=>{const a=ALL.indexOf(id)/6*Math.PI*2-Math.PI/2; return {x:Math.cos(a)*HEXR,z:Math.sin(a)*HEXR}}; MC._hexK=hexK;
+    {const o=MC._slot[MC.pawn], hx=hexOf(MC.pawn); loc.x=lerp(hx.x,loc.x+o.x,hexK); loc.z=lerp(hx.z,loc.z+o.z,hexK)}
+    const hop=Math.sin(Math.PI*f)*.35*hexK; hopNow=hop;
     loc.y=hop; board.updateMatrixWorld(); tp=board.localToWorld(loc); ts=PS*bs; vis=p>.16; posK=1-Math.exp(-dt*14);
     rivBuild(); if(RIV.ready){ const q=clamp((p-.22)/.74), rs=[]; const cw=Math.abs(casaLocal[1].x-casaLocal[0].x)||Math.abs(casaLocal[1].z-casaLocal[0].z)||.3;
       RIV.ids.forEach(id=>{const g=RIV.g[id]; if(id===MC.pawn){g.visible=false; return} const st=rivStep(id,q), si=Math.floor(st), sf=smooth(st-si); rs.push(+st.toFixed(2));
-        const A=casaLocal[si], B=casaLocal[Math.min(36,si+1)], v=A.clone().lerp(B,sf); const o=MC._slot[id]||{x:0,z:0}; v.x+=o.x; v.z+=o.z; v.y=Math.sin(Math.PI*sf)*.3;
+        const A=casaLocal[si], B=casaLocal[Math.min(36,si+1)], v=A.clone().lerp(B,sf); const o=MC._slot[id]||{x:0,z:0}, hx=hexOf(id); v.x=lerp(hx.x,v.x+o.x,hexK); v.z=lerp(hx.z,v.z+o.z,hexK); v.y=Math.sin(Math.PI*sf)*.3*hexK;
         g.position.copy(v); g.rotation.set(0,-.4+Math.sin(now*.001+st)*.15,0); g.scale.setScalar(PS*(1-(MC.boardOut||0)*.999)); g.visible=p>.16; if(MC.reduce) g.rotation.y=-.4});
       MC.boardSteps={me:+s.toFixed(2),rivals:rs} }
   } else if(mode==='story'){
@@ -118,9 +120,9 @@ function tick(now){
     const z=clamp(p/.44); tp=toWorld(W/2,H*.62-z*H*.1); ts=Math.max(.0001,(1-z)*H*.34*wpp()); vis=p<.44; tiltX=z*.4;
   } else if(mode==='fall' && MC.slot){
     // cai no centro do abismo: encolhe girando até sumir; depois reaparece ao lado da logo
-    const d=smooth(clamp(p/.62)); tp=toWorld(W/2,H*((mob?.34:.5)+.04*d)); /* R4d: no celular cai acima do texto */ ts=Math.max(.0001,H*(mob?.3:.38)*(1-d)*wpp()); vis=d<.985; tiltX=d*2.2; tiltZ=d*1.4; posK=1-Math.exp(-dt*8);
+    const d=smooth(clamp(p/.62)); tp=toWorld(W/2,H*((mob?.54:.5)+.04*d)); /* R16: no celular cai no centro da tela */ ts=Math.max(.0001,H*(mob?.3:.38)*(1-d)*wpp()); vis=d<.985; tiltX=d*2.2; tiltZ=d*1.4; posK=1-Math.exp(-dt*8);
   } else {
-    tp=toWorld(MC.free.sx,MC.free.sy); ts=MC.free.hp*wpp();
+    tp=toWorld(MC.free.sx,MC.free.sy-(MC.showUp||0)*H*.55); ts=MC.free.hp*wpp()*(1-(MC.showUp||0)*.35); if(mode==='show'&&(MC.showUp||0)>.98) vis=false;
     tiltZ=Math.max(-.35,Math.min(.35,-vel*.0002)); tiltX=Math.max(-.3,Math.min(.3,vel*.0001));
     if(mode==='hero') tiltX+=.3; else if(mode==='show') tiltX+=.12;
   }

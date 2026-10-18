@@ -1983,3 +1983,55 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
  #stcards .layers .char,#stcards .layers .plate,#stcards .layers img{transform:none!important;filter:none!important;transition:none!important}
  #stcards .fx{display:none!important}
 }</style>
+<style>/* R16 */
+/* cursiva (Vakantcy) tem rabiscos que saem da caixa: dá folga em vez de cortar */
+.acc{padding-left:.22em;margin-left:-.1em;padding-right:.3em;overflow:visible}
+.reino .txt,.reino .txt h2,#quebra .pq-big,.cald h2,.tz-txt h2,.dhead h2,.pq{overflow:visible!important}
+.reino .txt h2 .acc{padding-left:.26em;margin-left:-.06em}
+@media (max-width:760px){.reino .txt{overflow:visible;padding-left:.15em}}
+/* reinos: leque com 3 cartas maiores */
+.reino .count{display:none}
+</style>
+<style>/* R16: celular — carta plana com parallax interno e leve esticada no arrasto */
+@media (hover:none){
+ .holo{--tsx:1;--tsy:1}
+ .layers.deep img{transform:translate(calc(var(--lx,0)*-2.2%),calc(var(--ly,0)*-2%)) scale(1.08)!important;transition:transform .25s ease-out!important}
+ .layers.deep::after{display:none}
+ .card .f,.card .b{transform:scale(var(--tsx,1),var(--tsy,1));transition:transform .25s ease-out}
+ .lb-tilt{transform:scale(var(--tsx,1),var(--tsy,1))!important;transition:transform .25s ease-out}
+ #stcards .st-ci{transform:scale(var(--tsx,1),var(--tsy,1))!important;transition:transform .25s ease-out!important}
+ .lv-tilt{transform:scale(var(--tsx,1),var(--tsy,1))!important;transition:transform .25s ease-out}
+ .lb-card{touch-action:pan-y}
+ .lb-face .fx.sheen,.lb-face .fx.film{opacity:calc(var(--hov,0)*.5)}
+}</style>
+<style>/* R16: feitiço — virar sem 3D no celular (o iOS deixava a frente vazar sobre a receita), holográfico igual às cartas, revelação brilhando */
+@media (hover:none){
+ .pot{transform:none!important;perspective:none!important}
+ .pot .inner{transform:none!important;transform-style:flat!important;transition:none!important}
+ .pot .face{backface-visibility:visible!important;transition:opacity .45s ease,visibility 0s linear .45s}
+ .pot .back{transform:none!important}
+ .pot:not(.flip) .back{opacity:0;visibility:hidden;pointer-events:none}
+ .pot.flip .front{opacity:0;visibility:hidden;pointer-events:none}
+ .pot.flip .back,.pot:not(.flip) .front{opacity:1;visibility:visible;transition:opacity .45s ease}
+ .pot .face .fx.sheen,.pot .face .fx.film{display:none}
+ .pot .face .fx.glare{opacity:calc(var(--hov,0)*.35)}
+}
+.pot.won .face{animation:potwon 2.4s ease-in-out infinite}
+.pot.won .back::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.45) 48%,transparent 62%);background-size:220% 220%;animation:potsheen 2.2s ease-in-out infinite;mix-blend-mode:screen;z-index:5}
+@keyframes potwon{0%,100%{box-shadow:0 40px 80px -30px #000,0 0 40px color-mix(in srgb,var(--glow) 35%,transparent)}50%{box-shadow:0 40px 80px -30px #000,0 0 110px color-mix(in srgb,var(--glow) 85%,transparent),0 0 0 2px color-mix(in srgb,var(--glow) 70%,transparent)}}
+@keyframes potsheen{0%{background-position:120% 0}100%{background-position:-20% 0}}
+</style>
+<style>/* R16: confirmação do cadastro fica até fechar */
+.joined{position:relative}
+.joined .jx{position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;border:1px solid color-mix(in srgb,currentColor 25%,transparent);background:color-mix(in srgb,currentColor 6%,transparent);color:inherit;font-size:22px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.joined .jx:hover{background:color-mix(in srgb,currentColor 14%,transparent)}
+/* galeria no celular: foto em retrato, centralizada, cortando o centro */
+@media (max-width:760px){
+ .galm .galm-img{width:min(86vw,calc(78svh * 3 / 4));height:auto;aspect-ratio:3/4;object-fit:cover;object-position:50% 50%;max-height:78svh}
+ .galm{place-items:center!important;padding-top:0!important}
+ /* em breve: 3 colunas */
+ #sgrid.sgrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+ #sgrid .scard span{font-size:10px;padding:5px 8px 3px;bottom:8px}
+ #sgrid .scard.sil::after{font-size:26px;top:6px;right:8px}
+}
+</style>
