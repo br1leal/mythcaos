@@ -621,12 +621,12 @@ function updStory(){ const r=stSec.getBoundingClientRect(); if(r.bottom<MC.VH*.5
     S.el.style.opacity=o.toFixed(3); S.el.style.transform=`translateY(${y.toFixed(1)}px)`; S.el.style.visibility=o>0.005?'visible':'hidden';
     const n=S.words.length, lit=i<bi?n:i>bi?0:(S.B.end?n*clamp(q/.3):tl(n));
     S.words.forEach((w,j)=>{const a=clamp(lit-j); w.style.setProperty('--a',a.toFixed(3))});
-    S.cards.forEach((c,ci)=>{ const wOn=lit-S.words.indexOf(c.w)>.5||(S.B.early&&c.w===S.cards[0].w&&tq>.15), on=i===bi&&(S.B.red?(lit-S.words.indexOf(c.w)>.5||(S.B.early&&c.w===S.cards[0].w&&tq>.15+ci*.18)):(wOn&&tq>ci*.7)), gone=i<bi||(i===bi&&q>.9), pre=c.d.classList.contains('pre')||c.d.dataset.pre;
+    S.cards.forEach((c,ci)=>{ /* R15: tudo booleano — quando S.B.early era undefined, `on` virava undefined e classList.toggle('in',undefined) ALTERNAVA a classe a cada quadro (a carta piscava) */ const wOn=lit-S.words.indexOf(c.w)>.5||!!(S.B.early&&c.w===S.cards[0].w&&tq>.15), on=!!(i===bi&&(S.B.red?(lit-S.words.indexOf(c.w)>.5||!!(S.B.early&&c.w===S.cards[0].w&&tq>.15+ci*.18)):(wOn&&tq>ci*.7))), gone=i<bi||(i===bi&&q>.9), pre=c.d.classList.contains('pre')||c.d.dataset.pre;
       if(c.big){ // o tabuleiro surge aos poucos desde o início, desfocado, e fica nítido no bloco dele
         const bp=i<bi?1:clamp((bi+q)/(i+.35)), gb=i<bi||(i===bi&&q>.9); c.d.style.setProperty('--rv',bp.toFixed(3));
         c.d.style.opacity=gb?0:(.08+.92*Math.pow(bp,1.6)).toFixed(3); c.d.style.filter=innerWidth<761?'none':`blur(${((1-bp)*16).toFixed(1)}px)`; c.d.classList.add('in'); return }
-      if(pre){ c.d.dataset.pre=1; c.d.classList.toggle('pre',!on&&!gone&&i===bi); c.d.classList.toggle('in',(i===bi&&!gone)); c.d.classList.toggle('out',gone); return }
-      c.d.classList.toggle('in',on&&!gone); c.d.classList.toggle('out',gone) }) });
+      if(pre){ c.d.dataset.pre=1; c.d.classList.toggle('pre',!!(!on&&!gone&&i===bi)); c.d.classList.toggle('in',!!(i===bi&&!gone)); c.d.classList.toggle('out',!!gone); return }
+      c.d.classList.toggle('in',!!(on&&!gone)); c.d.classList.toggle('out',!!gone) }) });
   stDots.forEach((d,i)=>d.classList.toggle('on',i===bi));
   // final: o logo grande voa para o lugar do logo do topo, o topo aparece e o peão surge no centro
   const last=N-1, E=ST[last], qe=bi===last?q:(bi<last?0:1), mv=sstep(clamp(qe/.18)), hd=bi===last?clamp((qe-.05)/.15):0;
