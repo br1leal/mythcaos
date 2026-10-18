@@ -2890,15 +2890,19 @@ window.MC_BURN=function(host,dur,logo){ const cv=document.createElement('canvas'
   return new Promise(res=>{ const f=now=>{ const k=Math.min(1,(now-t0)/dur), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; gl.uniform1f(U('t'),e); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); if(k<1) requestAnimationFrame(f); else {cv.remove(); res()} }; requestAnimationFrame(f) }) };
 // ---------- loading ----------
 document.documentElement.classList.add('loading');
-const LD={fonts:0,page:0,models:0,vid:0}, ldEl=$('#loader'); let ldDone=false, ldShown=0;
+const LD={fonts:0,page:0,models:0,vid:0,img:0}, ldEl=$('#loader'); let ldDone=false, ldShown=0;
 MC.modelLoaded=()=>{LD.models=Math.min(1,LD.models+1/12)};
 document.fonts&&document.fonts.ready.then(()=>LD.fonts=1); if(!document.fonts) LD.fonts=1;
 addEventListener('load',()=>LD.page=1); if(document.readyState==='complete') LD.page=1;
 const t0=performance.now();
-function ldTick(){ if(ldDone) return; const pr=(LD.fonts*.2+LD.page*.4+LD.models*.4), el=performance.now()-t0, tg=Math.min(pr,MC.reduce?1:el/4600); /* R5: ~5s, nunca mais rápido que o relógio nem que o carregamento */ ldShown+=(tg-ldShown)*.18; if(tg>=1&&ldShown>.985) ldShown=1; const pc=Math.round(ldShown*100);
+// R13: aproveita o carregamento para baixar e decodificar as imagens do começo do site (história, tabuleiro, primeiros reinos) — evita travadas depois
+setTimeout(()=>{ const U=[...new Set([...document.querySelectorAll('#stcards img, #raizes img, .lv-panel img, #historia img')].map(i=>i.currentSrc||i.getAttribute('src')).filter(Boolean))].slice(0,40);
+  if(!U.length){LD.img=1; return} let d=0; const one=()=>{d++; LD.img=d/U.length};
+  U.forEach(u=>{const im=new Image(); im.decoding='async'; im.src=u; (im.decode?im.decode():new Promise(r=>{im.onload=im.onerror=r})).then(one,one)}) },60);
+function ldTick(){ if(ldDone) return; const pr=(LD.fonts*.15+LD.page*.3+LD.models*.35+LD.img*.2), el=performance.now()-t0, tg=Math.min(pr,MC.reduce?1:el/6600); /* R13: ~7s, nunca mais rápido que o relógio nem que o carregamento */ ldShown+=(tg-ldShown)*.18; if(tg>=1&&ldShown>.985) ldShown=1; const pc=Math.round(ldShown*100);
   {const msg=pc<25?'Acordando as lendas':pc<50?'Embaralhando os Reinos':pc<75?'Procurando o gorro do Saci':'Que comece o Caos', me=$('#ldmsg'); if(me&&me.textContent!==msg) me.textContent=msg}
   $('#ldbar').parentElement.style.setProperty('--lp',pc+'%'); $('#ldbar').style.width=pc+'%'; $('#ldpct').textContent=pc;
-  if((pr>.98&&ldShown>=1)||performance.now()-t0>12000){ if(!LD.tr) LD.tr=performance.now(); }
+  if((pr>.98&&ldShown>=1)||performance.now()-t0>14000){ if(!LD.tr) LD.tr=performance.now(); }
   if(LD.tr&&performance.now()-LD.tr>(MC.reduce?150:350)){ ldDone=true; $('#ldbar').style.width='100%'; $('#ldpct').textContent=100;
     setTimeout(()=>{ const L=ldEl.querySelector('.ld-logo'), S=ldEl.querySelector('.ld-sub'), HL=$('#hlogot'), HS=$('#hlogos');
       const flyTo=(el,tg)=>{if(!el||!tg) return; const a=el.getBoundingClientRect(), t=tg.getBoundingClientRect(); if(!a.height||!t.height) return; const _=0, k=t.height/a.height; el.style.transformOrigin='50% 50%'; el.style.transform=`translate(${(t.left+t.width/2)-(a.left+a.width/2)}px,${(t.top+t.height/2)-(a.top+a.height/2)}px) scale(${k})`};
