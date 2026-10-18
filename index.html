@@ -1943,6 +1943,20 @@ body[data-theme^="luz"] #mtrail.on{opacity:.75}
 #mfluid.on{opacity:1}
 body[data-theme^="luz"] #mfluid.on{opacity:.85}
 </style>
+<style>/* R9: sobre o autor — contatos padronizados e mais respiro entre os blocos */
+#autorm .atext h3{margin:4px 0 22px!important;line-height:.95}
+#autorm .atext p:not(.label){margin:0 0 16px!important;line-height:1.55}
+#autorm .atext .label{margin:0 0 6px!important}
+#autorm ul.autorc{display:block!important;margin:26px 0 0!important;padding:0;list-style:none;line-height:1.6}
+#autorm ul.autorc li{display:inline!important;margin:0;padding:0}
+#autorm ul.autorc li+li::before{content:"·";display:inline;margin:0 12px;opacity:.4;color:var(--bone)}
+#autorm a.achip{display:inline!important;font-family:var(--f-body,inherit)!important;font-size:14px!important;font-weight:400!important;letter-spacing:.02em!important;line-height:inherit!important;vertical-align:baseline!important;padding:0!important;margin:0!important;background:none!important;box-shadow:none!important;color:var(--bone)!important;opacity:.62;text-decoration:none;white-space:nowrap}
+#autorm a.achip:hover{opacity:1;color:var(--accent)!important}
+#autorm a.achip .label{display:none!important}
+#autorm .awa{display:none}
+#autorm .lbbtns{margin-top:26px!important}
+@media (max-width:760px){#autorm a.achip{font-size:12.5px!important;letter-spacing:0!important}#autorm ul.autorc li+li::before{margin:0 7px}#autorm .anum{display:none!important}#autorm .awa{display:inline}}
+</style>
 
 </head><body><link rel="preload" href="assets/fonts/vakantcy.woff2" as="font" type="font/woff2" crossorigin>
 <div class="loader" id="loader" role="status" aria-live="polite">
@@ -2297,7 +2311,7 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
     <p>Pai da Aurora e apaixonado por jogos de tabuleiro.</p>
     <p>Comecei a desenvolver o MythCaos em 2024, quando descobri que seria pai. Queria um jogo para, um dia, apresentar a ela o mundo de lendas e mitos que a gente conhece desde criança.</p>
     <p>Um jogo divertido e disputado, feito para a família inteira.</p>
-    <ul class="autorc"><li><a class="achip" href="mailto:contato@mythcaos.com.br"><span class="label">E-mail</span>contato@mythcaos.com.br</a></li><li><a class="achip" href="https://instagram.com/mythcaos" target="_blank" rel="noopener"><span class="label">Instagram</span>@mythcaos</a></li><li><a class="achip" href="https://wa.me/5542998270848" target="_blank" rel="noopener"><span class="label">WhatsApp</span>WhatsApp<span class="anum"> (42) 99827-0848</span></a></li></ul>
+    <ul class="autorc"><li><a class="achip" href="mailto:contato@mythcaos.com.br"><span class="label">E-mail</span>contato@mythcaos.com.br</a></li><li><a class="achip" href="https://instagram.com/mythcaos" target="_blank" rel="noopener"><span class="label">Instagram</span>@mythcaos</a></li><li><a class="achip" href="https://wa.me/5542998270848" target="_blank" rel="noopener"><span class="label">WhatsApp</span><span class="anum">(42) 99827-0848</span><span class="awa">WhatsApp</span></a></li></ul>
     <div class="lbbtns"><a class="btn small" href="#quebra" data-close>Jogue o desafio</a><button class="btn ghost small" type="button" data-lead>Lista de espera</button></div></div></div>
   <button class="mx" type="button" aria-label="Fechar" data-close>×</button>
 </div>
