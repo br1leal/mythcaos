@@ -1938,6 +1938,11 @@ footer.fcred .fcopy{margin-top:22px;font-size:13px;opacity:.6}
 body[data-theme^="luz"] #mtrail{mix-blend-mode:multiply;opacity:.0}
 body[data-theme^="luz"] #mtrail.on{opacity:.75}
 </style>
+<style>/* R8: rastro em fluido (WebGL) */
+#mfluid{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:2147483646;opacity:0;transition:opacity .4s}
+#mfluid.on{opacity:1}
+body[data-theme^="luz"] #mfluid.on{opacity:.85}
+</style>
 
 </head><body><link rel="preload" href="assets/fonts/vakantcy.woff2" as="font" type="font/woff2" crossorigin>
 <div class="loader" id="loader" role="status" aria-live="polite">
@@ -2371,7 +2376,7 @@ const find=f=>{const k=WHERE[f]; return k?{k,c:MANI[k].find(x=>x.f===f+'.jpg')}:
 // ---------- peões e tema ----------
 const PAWNS=[['saci','Saci','#c8281e','#e0362a'],['iara','Iara','#2f6fd0','#3f8cff'],['medusa','Medusa','#7a8a34','#9cb03c'],['mula','Mula sem Cabeça','#2a2a30','#ff7a1a'],['papainoel','Klaus','#ede6da','#e6edf5'],['valquiria','Valquíria','#e8b923','#f2c230']];
 if(PAWNS.some(p=>p[0]===window.MC_L)) MC.pawn=window.MC_L; // R4d: o peão que acompanha é o mesmo da logo sorteada na chegada
-function applyPawn(id){const p=PAWNS.find(x=>x[0]===id);MC.pawn=id;if(MC.pawnReady) document.querySelectorAll('img.mclogo').forEach(i=>{const f=v=>v.replace(/logo-[a-z]+-(\d)/g,'logo-'+id+'-$1'); i.srcset=f(i.srcset); if(i.getAttribute('src')) i.src=f(i.src)});document.documentElement.style.setProperty('--accent',p[3]);document.documentElement.style.setProperty('--btn-ink',id==='papainoel'?'#0d1a1c':'#140c08');
+function applyPawn(id){const p=PAWNS.find(x=>x[0]===id);MC.pawn=id;if(MC.pawnReady) document.querySelectorAll('img.mclogo').forEach(i=>{const f=v=>v.replace(/logo-[a-z]+-(\d)/g,'logo-'+id+'-$1'); i.srcset=f(i.srcset); if(i.getAttribute('src')) i.src=f(i.src)});document.documentElement.style.setProperty('--accent',p[3]);MC.onAccent&&MC.onAccent(p[3]);document.documentElement.style.setProperty('--btn-ink',id==='papainoel'?'#0d1a1c':'#140c08');
   try{localStorage.setItem('mc-pawn',id)}catch(e){}; $$('#gpick button,#ptagm button,#pzpick button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id)); const tn=$('#ptagn'); if(tn) tn.textContent=p[1]; const zn=$('#pzn'); if(zn) zn.textContent=p[1]; MC.onPawn&&MC.onPawn(id); MC.onTheme&&MC.onTheme()}
 const gpick=$('#gpick');
 if(gpick) PAWNS.forEach(([id,name,c])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.style.setProperty('--c',c);b.innerHTML=`<i></i><span>${name.split(' ')[0]}</span>`;b.setAttribute('aria-label',name);b.onclick=()=>applyPawn(id);gpick.appendChild(b)});
@@ -3093,16 +3098,91 @@ function makeRing(st,items,dir=1,spd=1){ const N=items.length, step=360/N, prev=
 // 10 liquid glass: refração (filtro SVG no backdrop) só onde o navegador suporta (Chrome/Edge)
 try{ if(false&&matchMedia('(pointer:fine)').matches&&navigator.userAgentData&&navigator.userAgentData.brands.some(b=>/Chromium/i.test(b.brand))) document.documentElement.classList.add('lgr') }catch(e){}
 
+// R8: rastro do mouse em fluido (WebGL) — tinta na cor da lenda que é empurrada pelo mouse,
+// gira (vorticidade), se espalha e evapora. Técnica clássica "stable fluids" na GPU:
+// advecção → vorticidade → divergência → pressão (Jacobi) → projeção. Só desktop.
+window.MC_FLUID=function(cv,opts){
+  const O=Object.assign({sim:128,dye:768,velDiss:1.4,dyeDiss:2.6,pressure:.8,iters:18,curl:14,radius:.09,force:3600,amount:.14},opts||{});
+  const gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,preserveDrawingBuffer:false});
+  if(!gl) return null;
+  const hf=gl.getExtension('OES_texture_half_float'), hl=gl.getExtension('OES_texture_half_float_linear');
+  if(!hf||!hl) return null;
+  const HF=hf.HALF_FLOAT_OES;
+  const sh=(t,s)=>{const o=gl.createShader(t); gl.shaderSource(o,s); gl.compileShader(o); if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(o); return o};
+  const VS=sh(gl.VERTEX_SHADER,`precision highp float;attribute vec2 aP;varying vec2 vUv,vL,vR,vT,vB;uniform vec2 tx;
+    void main(){vUv=aP*.5+.5;vL=vUv-vec2(tx.x,0.);vR=vUv+vec2(tx.x,0.);vT=vUv+vec2(0.,tx.y);vB=vUv-vec2(0.,tx.y);gl_Position=vec4(aP,0.,1.);}`);
+  const P=src=>{const p=gl.createProgram(); gl.attachShader(p,VS); gl.attachShader(p,sh(gl.FRAGMENT_SHADER,'precision highp float;precision highp sampler2D;varying vec2 vUv,vL,vR,vT,vB;uniform vec2 tx;'+src)); gl.bindAttribLocation(p,0,'aP'); gl.linkProgram(p);
+    if(!gl.getProgramParameter(p,gl.LINK_STATUS)) throw gl.getProgramInfoLog(p); const u={}; const n=gl.getProgramParameter(p,gl.ACTIVE_UNIFORMS); for(let i=0;i<n;i++){const a=gl.getActiveUniform(p,i).name; u[a]=gl.getUniformLocation(p,a)} return {p,u}};
+  let prg;
+  try{ prg={
+    splat:P(`uniform sampler2D uT;uniform float ar,r;uniform vec3 c;uniform vec2 pt;void main(){vec2 p=vUv-pt;p.x*=ar;vec3 s=exp(-dot(p,p)/r)*c;gl_FragColor=vec4(texture2D(uT,vUv).xyz+s,1.);}`),
+    adv:P(`uniform sampler2D uV,uS;uniform float dt,ds;void main(){vec2 co=vUv-dt*texture2D(uV,vUv).xy*tx;gl_FragColor=texture2D(uS,co)/(1.+ds*dt);}`),
+    div:P(`uniform sampler2D uV;void main(){float L=texture2D(uV,vL).x,R=texture2D(uV,vR).x,T=texture2D(uV,vT).y,B=texture2D(uV,vB).y;vec2 C=texture2D(uV,vUv).xy;
+      if(vL.x<0.)L=-C.x;if(vR.x>1.)R=-C.x;if(vT.y>1.)T=-C.y;if(vB.y<0.)B=-C.y;gl_FragColor=vec4(.5*(R-L+T-B),0.,0.,1.);}`),
+    curl:P(`uniform sampler2D uV;void main(){float L=texture2D(uV,vL).y,R=texture2D(uV,vR).y,T=texture2D(uV,vT).x,B=texture2D(uV,vB).x;gl_FragColor=vec4(.5*(R-L-T+B),0.,0.,1.);}`),
+    vort:P(`uniform sampler2D uV,uC;uniform float cs,dt;void main(){float L=texture2D(uC,vL).x,R=texture2D(uC,vR).x,T=texture2D(uC,vT).x,B=texture2D(uC,vB).x,C=texture2D(uC,vUv).x;
+      vec2 f=.5*vec2(abs(T)-abs(B),abs(R)-abs(L));f/=length(f)+1e-4;f*=cs*C;f.y*=-1.;vec2 v=texture2D(uV,vUv).xy+f*dt;gl_FragColor=vec4(clamp(v,-1000.,1000.),0.,1.);}`),
+    clr:P(`uniform sampler2D uT;uniform float v;void main(){gl_FragColor=v*texture2D(uT,vUv);}`),
+    prs:P(`uniform sampler2D uP,uD;void main(){float L=texture2D(uP,vL).x,R=texture2D(uP,vR).x,T=texture2D(uP,vT).x,B=texture2D(uP,vB).x,d=texture2D(uD,vUv).x;gl_FragColor=vec4((L+R+B+T-d)*.25,0.,0.,1.);}`),
+    grd:P(`uniform sampler2D uP,uV;void main(){float L=texture2D(uP,vL).x,R=texture2D(uP,vR).x,T=texture2D(uP,vT).x,B=texture2D(uP,vB).x;vec2 v=texture2D(uV,vUv).xy-vec2(R-L,T-B);gl_FragColor=vec4(v,0.,1.);}`),
+    show:P(`uniform sampler2D uT;uniform float k;void main(){vec3 c=texture2D(uT,vUv).rgb*k;c=c/(1.+c*.35);float a=clamp(max(c.r,max(c.g,c.b)),0.,1.);gl_FragColor=vec4(min(c,vec3(a)),a);}`)
+  }}catch(e){ return null }
+  gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,-1,1,1,1,1,-1]),gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,gl.createBuffer()); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array([0,1,2,0,2,3]),gl.STATIC_DRAW);
+  gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0); gl.enableVertexAttribArray(0);
+  const fbo=(w,h)=>{const t=gl.createTexture(); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,t);
+    [gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER].forEach(k=>gl.texParameteri(gl.TEXTURE_2D,k,gl.LINEAR)); [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(k=>gl.texParameteri(gl.TEXTURE_2D,k,gl.CLAMP_TO_EDGE));
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,w,h,0,gl.RGBA,HF,null); const f=gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER,f); gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,t,0);
+    gl.viewport(0,0,w,h); gl.clearColor(0,0,0,1); gl.clear(gl.COLOR_BUFFER_BIT);
+    return {t,f,w,h,tx:[1/w,1/h],at(i){gl.activeTexture(gl.TEXTURE0+i); gl.bindTexture(gl.TEXTURE_2D,t); return i}}};
+  const dbl=(w,h)=>{let a=fbo(w,h),b=fbo(w,h); return {w,h,tx:a.tx,get r(){return a},get w_(){return b},swap(){const t=a;a=b;b=t}}};
+  const res=r=>{const ar=gl.drawingBufferWidth/gl.drawingBufferHeight, lo=Math.round(r), hi=Math.round(r*(ar<1?1/ar:ar)); return ar>1?[hi,lo]:[lo,hi]};
+  let vel,dye,dv,cu,pr;
+  const build=()=>{const [sw,shh]=res(O.sim), [dw,dh]=res(O.dye); vel=dbl(sw,shh); dye=dbl(dw,dh); dv=fbo(sw,shh); cu=fbo(sw,shh); pr=dbl(sw,shh)};
+  const resize=()=>{const W=Math.round(innerWidth*Math.min(devicePixelRatio,1)), H=Math.round(innerHeight*Math.min(devicePixelRatio,1)); if(cv.width!==W||cv.height!==H){cv.width=W; cv.height=H; build()}};
+  const use=(pg,tx)=>{gl.useProgram(pg.p); gl.uniform2f(pg.u.tx,tx[0],tx[1]); return pg.u};
+  const blit=t=>{ if(t){gl.viewport(0,0,t.w,t.h); gl.bindFramebuffer(gl.FRAMEBUFFER,t.f)} else {gl.viewport(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight); gl.bindFramebuffer(gl.FRAMEBUFFER,null)} gl.drawElements(gl.TRIANGLES,6,gl.UNSIGNED_SHORT,0)};
+  resize(); addEventListener('resize',resize);
+  let col=[1,.2,.15];
+  const splat=(x,y,dx,dy,c)=>{const ar=cv.width/cv.height, r=O.radius/100*(ar>1?ar:1);
+    let u=use(prg.splat,vel.tx); gl.uniform1i(u.uT,vel.r.at(0)); gl.uniform1f(u.ar,ar); gl.uniform2f(u.pt,x,y); gl.uniform3f(u.c,dx,dy,0); gl.uniform1f(u.r,r); blit(vel.w_); vel.swap();
+    u=use(prg.splat,dye.tx); gl.uniform1i(u.uT,dye.r.at(0)); gl.uniform3f(u.c,c[0],c[1],c[2]); blit(dye.w_); dye.swap()};
+  const step=dt=>{ gl.disable(gl.BLEND);
+    let u=use(prg.curl,vel.tx); gl.uniform1i(u.uV,vel.r.at(0)); blit(cu);
+    u=use(prg.vort,vel.tx); gl.uniform1i(u.uV,vel.r.at(0)); gl.uniform1i(u.uC,cu.at(1)); gl.uniform1f(u.cs,O.curl); gl.uniform1f(u.dt,dt); blit(vel.w_); vel.swap();
+    u=use(prg.div,vel.tx); gl.uniform1i(u.uV,vel.r.at(0)); blit(dv);
+    u=use(prg.clr,vel.tx); gl.uniform1i(u.uT,pr.r.at(0)); gl.uniform1f(u.v,O.pressure); blit(pr.w_); pr.swap();
+    u=use(prg.prs,vel.tx); gl.uniform1i(u.uD,dv.at(0)); for(let i=0;i<O.iters;i++){gl.uniform1i(u.uP,pr.r.at(1)); blit(pr.w_); pr.swap()}
+    u=use(prg.grd,vel.tx); gl.uniform1i(u.uP,pr.r.at(0)); gl.uniform1i(u.uV,vel.r.at(1)); blit(vel.w_); vel.swap();
+    u=use(prg.adv,vel.tx); gl.uniform1i(u.uV,vel.r.at(0)); gl.uniform1i(u.uS,vel.r.at(0)); gl.uniform1f(u.dt,dt); gl.uniform1f(u.ds,O.velDiss); blit(vel.w_); vel.swap();
+    u=use(prg.adv,vel.tx); gl.uniform1i(u.uV,vel.r.at(0)); gl.uniform1i(u.uS,dye.r.at(1)); gl.uniform1f(u.dt,dt); gl.uniform1f(u.ds,O.dyeDiss); blit(dye.w_); dye.swap() };
+  const show=()=>{const u=use(prg.show,dye.tx); gl.uniform1i(u.uT,dye.r.at(0)); gl.uniform1f(u.k,1); gl.clearColor(0,0,0,0); gl.bindFramebuffer(gl.FRAMEBUFFER,null); gl.viewport(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight); gl.clear(gl.COLOR_BUFFER_BIT); blit(null)};
+  let raf=0,lt=0,last=0,px=-1,py=-1,pend=[];
+  const loop=now=>{ const dt=Math.min(.033,lt?(now-lt)/1000:.016); lt=now;
+    pend.forEach(a=>splat(...a)); pend.length=0; step(dt); show();
+    if(now-last<3800) raf=requestAnimationFrame(loop); else {raf=0; lt=0; gl.bindFramebuffer(gl.FRAMEBUFFER,null); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT); cv.classList.remove('on')} };
+  return {
+    color(hex){const m=/^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec((hex||'').trim()); if(m) col=[1,2,3].map(i=>parseInt(m[i],16)/255)},
+    move(x,y){ const W=innerWidth,H=innerHeight; if(px<0){px=x;py=y; return} const dx=(x-px)/W, dy=(y-py)/H; px=x; py=y; if(!dx&&!dy) return;
+      const sp=Math.min(1,Math.hypot(dx,dy)*40), k=O.amount*(.45+.55*sp);
+      pend.push([x/W,1-y/H,dx*O.force,-dy*O.force,[col[0]*k,col[1]*k,col[2]*k]]); last=performance.now(); cv.classList.add('on'); if(!raf) raf=requestAnimationFrame(loop)},
+    leave(){px=-1;py=-1},
+    gl
+  };
+};
+
 // 1 cursor próprio + rastro quase imperceptível que deforma o que passa por baixo (lente líquida na cor da lenda)
 {const fine=matchMedia('(pointer:fine)').matches&&matchMedia('(hover:hover)').matches;
  if(fine&&!MC.reduce){ const de=document.documentElement; de.classList.add('cur'); MC.trailN=0;
   const cur=document.createElement('div'); cur.id='mcur'; cur.setAttribute('aria-hidden','true'); cur.innerHTML='<svg viewBox="0 0 22 22"><path d="M2.5 2 L19.5 9.6 L11.4 11.6 L8.9 19.8 Z"/></svg>';
   // R5: rastro de fumaça na cor da lenda — fita suave com mola, afina e some (canvas em meia resolução + desfoque na GPU)
+  const fcv=document.createElement('canvas'); fcv.id='mfluid'; fcv.setAttribute('aria-hidden','true'); document.body.appendChild(fcv);
+  let FL=null; try{ FL=window.MC_FLUID(fcv) }catch(e){ FL=null } if(!FL) fcv.remove(); MC.fluid=FL;
   const tr=document.createElement('canvas'); tr.id='mtrail'; tr.setAttribute('aria-hidden','true'); const tx=tr.getContext('2d');
   document.body.append(tr,cur);
   let mx=-200,my=-200,raf=0,W=0,H=0,acc='#e0362a',lastMove=0; const S=.5, pts=[], fo={x:-200,y:-200,vx:0,vy:0};
   const size=()=>{W=innerWidth; H=innerHeight; tr.width=Math.ceil(W*S); tr.height=Math.ceil(H*S)}; size(); addEventListener('resize',size);
-  const readAcc=()=>{acc=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||acc}; readAcc(); const _ot=MC.onTheme; MC.onTheme=()=>{_ot&&_ot(); readAcc()};
+  const readAcc=()=>{acc=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||acc; FL&&FL.color(acc)}; readAcc(); MC.onAccent=c=>{acc=c; FL&&FL.color(c)}; const _ot=MC.onTheme; MC.onTheme=()=>{_ot&&_ot(); readAcc()};
   const loop=now=>{ // mola: o rastro segue o mouse com atraso e curva natural
     fo.vx+=(mx-fo.x)*.16; fo.vy+=(my-fo.y)*.16; fo.vx*=.66; fo.vy*=.66; fo.x+=fo.vx; fo.y+=fo.vy;
     const sp=Math.hypot(fo.vx,fo.vy); if(now-lastMove<120||sp>.4) pts.unshift({x:fo.x,y:fo.y,l:1,w:Math.min(1,.35+sp/22)});
@@ -3115,11 +3195,11 @@ try{ if(false&&matchMedia('(pointer:fine)').matches&&navigator.userAgentData&&na
           tx.beginPath(); tx.moveTo((a.x+b.x)/2,(a.y+b.y)/2); tx.quadraticCurveTo(b.x,b.y,(b.x+c.x)/2,(b.y+c.y)/2); tx.stroke()}}
       tx.globalAlpha=.5*pts[0].l; tx.beginPath(); tx.arc(pts[0].x,pts[0].y,16*pts[0].w,0,6.283); tx.fill(); tx.globalAlpha=1 }
     if(pts.length||sp>.3){raf=requestAnimationFrame(loop)} else {raf=0; tr.classList.remove('on')} };
-  addEventListener('pointermove',e=>{ if(e.pointerType&&e.pointerType!=='mouse') return; mx=e.clientX; my=e.clientY; lastMove=performance.now(); MC.trailN++; cur.style.transform=`translate3d(${mx-2.5}px,${my-2}px,0)`; cur.style.opacity=1; tr.classList.add('on'); if(fo.x<-100){fo.x=mx; fo.y=my} if(!raf) raf=requestAnimationFrame(loop)},{passive:true});
+  addEventListener('pointermove',e=>{ if(e.pointerType&&e.pointerType!=='mouse') return; mx=e.clientX; my=e.clientY; lastMove=performance.now(); MC.trailN++; cur.style.transform=`translate3d(${mx-2.5}px,${my-2}px,0)`; cur.style.opacity=1; if(FL){FL.move(mx,my); return} tr.classList.add('on'); if(fo.x<-100){fo.x=mx; fo.y=my} if(!raf) raf=requestAnimationFrame(loop)},{passive:true});
   const HOV='a,button,[role="button"],label,select,.lv-card,.scard,.rel,.ring-item,.plv,.ing,[data-holo],.grv-fr';
   document.addEventListener('pointerover',e=>cur.classList.toggle('on',!!e.target.closest(HOV)));
   addEventListener('pointerdown',()=>cur.classList.add('down')); addEventListener('pointerup',()=>cur.classList.remove('down'));
-  document.addEventListener('pointerout',e=>{if(!e.relatedTarget){cur.style.opacity=0; tr.classList.remove('on')}}) }}
+  document.addEventListener('pointerout',e=>{if(!e.relatedTarget){cur.style.opacity=0; tr.classList.remove('on'); FL&&FL.leave()}}) }}
 
 </script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
