@@ -2073,6 +2073,26 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
 @media (max-width:760px){.gz-space figure{width:38vw!important}.gz-space figure.gz-v{width:27vw!important}}
 </style>
 <style>.holo,.holo img{-webkit-user-drag:none;user-drag:none}</style>
+<style>/* R18 */
+/* baralhos: Portal aberto libera todos */
+.deck.free{opacity:1!important;filter:none!important;cursor:pointer}
+.deck.free .stack{box-shadow:0 0 0 2px color-mix(in srgb,var(--dc) 70%,transparent),0 0 40px color-mix(in srgb,var(--dc) 45%,transparent);animation:deckfree 1.6s ease-in-out infinite}
+@keyframes deckfree{50%{box-shadow:0 0 0 2px var(--dc),0 0 70px color-mix(in srgb,var(--dc) 70%,transparent)}}
+.deck.free .dlock{color:var(--dc);opacity:1}
+/* relíquias: uma versão por vez em todas as telas, com setas */
+.rf-arr{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:1px solid color-mix(in srgb,var(--bone) 25%,transparent);background:rgba(0,0,0,.45);color:var(--bone);font-size:30px;line-height:1;display:grid;place-items:center;cursor:pointer;z-index:5;padding:0 0 4px}
+.rf-arr.l{left:max(8px,calc(50% - min(36vw,calc(33svh * 815 / 1110)) - 60px))}.rf-arr.r{right:max(8px,calc(50% - min(36vw,calc(33svh * 815 / 1110)) - 60px))}
+.rf-arr:hover{background:color-mix(in srgb,var(--rc,var(--accent)) 40%,#000)}
+.relfan.single .rf-c{width:min(72vw,calc(66svh * 815 / 1110))!important}
+@media (min-width:761px){.relfan.single .rf-c{width:min(30vw,calc(64svh * 815 / 1110))!important}.relfan.single .rf-c.prev{transform:translate(calc(-50% - 36vw),-50%) rotate(-6deg) scale(.9)!important}.relfan.single .rf-c.next{transform:translate(calc(-50% + 36vw),-50%) rotate(6deg) scale(.9)!important}}
+@media (max-width:760px){.rf-arr{display:none}}
+/* feitiço: parallax da imagem dentro da carta, igual às outras */
+.pot .front img{transform:translate(-50%,-50%) rotate(90deg) translate(calc(var(--ly,0)*-2%),calc(var(--lx,0)*2%)) scale(1.08)!important;transition:transform .25s ease-out!important}
+.pot .back #magimg{transform:translate(calc(var(--lx,0)*-1.6%),calc(var(--ly,0)*-1.4%)) scale(1.06);transition:transform .25s ease-out}
+/* galeria: nada cortado no topo */
+.gz-stage{overflow:visible!important}
+.galz{overflow:clip}
+</style>
 
 </head><body><link rel="preload" href="assets/fonts/vakantcy.woff2" as="font" type="font/woff2" crossorigin>
 <div class="loader" id="loader" role="status" aria-live="polite">
@@ -2093,15 +2113,15 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
 <svg class="lgdefs" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute"><filter id="lgf" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.04" numOctaves="2" seed="11" result="n"/><feGaussianBlur in="n" stdDeviation="1.5" result="nb"/><feDisplacementMap in="SourceGraphic" in2="nb" scale="26" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="curf" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <header class="top">
   <div class="brand"><a class="logo" href="#historia" id="hlogo"><span id="hlogot"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:520px) 120px, 160px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"><script>window.MC_LOGO=function(){var L=["saci","iara","medusa","mula","papainoel","valquiria"],k=window.MC_L||(window.MC_L="saci");var A={saci:"#e0362a",iara:"#3f8cff",medusa:"#9cb03c",mula:"#ff7a1a",papainoel:"#e6edf5",valquiria:"#f2c230"},R=document.documentElement.style;R.setProperty("--accent",A[k]);R.setProperty("--btn-ink",k==="papainoel"?"#0d1a1c":"#140c08");document.querySelectorAll("img.mclogo[data-l]").forEach(function(i){i.srcset=i.getAttribute("data-l").replace(/__L__/g,k);i.removeAttribute("data-l")})};MC_LOGO()</script></span><span class="lsub" id="hlogos">O Despertar das Lendas</span></a><button class="dock" id="dock" type="button" aria-label="Ver sua lenda de perto" title="Ver de perto"></button><div class="ptag"><button class="ptag-b" id="ptagb" type="button" aria-expanded="false" aria-controls="ptagm"><i></i><span id="ptagn">Saci</span><em>trocar</em></button><div class="ptag-m" id="ptagm" hidden></div></div></div>
-  <nav class="tnav" aria-label="Atalhos"><div class="tlinks" id="tlinks"><button class="tlink" type="button" data-autor>Sobre o autor</button><a class="tlink" href="#quebra">Jogue o desafio</a></div><button class="btn small" type="button" data-lead>Lista de espera</button><button class="tmenu" id="tmenu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="tlinks"><i></i><i></i><i></i></button></nav>
+  <nav class="tnav" aria-label="Atalhos"><div class="tlinks" id="tlinks"><button class="tlink" type="button" data-autor>Sobre o autor</button></div><button class="btn small" type="button" data-lead>Lista de espera</button><button class="tmenu" id="tmenu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="tlinks"><i></i><i></i><i></i></button></nav>
 </header>
 
 <nav class="rail" aria-label="Seções">
   <a href="#historia"><span>História</span><i></i></a>
   <a href="#peca"><span>A peça</span><i></i></a>
   <a href="#lendas"><span>Lendas</span><i></i></a>
-  <a href="#decks"><span>Baralhos</span><i></i></a>
   <a href="#insignias"><span>Insígnias</span><i></i></a>
+  <a href="#decks"><span>Baralhos</span><i></i></a>
   <a href="#raizes"><span>Raízes</span><i></i></a>
   <a href="#mares"><span>Marés</span><i></i></a>
   <a href="#tormentas"><span>Tormentas</span><i></i></a>
@@ -2114,7 +2134,7 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
   <a href="#galeria"><span>Galeria</span><i></i></a>
   <a href="#caldeirao"><span>Feitiços</span><i></i></a>
   <a href="#embreve"><span>Em breve</span><i></i></a>
-  <a href="#quebra"><span>Desafio</span><i></i></a>
+  
   <a href="#lista"><span>Lista</span><i></i></a>
 </nav>
 
@@ -2193,6 +2213,13 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
   </div>
 </section>
 
+<section id="insignias" class="ins wrap" data-theme="base" data-mode="dock">
+  <p class="label">Insígnias</p>
+  <h2 class="one">Três classes de lendas</h2>
+  <p class="lead2 two">As cartas de personagem se dividem em Guardiões de proteção, Caos de combate e Oráculos de manipulação.<br>A insígnia no canto mostra a classe e quanto a carta vale na sua mão quando a rodada fecha.</p>
+  <div class="igrid"><div class="icol" style="--ic:#e8892c"><img class="ibig" src="assets/ins/guardias-5.webp" alt=""><div class="itx"><p class="label ikind">Proteção</p><h3>Guardião</h3><p>A espada. De +1 a +5. Defende você de ataques de Caos e de Oráculo, e te leva para frente.</p><div class="irow"><img src="assets/ins/guardias-1.webp" alt="1"><img src="assets/ins/guardias-2.webp" alt="2"><img src="assets/ins/guardias-3.webp" alt="3"><img src="assets/ins/guardias-4.webp" alt="4"><img src="assets/ins/guardias-5.webp" alt="5"></div></div></div><div class="icol" style="--ic:#e0362a"><img class="ibig" src="assets/ins/caos-8.webp" alt=""><div class="itx"><p class="label ikind">Combate</p><h3>Caos</h3><p>A serpente. De −2 a −8. Ataca os outros, mas pesa se ficar na sua mão.</p><div class="irow"><img src="assets/ins/caos-2.webp" alt="2"><img src="assets/ins/caos-3.webp" alt="3"><img src="assets/ins/caos-4.webp" alt="4"><img src="assets/ins/caos-5.webp" alt="5"><img src="assets/ins/caos-8.webp" alt="8"></div></div></div><div class="icol" style="--ic:#a88bff"><img class="ibig" src="assets/ins/oraculos-4.webp" alt=""><div class="itx"><p class="label ikind">Manipulação</p><h3>Oráculo</h3><p>A lua. De +1 a +4. Informação: espiar, prever e reordenar.</p><div class="irow"><img src="assets/ins/oraculos-1.webp" alt="1"><img src="assets/ins/oraculos-2.webp" alt="2"><img src="assets/ins/oraculos-3.webp" alt="3"><img src="assets/ins/oraculos-4.webp" alt="4"></div></div></div></div>
+</section>
+
 <section id="decks" class="decks wrap" data-theme="base" data-mode="dock">
   <p class="label">Explore</p>
   <h2 class="one">Os quatro Reinos</h2>
@@ -2204,13 +2231,6 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
     <button class="deck" data-r="tormentas" style="--dc:#a88bff"><span class="dn">Tormentas</span><span class="dcount">Reino III · <b>24</b> cartas</span><span class="stack"><img src="assets/imp/tormentas/114-verso.jpg" alt=""></span><span class="dlock"></span></button>
     <button class="deck" data-r="titas" style="--dc:#e8b54c"><span class="dn">Titãs</span><span class="dcount">Reino IV · <b>19</b> cartas</span><span class="stack"><img src="assets/imp/titas/114-verso.jpg" alt=""></span><span class="dlock"></span></button>
   </div>
-</section>
-
-<section id="insignias" class="ins wrap" data-theme="base" data-mode="dock">
-  <p class="label">Insígnias</p>
-  <h2 class="one">Três classes de lendas</h2>
-  <p class="lead2 two">As cartas de personagem se dividem em Guardiões de proteção, Caos de combate e Oráculos de manipulação.<br>A insígnia no canto mostra a classe e quanto a carta vale na sua mão quando a rodada fecha.</p>
-  <div class="igrid"><div class="icol" style="--ic:#e8892c"><img class="ibig" src="assets/ins/guardias-5.webp" alt=""><div class="itx"><p class="label ikind">Proteção</p><h3>Guardião</h3><p>A espada. De +1 a +5. Defende você de ataques de Caos e de Oráculo, e te leva para frente.</p><div class="irow"><img src="assets/ins/guardias-1.webp" alt="1"><img src="assets/ins/guardias-2.webp" alt="2"><img src="assets/ins/guardias-3.webp" alt="3"><img src="assets/ins/guardias-4.webp" alt="4"><img src="assets/ins/guardias-5.webp" alt="5"></div></div></div><div class="icol" style="--ic:#e0362a"><img class="ibig" src="assets/ins/caos-8.webp" alt=""><div class="itx"><p class="label ikind">Combate</p><h3>Caos</h3><p>A serpente. De −2 a −8. Ataca os outros, mas pesa se ficar na sua mão.</p><div class="irow"><img src="assets/ins/caos-2.webp" alt="2"><img src="assets/ins/caos-3.webp" alt="3"><img src="assets/ins/caos-4.webp" alt="4"><img src="assets/ins/caos-5.webp" alt="5"><img src="assets/ins/caos-8.webp" alt="8"></div></div></div><div class="icol" style="--ic:#a88bff"><img class="ibig" src="assets/ins/oraculos-4.webp" alt=""><div class="itx"><p class="label ikind">Manipulação</p><h3>Oráculo</h3><p>A lua. De +1 a +4. Informação: espiar, prever e reordenar.</p><div class="irow"><img src="assets/ins/oraculos-1.webp" alt="1"><img src="assets/ins/oraculos-2.webp" alt="2"><img src="assets/ins/oraculos-3.webp" alt="3"><img src="assets/ins/oraculos-4.webp" alt="4"></div></div></div></div>
 </section>
 
 <section id="raizes" class="reino" data-theme="raizes" data-mode="dock">
@@ -2333,7 +2353,7 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
   <div class="sgrid" id="sgrid"></div>
 </section>
 
-<section id="quebra" class="puz wrap" data-theme="luz" data-mode="dock">
+<section id="quebra" class="puz wrap" data-theme="luz" data-mode="dock" hidden>
   <div class="pq-head">
     <div class="pq-l"><p class="label">Minigame · ranking ao vivo</p>
       <h2 class="pq-big">Enquanto o jogo não fica pronto, <span class="acc">que tal encarar o desafio?</span></h2></div>
@@ -2368,14 +2388,12 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
     <label for="f-nome">Seu nome<input id="f-nome" name="nome" autocomplete="name" required></label>
     <label for="f-email">E-mail<input id="f-email" name="email" type="email" autocomplete="email" required></label>
     <label for="f-tel">Celular (WhatsApp)<input id="f-tel" name="tel" type="tel" autocomplete="tel" placeholder="(11) 90000-0000"></label>
-    <label for="f-mesa">Quantas pessoas jogam na sua mesa?<select id="f-mesa" name="mesa"><option>2 a 3</option><option selected>4 a 6</option><option>Mais de 6</option></select></label>
-    <label class="chk" for="f-catarse"><input id="f-catarse" type="checkbox" checked> Quero saber se abrir uma campanha no Catarse</label>
     <button class="btn" type="submit">Entrar na lista</button>
     <p class="ok" id="ok" aria-live="polite"></p>
   </form>
-  <div class="joined" hidden aria-live="polite"><button class="jx" type="button" aria-label="Fechar" data-jclose>×</button><p class="label">Lista de espera</p><h3>Seu lugar na mesa está guardado<span class="jn"></span>!</h3><p>Enviamos um e-mail de boas-vindas. Enquanto isso, que tal o Desafio MythCaos?</p><a class="btn" href="#quebra" data-jgo>Jogue o desafio</a></div>
+  <div class="joined" hidden aria-live="polite"><button class="jx" type="button" aria-label="Fechar" data-jclose>×</button><p class="label">Lista de espera</p><h3>Seu lugar na mesa está guardado<span class="jn"></span>!</h3><p>Enviamos um e-mail de boas-vindas. Quando tiver novidade de verdade, você fica sabendo primeiro.</p></div>
 </section>
-<footer class="wrap fcred"><p class="cbig"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"></p><p class="fline"><span>Criado e desenvolvido por <strong>Bruno Leal</strong></span><span class="st-dot"> · </span><span class="fbr">Feito no Brasil <svg class="flagbr" viewBox="0 0 20 14" role="img" aria-label="bandeira do Brasil"><rect width="20" height="14" rx="2.2" fill="#009c3b"/><path d="M10 1.7 18 7 10 12.3 2 7z" fill="#ffdf00"/><circle cx="10" cy="7" r="3.05" fill="#002776"/><path d="M7.05 6.35c1.9-.55 4.05-.25 5.9.95" stroke="#fff" stroke-width=".55" fill="none"/></svg></span></p><p class="fnav"><button class="tlink" type="button" data-autor>Sobre o autor</button><span class="st-dot"> · </span><a class="tlink" href="#quebra">Desafio MythCaos</a></p><p class="fcopy">© 2026 Bruno Leal · Todos os direitos reservados</p></footer>
+<footer class="wrap fcred"><p class="cbig"><img class="mclogo" data-l="assets/logo/logo-__L__-480.webp 480w, assets/logo/logo-__L__-1000.webp 1000w, assets/logo/logo-__L__-1400.webp 1400w" sizes="(max-width:700px) 92vw, 900px" width="1400" height="579" alt="MythCaos – O Despertar das Lendas" decoding="async"></p><p class="fline"><span>Criado e desenvolvido por <strong>Bruno Leal</strong></span><span class="st-dot"> · </span><span class="fbr">Feito no Brasil <svg class="flagbr" viewBox="0 0 20 14" role="img" aria-label="bandeira do Brasil"><rect width="20" height="14" rx="2.2" fill="#009c3b"/><path d="M10 1.7 18 7 10 12.3 2 7z" fill="#ffdf00"/><circle cx="10" cy="7" r="3.05" fill="#002776"/><path d="M7.05 6.35c1.9-.55 4.05-.25 5.9.95" stroke="#fff" stroke-width=".55" fill="none"/></svg></span></p><p class="fnav"><button class="tlink" type="button" data-autor>Sobre o autor</button></p><p class="fcopy">© 2026 Bruno Leal · Todos os direitos reservados</p></footer>
 </main>
 
 <div class="modal" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbn">
@@ -2431,13 +2449,13 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
     <p>Comecei a desenvolver o MythCaos em 2024, quando descobri que seria pai. Queria um jogo para, um dia, apresentar a ela o mundo de lendas e mitos que a gente conhece desde criança.</p>
     <p>Um jogo divertido e disputado, feito para a família inteira.</p>
     <ul class="autorc"><li><a class="achip" href="mailto:contato@mythcaos.com.br"><span class="label">E-mail</span>contato@mythcaos.com.br</a></li><li><a class="achip" href="https://instagram.com/mythcaos" target="_blank" rel="noopener"><span class="label">Instagram</span>@mythcaos</a></li><li><a class="achip" href="https://wa.me/5542998270848" target="_blank" rel="noopener"><span class="label">WhatsApp</span><span class="anum">(42) 99827-0848</span><span class="awa">WhatsApp</span></a></li></ul>
-    <div class="lbbtns"><a class="btn small" href="#quebra" data-close>Jogue o desafio</a><button class="btn ghost small" type="button" data-lead>Lista de espera</button></div></div></div>
+    <div class="lbbtns"><button class="btn ghost small" type="button" data-lead>Lista de espera</button></div></div></div>
   <button class="mx" type="button" aria-label="Fechar" data-close>×</button>
 </div>
 <div class="modal" id="lead" hidden role="dialog" aria-modal="true" aria-labelledby="leadt">
   <div class="mbg" data-close></div>
   <div class="mbox">
-    <div class="joined" hidden aria-live="polite"><button class="jx" type="button" aria-label="Fechar" data-jclose>×</button><p class="label">Lista de espera</p><h3>Seu lugar na mesa está guardado<span class="jn"></span>!</h3><p>Enviamos um e-mail de boas-vindas. Enquanto isso, que tal o Desafio MythCaos?</p><a class="btn" href="#quebra" data-jgo>Jogue o desafio</a></div>
+    <div class="joined" hidden aria-live="polite"><button class="jx" type="button" aria-label="Fechar" data-jclose>×</button><p class="label">Lista de espera</p><h3>Seu lugar na mesa está guardado<span class="jn"></span>!</h3><p>Enviamos um e-mail de boas-vindas. Quando tiver novidade de verdade, você fica sabendo primeiro.</p></div>
     <form id="leadf" novalidate><div class="hpf" aria-hidden="true"><label>Não preencha<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <p class="label" id="leadk">Novidades</p>
       <h3 id="leadt">Fique por dentro</h3>
@@ -2618,7 +2636,7 @@ $('#leadf').addEventListener('submit',async e=>{e.preventDefault();const n=$('#l
 $('#form').addEventListener('submit',async e=>{e.preventDefault();const n=$('#f-nome').value.trim(),m=$('#f-email').value.trim(),ok=$('#ok');
   if(!n){ok.textContent='Escreva seu nome para entrar na lista.';$('#f-nome').focus();return}
   if(!okEmail(m)){ok.textContent='Esse e-mail parece incompleto. Confira e tente de novo.';$('#f-email').focus();return}
-  const saved=MC.isBot('form')?true:await saveLead({nome:n,email:m,tel:$('#f-tel').value.trim(),mesa:$('#f-mesa').value,catarse:$('#f-catarse').checked,origem:'lista'}); leadSaved=true;
+  const saved=MC.isBot('form')?true:await saveLead({nome:n,email:m,tel:$('#f-tel').value.trim(),origem:'lista'}); leadSaved=true;
   ok.textContent=saved?`Pronto, ${n.split(' ')[0]}. Seu lugar na mesa está guardado.`:'Recebemos seus dados nesta tela, mas o envio ainda não está ligado nesta prévia.'; MC.onJoin&&MC.onJoin()});
 
 // ---------- lightbox: carta centralizada ----------
@@ -2633,10 +2651,11 @@ if(TOUCHUI){ let sx=0,sy=0,sw=false; const card=lb.querySelector('.lb-card');
   card.addEventListener('touchend',e=>{ if(!sw) return; sw=false; const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy; if(Math.abs(dx)<56||Math.abs(dx)<Math.abs(dy)*1.2||!lbList||lbList.length<2) return;
     const i=lbList.indexOf(lbCur), n=(i+(dx<0?1:-1)+lbList.length)%lbList.length; const nf=lbList[n];
     card.animate([{transform:`translateX(${dx<0?-18:18}px)`,opacity:.6},{transform:'none',opacity:1}],{duration:320,easing:'cubic-bezier(.2,.8,.2,1)'}); openCard(nf,null) },{passive:true}) }
+const ALLCARDS=['raizes','mares','tormentas','titas'].flatMap(k=>MANI[k].filter(c=>['Guardião','Caos','Oráculo'].includes(c.c)).map(c=>c.f.slice(0,-4)));
 let lbList=null, lbCur=null;
 async function openCard(f,fromEl,flip){
   const d=find(f); if(!d) return; lbCur=f;
-  if(fromEl){ const fan=fromEl.closest&&fromEl.closest('.fan'); const st=fromEl.closest&&fromEl.closest('#stcards'); lbList=fan?R[fan.closest('section').id]:st?ST.flatMap(S=>S.cards.filter(c=>!c.big&&!c.ref.startsWith('v:')).map(c=>c.ref)):scPool } else if(!lbList) lbList=scPool; const {k,c}=d, cls=c.c, pts=parseInt(c.p)||0, my=++lbToken;
+  if(fromEl){ const fan=fromEl.closest&&fromEl.closest('.fan'); const st=fromEl.closest&&fromEl.closest('#stcards'); lbList=fan?R[fan.closest('section').id]:st?ST.flatMap(S=>S.cards.filter(c=>!c.big&&!c.ref.startsWith('v:')).map(c=>c.ref)):ALLCARDS } else if(!lbList) lbList=ALLCARDS; const {k,c}=d, cls=c.c, pts=parseInt(c.p)||0, my=++lbToken;
   lb.classList.remove('ready'); lb.style.setProperty('--kc',KC[cls]||'var(--accent)');
   $('#lbback').src=`assets/imp/${k}/114-verso.jpg`;
   lbl.innerHTML=layersHTML(f,'Carta '+c.n);
@@ -2657,8 +2676,9 @@ for(const k of ['raizes','mares','tormentas','titas']) piles[k]=shuffle([...MANI
 const ORD=['raizes','mares','tormentas','titas']; let cur='raizes';
 let dMsg='';
 // só o Reino onde você está fica liberado; os outros ficam cinza até um Portal abrir o caminho
-function paintDecks(){ $$('.deck').forEach(d=>{const k=d.dataset.r, on=k===cur; d.classList.toggle('active',on); d.classList.toggle('locked',!on); d.disabled=false; d.removeAttribute('aria-disabled');
-  d.querySelector('.dlock').textContent=on?dMsg:(ORD.indexOf(k)>ORD.indexOf(cur)?'':'')}); selDeck=$(`.deck[data-r="${cur}"]`)}
+let portalOpen=false; // R18: um Portal libera todos os Reinos; você escolhe um e fica nele; um Limbo te devolve às Raízes
+function paintDecks(){ $$('.deck').forEach(d=>{const k=d.dataset.r, on=k===cur, free=portalOpen&&!on; d.classList.toggle('active',on); d.classList.toggle('locked',!on&&!portalOpen); d.classList.toggle('free',free); d.disabled=false; d.removeAttribute('aria-disabled');
+  d.querySelector('.dlock').textContent=on?dMsg:(free?'Portal aberto · escolha':'')}); selDeck=$(`.deck[data-r="${cur}"]`)}
 function deckFx(kind,from,to){ const a=$(`.deck[data-r="${from}"] .stack`), b=$(`.deck[data-r="${to}"] .stack`); if(!a||!b) return;
   const ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect(), fx=document.createElement('div'); fx.className='deckfx '+kind;
   const x1=ra.left+ra.width/2, y1=ra.top+ra.height/2, x2=rb.left+rb.width/2, y2=rb.top+rb.height/2;
@@ -2673,22 +2693,22 @@ MC.afterCard=()=>{ if(!drawing) return; drawing=false; dMsg='Compre mais 1'; pai
 function deckTip(btn,msg){ let t=btn.querySelector('.dtip'); if(!t){t=document.createElement('span'); t.className='dtip'; t.setAttribute('role','status'); btn.appendChild(t)} t.innerHTML=msg; t.classList.remove('on'); void t.offsetWidth; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),2600);
   const a=$(`.deck[data-r="${cur}"]`); a.classList.remove('nudge'); void a.offsetWidth; a.classList.add('nudge')}
 $$('.deck').forEach(btn=>btn.addEventListener('click',()=>{ if(drawing) return; const k=btn.dataset.r;
-  if(k!==cur){ deckTip(btn,ORD.indexOf(k)>ORD.indexOf(cur)?`Bloqueado. Clique de novo em <b>${RN[cur]}</b> até achar um Portal.`:`Você já passou daqui. Continue em <b>${RN[cur]}</b>.`); return }
+  if(k!==cur){ if(!portalOpen){ deckTip(btn,`Bloqueado. Clique de novo em <b>${RN[cur]}</b> até achar um Portal.`); return } portalOpen=false; deckFx('portal',cur,k); cur=k; dMsg='Você chegou. Compre aqui'; paintDecks(); return }
   drawing=true; cur=k; paintDecks();
   // só cartas que o site já mostrou: um personagem e um Portal (Limbo nos Titãs), sempre os mesmos
   const f=DSHOW[k][dIdx[k]++%2], cls=find(f).c.c; MC.onDraw&&MC.onDraw(cls);
-  if(cls==='Portal'&&k!=='titas'){ const nx=ORD[ORD.indexOf(k)+1]; deckPend=()=>{deckFx('portal',k,nx); cur=nx; dMsg='Portal aberto! Compre aqui'; paintDecks()} }
-  else if(cls==='Limbo'&&k!=='raizes') deckPend=()=>{deckFx('limbo',k,'raizes'); cur='raizes'; dMsg='Caiu no Limbo! Recomece aqui'; paintDecks()};
+  if(cls==='Portal'){ deckPend=()=>{portalOpen=true; dMsg='Portal aberto! Escolha um Reino'; paintDecks()} }
+  else if(cls==='Limbo'&&k!=='raizes') deckPend=()=>{portalOpen=false; deckFx('limbo',k,'raizes'); cur='raizes'; dMsg='Caiu no Limbo! Recomece aqui'; paintDecks()};
   openCard(f,btn.querySelector('.stack'),true) }));
 paintDecks();
 
 // ---------- Reinos ----------
 // R16: 3 cartas por Reino (maiores), nenhuma repetida da História
-const R={
- raizes:['04-g-caipora','28-c-mula-sem-cabeca','03-g-boitata'],
- mares:['15-g-poseidon','02-g-iara','49-o-boto'],
- tormentas:['52-o-loki','40-c-yuki-onna','10-g-freya'],
- titas:['11-g-valkyria','34-c-minotauro','12-g-odin']};
+const R={ /* R18: uma de cada cultura por Reino (folclore · mitologia · lenda urbana/terror) */
+ raizes:['04-g-caipora','13-g-hercules','20-c-bicho-papao'],
+ mares:['49-o-boto','15-g-poseidon','22-c-charlotte'],
+ tormentas:['16-g-tupa','10-g-freya','40-c-yuki-onna'],
+ titas:['50-o-phoenix','12-g-odin','37-c-noiva-fantasma']};
 const reinos=[];
 for(const id in R){const sec=document.getElementById(id), fan=sec.querySelector('.fan'), cards=[];
   R[id].forEach(f=>{const el=document.createElement('div');el.className='card';el.tabIndex=0;el.setAttribute('role','button');el.setAttribute('aria-label','Ver a carta '+nameOf(f));
@@ -2782,7 +2802,7 @@ function relFill(el){ const list=el._rl; $('#relmt').textContent=el.querySelecto
   requestAnimationFrame(()=>requestAnimationFrame(()=>rfFan.classList.add('on'))) }
 // R17: no celular, uma versão por vez, grande; deslizar o dedo troca
 let relIdx=0; function relSet(i){ const cs=[...rfFan.querySelectorAll('.rf-c')]; if(!cs.length) return; relIdx=(i+cs.length)%cs.length; cs.forEach((c,k)=>{c.classList.toggle('cur',k===relIdx); c.classList.toggle('prev',k===(relIdx-1+cs.length)%cs.length); c.classList.toggle('next',k===(relIdx+1)%cs.length)});
-  let dots=relM.querySelector('.rf-dots'); if(!dots){dots=document.createElement('div'); dots.className='rf-dots'; rfFan.after(dots)} dots.innerHTML=cs.map((_,k)=>`<i class="${k===relIdx?'on':''}"></i>`).join('') }
+  let dots=relM.querySelector('.rf-dots'); if(!dots){dots=document.createElement('div'); dots.className='rf-dots'; rfFan.after(dots); const mk=(d,l)=>{const b=document.createElement('button'); b.type='button'; b.className='rf-arr '+(d<0?'l':'r'); b.setAttribute('aria-label',l); b.textContent=d<0?'‹':'›'; b.onclick=e=>{e.stopPropagation(); relSet(relIdx+d)}; rfFan.appendChild(b)}; mk(-1,'Versão anterior'); mk(1,'Próxima versão'); relM.addEventListener('keydown',e=>{if(e.key==='ArrowRight') relSet(relIdx+1); if(e.key==='ArrowLeft') relSet(relIdx-1)})} dots.innerHTML=cs.map((_,k)=>`<i class="${k===relIdx?'on':''}"></i>`).join('') }
 { let sx=0,sy=0,on=false; rfFan.addEventListener('touchstart',e=>{const t=e.touches[0]; sx=t.clientX; sy=t.clientY; on=true},{passive:true});
   rfFan.addEventListener('touchend',e=>{ if(!on||!relM.classList.contains('single')) return; on=false; const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy; if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)) relSet(relIdx+(dx<0?1:-1)) },{passive:true}) }
 // passar o mouse: o leque abre na tela, sem modal (fundo escurece e desfoca); tirar o mouse fecha
@@ -2794,8 +2814,8 @@ if(canHover) addEventListener('pointermove',e=>{ if(e.pointerType==='touch') ret
   if(relM.classList.contains('hov')&&relFor&&!relT) relT=setTimeout(()=>{relT=0; relHide()},260) },{passive:true});
 $$('.rel').forEach(el=>{const img=el.querySelector('img'), g=Object.keys(RELS).find(k=>img.src.includes('-r-'+k)); if(!g) return; el._rl=RELS[g];
   el.insertAdjacentHTML('afterbegin',`<span class="rn">${el._rl.length} versões</span>`);
-  const open=()=>{ relFor=null; relM.classList.remove('hov','closing'); relFill(el); if(TOUCHUI){ relM.classList.add('single'); relSet(0) } openModal(relM) };
-  el.addEventListener('click',()=>{ if(canHover) relShow(el); else open() }); el.tabIndex=0; el.setAttribute('role','button'); el.setAttribute('aria-label','Ver as versões de '+el.querySelector('h3').textContent);
+  const open=()=>{ relFor=null; relM.classList.remove('hov','closing'); relFill(el); relM.classList.add('single'); relSet(0); openModal(relM) };
+  el.addEventListener('click',()=>{ relHide&&relM.classList.contains('hov')&&relHide(); open() }); el.tabIndex=0; el.setAttribute('role','button'); el.setAttribute('aria-label','Ver as versões de '+el.querySelector('h3').textContent);
   el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}})});
 document.addEventListener('click',e=>{ if(relM.classList.contains('hov')&&relFor&&!e.target.closest('.rel,.rf-c')) relHide() });
 addEventListener('keydown',e=>{ if(e.key==='Escape'&&relM.classList.contains('hov')) relHide() });
@@ -3251,7 +3271,7 @@ function makeRing(st,items,dir=1,spd=1){ const N=items.length, step=360/N, prev=
   let base=0, lastY=scrollY, lt=0, boost=0, raf=0, run=false;
   const gz=now=>{ const r=sec.getBoundingClientRect(); const W=innerWidth, H=MC.VH, mob=W<761; const dt=lt?Math.min(.05,(now-lt)/1000):0; lt=now; const dy=scrollY-lastY; lastY=scrollY; boost+=(dy*.0025-boost)*.15; base+=(.09+boost)*dt*(mob?1.2:1);
     const vis=clamp((H-r.top)/(H*.5))*clamp((r.bottom)/(H*.5)); gzH.style.opacity='1';
-    figs.forEach((f,i)=>{const q=pos[i], ring=q.ring, R=(mob?[.36,.52,.7]:[.3,.42,.55])[ring], rx=W*R*(mob?1.15:1), ry=H*(mob?.3:.36)*(mob?[.85,1.05,1.3][ring]:[.8,1.05,1.35][ring]);
+    figs.forEach((f,i)=>{const q=pos[i], ring=q.ring, R=(mob?[.36,.52,.7]:[.3,.42,.55])[ring], rx=W*R*(mob?1.15:1), ry=H*(mob?.26:.3)*(mob?[.8,1,1.15][ring]:[.78,1,1.18][ring]);
       const a=q.a0+base*(ring%2?-1:1)*(1-ring*.22); const x=Math.cos(a)*rx, y=Math.sin(a)*ry, depth=(Math.sin(a)+1)/2; const sc=(mob?.42:.5)+depth*(mob?.5:.6), o=(.35+depth*.65)*vis;
       const oS=o.toFixed(2); if(oS!==q.o){f.style.opacity=oS; f.style.visibility=o>.02?'visible':'hidden'; f.style.pointerEvents=o>.5?'auto':'none'; q.o=oS}
       const t=`translate(-50%,-50%) translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${sc.toFixed(3)})`; if(t!==q.t){f.style.transform=t; f.style.zIndex=Math.round(depth*20); q.t=t}});

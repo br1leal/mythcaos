@@ -131,7 +131,7 @@ $('#leadf').addEventListener('submit',async e=>{e.preventDefault();const n=$('#l
 $('#form').addEventListener('submit',async e=>{e.preventDefault();const n=$('#f-nome').value.trim(),m=$('#f-email').value.trim(),ok=$('#ok');
   if(!n){ok.textContent='Escreva seu nome para entrar na lista.';$('#f-nome').focus();return}
   if(!okEmail(m)){ok.textContent='Esse e-mail parece incompleto. Confira e tente de novo.';$('#f-email').focus();return}
-  const saved=MC.isBot('form')?true:await saveLead({nome:n,email:m,tel:$('#f-tel').value.trim(),mesa:$('#f-mesa').value,catarse:$('#f-catarse').checked,origem:'lista'}); leadSaved=true;
+  const saved=MC.isBot('form')?true:await saveLead({nome:n,email:m,tel:$('#f-tel').value.trim(),origem:'lista'}); leadSaved=true;
   ok.textContent=saved?`Pronto, ${n.split(' ')[0]}. Seu lugar na mesa está guardado.`:'Recebemos seus dados nesta tela, mas o envio ainda não está ligado nesta prévia.'; MC.onJoin&&MC.onJoin()});
 
 // ---------- lightbox: carta centralizada ----------
@@ -146,10 +146,11 @@ if(TOUCHUI){ let sx=0,sy=0,sw=false; const card=lb.querySelector('.lb-card');
   card.addEventListener('touchend',e=>{ if(!sw) return; sw=false; const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy; if(Math.abs(dx)<56||Math.abs(dx)<Math.abs(dy)*1.2||!lbList||lbList.length<2) return;
     const i=lbList.indexOf(lbCur), n=(i+(dx<0?1:-1)+lbList.length)%lbList.length; const nf=lbList[n];
     card.animate([{transform:`translateX(${dx<0?-18:18}px)`,opacity:.6},{transform:'none',opacity:1}],{duration:320,easing:'cubic-bezier(.2,.8,.2,1)'}); openCard(nf,null) },{passive:true}) }
+const ALLCARDS=['raizes','mares','tormentas','titas'].flatMap(k=>MANI[k].filter(c=>['Guardião','Caos','Oráculo'].includes(c.c)).map(c=>c.f.slice(0,-4)));
 let lbList=null, lbCur=null;
 async function openCard(f,fromEl,flip){
   const d=find(f); if(!d) return; lbCur=f;
-  if(fromEl){ const fan=fromEl.closest&&fromEl.closest('.fan'); const st=fromEl.closest&&fromEl.closest('#stcards'); lbList=fan?R[fan.closest('section').id]:st?ST.flatMap(S=>S.cards.filter(c=>!c.big&&!c.ref.startsWith('v:')).map(c=>c.ref)):scPool } else if(!lbList) lbList=scPool; const {k,c}=d, cls=c.c, pts=parseInt(c.p)||0, my=++lbToken;
+  if(fromEl){ const fan=fromEl.closest&&fromEl.closest('.fan'); const st=fromEl.closest&&fromEl.closest('#stcards'); lbList=fan?R[fan.closest('section').id]:st?ST.flatMap(S=>S.cards.filter(c=>!c.big&&!c.ref.startsWith('v:')).map(c=>c.ref)):ALLCARDS } else if(!lbList) lbList=ALLCARDS; const {k,c}=d, cls=c.c, pts=parseInt(c.p)||0, my=++lbToken;
   lb.classList.remove('ready'); lb.style.setProperty('--kc',KC[cls]||'var(--accent)');
   $('#lbback').src=`assets/imp/${k}/114-verso.jpg`;
   lbl.innerHTML=layersHTML(f,'Carta '+c.n);
@@ -170,8 +171,9 @@ for(const k of ['raizes','mares','tormentas','titas']) piles[k]=shuffle([...MANI
 const ORD=['raizes','mares','tormentas','titas']; let cur='raizes';
 let dMsg='';
 // só o Reino onde você está fica liberado; os outros ficam cinza até um Portal abrir o caminho
-function paintDecks(){ $$('.deck').forEach(d=>{const k=d.dataset.r, on=k===cur; d.classList.toggle('active',on); d.classList.toggle('locked',!on); d.disabled=false; d.removeAttribute('aria-disabled');
-  d.querySelector('.dlock').textContent=on?dMsg:(ORD.indexOf(k)>ORD.indexOf(cur)?'':'')}); selDeck=$(`.deck[data-r="${cur}"]`)}
+let portalOpen=false; // R18: um Portal libera todos os Reinos; você escolhe um e fica nele; um Limbo te devolve às Raízes
+function paintDecks(){ $$('.deck').forEach(d=>{const k=d.dataset.r, on=k===cur, free=portalOpen&&!on; d.classList.toggle('active',on); d.classList.toggle('locked',!on&&!portalOpen); d.classList.toggle('free',free); d.disabled=false; d.removeAttribute('aria-disabled');
+  d.querySelector('.dlock').textContent=on?dMsg:(free?'Portal aberto · escolha':'')}); selDeck=$(`.deck[data-r="${cur}"]`)}
 function deckFx(kind,from,to){ const a=$(`.deck[data-r="${from}"] .stack`), b=$(`.deck[data-r="${to}"] .stack`); if(!a||!b) return;
   const ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect(), fx=document.createElement('div'); fx.className='deckfx '+kind;
   const x1=ra.left+ra.width/2, y1=ra.top+ra.height/2, x2=rb.left+rb.width/2, y2=rb.top+rb.height/2;
@@ -186,22 +188,22 @@ MC.afterCard=()=>{ if(!drawing) return; drawing=false; dMsg='Compre mais 1'; pai
 function deckTip(btn,msg){ let t=btn.querySelector('.dtip'); if(!t){t=document.createElement('span'); t.className='dtip'; t.setAttribute('role','status'); btn.appendChild(t)} t.innerHTML=msg; t.classList.remove('on'); void t.offsetWidth; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),2600);
   const a=$(`.deck[data-r="${cur}"]`); a.classList.remove('nudge'); void a.offsetWidth; a.classList.add('nudge')}
 $$('.deck').forEach(btn=>btn.addEventListener('click',()=>{ if(drawing) return; const k=btn.dataset.r;
-  if(k!==cur){ deckTip(btn,ORD.indexOf(k)>ORD.indexOf(cur)?`Bloqueado. Clique de novo em <b>${RN[cur]}</b> até achar um Portal.`:`Você já passou daqui. Continue em <b>${RN[cur]}</b>.`); return }
+  if(k!==cur){ if(!portalOpen){ deckTip(btn,`Bloqueado. Clique de novo em <b>${RN[cur]}</b> até achar um Portal.`); return } portalOpen=false; deckFx('portal',cur,k); cur=k; dMsg='Você chegou. Compre aqui'; paintDecks(); return }
   drawing=true; cur=k; paintDecks();
   // só cartas que o site já mostrou: um personagem e um Portal (Limbo nos Titãs), sempre os mesmos
   const f=DSHOW[k][dIdx[k]++%2], cls=find(f).c.c; MC.onDraw&&MC.onDraw(cls);
-  if(cls==='Portal'&&k!=='titas'){ const nx=ORD[ORD.indexOf(k)+1]; deckPend=()=>{deckFx('portal',k,nx); cur=nx; dMsg='Portal aberto! Compre aqui'; paintDecks()} }
-  else if(cls==='Limbo'&&k!=='raizes') deckPend=()=>{deckFx('limbo',k,'raizes'); cur='raizes'; dMsg='Caiu no Limbo! Recomece aqui'; paintDecks()};
+  if(cls==='Portal'){ deckPend=()=>{portalOpen=true; dMsg='Portal aberto! Escolha um Reino'; paintDecks()} }
+  else if(cls==='Limbo'&&k!=='raizes') deckPend=()=>{portalOpen=false; deckFx('limbo',k,'raizes'); cur='raizes'; dMsg='Caiu no Limbo! Recomece aqui'; paintDecks()};
   openCard(f,btn.querySelector('.stack'),true) }));
 paintDecks();
 
 // ---------- Reinos ----------
 // R16: 3 cartas por Reino (maiores), nenhuma repetida da História
-const R={
- raizes:['04-g-caipora','28-c-mula-sem-cabeca','03-g-boitata'],
- mares:['15-g-poseidon','02-g-iara','49-o-boto'],
- tormentas:['52-o-loki','40-c-yuki-onna','10-g-freya'],
- titas:['11-g-valkyria','34-c-minotauro','12-g-odin']};
+const R={ /* R18: uma de cada cultura por Reino (folclore · mitologia · lenda urbana/terror) */
+ raizes:['04-g-caipora','13-g-hercules','20-c-bicho-papao'],
+ mares:['49-o-boto','15-g-poseidon','22-c-charlotte'],
+ tormentas:['16-g-tupa','10-g-freya','40-c-yuki-onna'],
+ titas:['50-o-phoenix','12-g-odin','37-c-noiva-fantasma']};
 const reinos=[];
 for(const id in R){const sec=document.getElementById(id), fan=sec.querySelector('.fan'), cards=[];
   R[id].forEach(f=>{const el=document.createElement('div');el.className='card';el.tabIndex=0;el.setAttribute('role','button');el.setAttribute('aria-label','Ver a carta '+nameOf(f));
@@ -295,7 +297,7 @@ function relFill(el){ const list=el._rl; $('#relmt').textContent=el.querySelecto
   requestAnimationFrame(()=>requestAnimationFrame(()=>rfFan.classList.add('on'))) }
 // R17: no celular, uma versão por vez, grande; deslizar o dedo troca
 let relIdx=0; function relSet(i){ const cs=[...rfFan.querySelectorAll('.rf-c')]; if(!cs.length) return; relIdx=(i+cs.length)%cs.length; cs.forEach((c,k)=>{c.classList.toggle('cur',k===relIdx); c.classList.toggle('prev',k===(relIdx-1+cs.length)%cs.length); c.classList.toggle('next',k===(relIdx+1)%cs.length)});
-  let dots=relM.querySelector('.rf-dots'); if(!dots){dots=document.createElement('div'); dots.className='rf-dots'; rfFan.after(dots)} dots.innerHTML=cs.map((_,k)=>`<i class="${k===relIdx?'on':''}"></i>`).join('') }
+  let dots=relM.querySelector('.rf-dots'); if(!dots){dots=document.createElement('div'); dots.className='rf-dots'; rfFan.after(dots); const mk=(d,l)=>{const b=document.createElement('button'); b.type='button'; b.className='rf-arr '+(d<0?'l':'r'); b.setAttribute('aria-label',l); b.textContent=d<0?'‹':'›'; b.onclick=e=>{e.stopPropagation(); relSet(relIdx+d)}; rfFan.appendChild(b)}; mk(-1,'Versão anterior'); mk(1,'Próxima versão'); relM.addEventListener('keydown',e=>{if(e.key==='ArrowRight') relSet(relIdx+1); if(e.key==='ArrowLeft') relSet(relIdx-1)})} dots.innerHTML=cs.map((_,k)=>`<i class="${k===relIdx?'on':''}"></i>`).join('') }
 { let sx=0,sy=0,on=false; rfFan.addEventListener('touchstart',e=>{const t=e.touches[0]; sx=t.clientX; sy=t.clientY; on=true},{passive:true});
   rfFan.addEventListener('touchend',e=>{ if(!on||!relM.classList.contains('single')) return; on=false; const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy; if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)) relSet(relIdx+(dx<0?1:-1)) },{passive:true}) }
 // passar o mouse: o leque abre na tela, sem modal (fundo escurece e desfoca); tirar o mouse fecha
@@ -307,8 +309,8 @@ if(canHover) addEventListener('pointermove',e=>{ if(e.pointerType==='touch') ret
   if(relM.classList.contains('hov')&&relFor&&!relT) relT=setTimeout(()=>{relT=0; relHide()},260) },{passive:true});
 $$('.rel').forEach(el=>{const img=el.querySelector('img'), g=Object.keys(RELS).find(k=>img.src.includes('-r-'+k)); if(!g) return; el._rl=RELS[g];
   el.insertAdjacentHTML('afterbegin',`<span class="rn">${el._rl.length} versões</span>`);
-  const open=()=>{ relFor=null; relM.classList.remove('hov','closing'); relFill(el); if(TOUCHUI){ relM.classList.add('single'); relSet(0) } openModal(relM) };
-  el.addEventListener('click',()=>{ if(canHover) relShow(el); else open() }); el.tabIndex=0; el.setAttribute('role','button'); el.setAttribute('aria-label','Ver as versões de '+el.querySelector('h3').textContent);
+  const open=()=>{ relFor=null; relM.classList.remove('hov','closing'); relFill(el); relM.classList.add('single'); relSet(0); openModal(relM) };
+  el.addEventListener('click',()=>{ relHide&&relM.classList.contains('hov')&&relHide(); open() }); el.tabIndex=0; el.setAttribute('role','button'); el.setAttribute('aria-label','Ver as versões de '+el.querySelector('h3').textContent);
   el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}})});
 document.addEventListener('click',e=>{ if(relM.classList.contains('hov')&&relFor&&!e.target.closest('.rel,.rf-c')) relHide() });
 addEventListener('keydown',e=>{ if(e.key==='Escape'&&relM.classList.contains('hov')) relHide() });
@@ -764,7 +766,7 @@ function makeRing(st,items,dir=1,spd=1){ const N=items.length, step=360/N, prev=
   let base=0, lastY=scrollY, lt=0, boost=0, raf=0, run=false;
   const gz=now=>{ const r=sec.getBoundingClientRect(); const W=innerWidth, H=MC.VH, mob=W<761; const dt=lt?Math.min(.05,(now-lt)/1000):0; lt=now; const dy=scrollY-lastY; lastY=scrollY; boost+=(dy*.0025-boost)*.15; base+=(.09+boost)*dt*(mob?1.2:1);
     const vis=clamp((H-r.top)/(H*.5))*clamp((r.bottom)/(H*.5)); gzH.style.opacity='1';
-    figs.forEach((f,i)=>{const q=pos[i], ring=q.ring, R=(mob?[.36,.52,.7]:[.3,.42,.55])[ring], rx=W*R*(mob?1.15:1), ry=H*(mob?.3:.36)*(mob?[.85,1.05,1.3][ring]:[.8,1.05,1.35][ring]);
+    figs.forEach((f,i)=>{const q=pos[i], ring=q.ring, R=(mob?[.36,.52,.7]:[.3,.42,.55])[ring], rx=W*R*(mob?1.15:1), ry=H*(mob?.26:.3)*(mob?[.8,1,1.15][ring]:[.78,1,1.18][ring]);
       const a=q.a0+base*(ring%2?-1:1)*(1-ring*.22); const x=Math.cos(a)*rx, y=Math.sin(a)*ry, depth=(Math.sin(a)+1)/2; const sc=(mob?.42:.5)+depth*(mob?.5:.6), o=(.35+depth*.65)*vis;
       const oS=o.toFixed(2); if(oS!==q.o){f.style.opacity=oS; f.style.visibility=o>.02?'visible':'hidden'; f.style.pointerEvents=o>.5?'auto':'none'; q.o=oS}
       const t=`translate(-50%,-50%) translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${sc.toFixed(3)})`; if(t!==q.t){f.style.transform=t; f.style.zIndex=Math.round(depth*20); q.t=t}});

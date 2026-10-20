@@ -2065,3 +2065,23 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
 @media (max-width:760px){.gz-space figure{width:38vw!important}.gz-space figure.gz-v{width:27vw!important}}
 </style>
 <style>.holo,.holo img{-webkit-user-drag:none;user-drag:none}</style>
+<style>/* R18 */
+/* baralhos: Portal aberto libera todos */
+.deck.free{opacity:1!important;filter:none!important;cursor:pointer}
+.deck.free .stack{box-shadow:0 0 0 2px color-mix(in srgb,var(--dc) 70%,transparent),0 0 40px color-mix(in srgb,var(--dc) 45%,transparent);animation:deckfree 1.6s ease-in-out infinite}
+@keyframes deckfree{50%{box-shadow:0 0 0 2px var(--dc),0 0 70px color-mix(in srgb,var(--dc) 70%,transparent)}}
+.deck.free .dlock{color:var(--dc);opacity:1}
+/* relíquias: uma versão por vez em todas as telas, com setas */
+.rf-arr{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:1px solid color-mix(in srgb,var(--bone) 25%,transparent);background:rgba(0,0,0,.45);color:var(--bone);font-size:30px;line-height:1;display:grid;place-items:center;cursor:pointer;z-index:5;padding:0 0 4px}
+.rf-arr.l{left:max(8px,calc(50% - min(36vw,calc(33svh * 815 / 1110)) - 60px))}.rf-arr.r{right:max(8px,calc(50% - min(36vw,calc(33svh * 815 / 1110)) - 60px))}
+.rf-arr:hover{background:color-mix(in srgb,var(--rc,var(--accent)) 40%,#000)}
+.relfan.single .rf-c{width:min(72vw,calc(66svh * 815 / 1110))!important}
+@media (min-width:761px){.relfan.single .rf-c{width:min(30vw,calc(64svh * 815 / 1110))!important}.relfan.single .rf-c.prev{transform:translate(calc(-50% - 36vw),-50%) rotate(-6deg) scale(.9)!important}.relfan.single .rf-c.next{transform:translate(calc(-50% + 36vw),-50%) rotate(6deg) scale(.9)!important}}
+@media (max-width:760px){.rf-arr{display:none}}
+/* feitiço: parallax da imagem dentro da carta, igual às outras */
+.pot .front img{transform:translate(-50%,-50%) rotate(90deg) translate(calc(var(--ly,0)*-2%),calc(var(--lx,0)*2%)) scale(1.08)!important;transition:transform .25s ease-out!important}
+.pot .back #magimg{transform:translate(calc(var(--lx,0)*-1.6%),calc(var(--ly,0)*-1.4%)) scale(1.06);transition:transform .25s ease-out}
+/* galeria: nada cortado no topo */
+.gz-stage{overflow:visible!important}
+.galz{overflow:clip}
+</style>
