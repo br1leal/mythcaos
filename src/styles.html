@@ -1992,18 +1992,20 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
 /* reinos: leque com 3 cartas maiores */
 .reino .count{display:none}
 </style>
-<style>/* R16: celular — carta plana com parallax interno e leve esticada no arrasto */
-@media (hover:none){
- .holo{--tsx:1;--tsy:1}
- .layers.deep img{transform:translate(calc(var(--lx,0)*-2.2%),calc(var(--ly,0)*-2%)) scale(1.08)!important;transition:transform .25s ease-out!important}
- .layers.deep::after{display:none}
- .card .f,.card .b{transform:scale(var(--tsx,1),var(--tsy,1));transition:transform .25s ease-out}
- .lb-tilt{transform:scale(var(--tsx,1),var(--tsy,1))!important;transition:transform .25s ease-out}
- #stcards .st-ci{transform:scale(var(--tsx,1),var(--tsy,1))!important;transition:transform .25s ease-out!important}
- .lv-tilt{transform:scale(var(--tsx,1),var(--tsy,1))!important;transition:transform .25s ease-out}
- .lb-card{touch-action:pan-y}
- .lb-face .fx.sheen,.lb-face .fx.film{opacity:calc(var(--hov,0)*.5)}
-}</style>
+<style>/* R17: todas as cartas — imagem inteira (sem recorte) com parallax interno; puxar estica (dedo ou mouse) */
+.layers.deep img{transform:translate(calc(var(--lx,0)*-2.2%),calc(var(--ly,0)*-2%)) scale(1.08)!important;transition:transform .25s ease-out!important}
+.layers.deep::after{display:none}
+.card .f,.card .b{transform:var(--stretch,none)}
+.lb-tilt{transform:var(--stretch,none) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))!important}
+.st-ci{transform:var(--stretch,none) perspective(900px) rotateX(var(--rx,0deg)) rotateY(calc(var(--ry,0deg) + var(--flip,0deg))) scale(var(--hs,1))}
+#stcards .st-ci{transform:var(--stretch,none)!important;transition:none!important}
+.lv-tilt{transform:var(--stretch,none) perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--hs,1))!important}
+.hwrap{transform:var(--stretch,none) perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--hs,1))}
+.pot{transform:var(--stretch,none) perspective(1200px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))!important}
+.holo{touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.lb-card,.lb-card .holo,.rf-c{touch-action:none}
+@media (hover:none){ .lb-face .fx.sheen,.lb-face .fx.film{opacity:calc(var(--hov,0)*.5)} .pot{transform:var(--stretch,none)!important} }
+</style>
 <style>/* R16: feitiço — virar sem 3D no celular (o iOS deixava a frente vazar sobre a receita), holográfico igual às cartas, revelação brilhando */
 @media (hover:none){
  .pot{transform:none!important;perspective:none!important}
@@ -2013,8 +2015,6 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
  .pot:not(.flip) .back{opacity:0;visibility:hidden;pointer-events:none}
  .pot.flip .front{opacity:0;visibility:hidden;pointer-events:none}
  .pot.flip .back,.pot:not(.flip) .front{opacity:1;visibility:visible;transition:opacity .45s ease}
- .pot .face .fx.sheen,.pot .face .fx.film{display:none}
- .pot .face .fx.glare{opacity:calc(var(--hov,0)*.35)}
 }
 .pot.won .face{animation:potwon 2.4s ease-in-out infinite}
 .pot.won .back::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.45) 48%,transparent 62%);background-size:220% 220%;animation:potsheen 2.2s ease-in-out infinite;mix-blend-mode:screen;z-index:5}
@@ -2035,3 +2035,33 @@ body[data-theme^="luz"] #mfluid.on{opacity:.85}
  #sgrid .scard.sil::after{font-size:26px;top:6px;right:8px}
 }
 </style>
+<style>/* R17: celular — cursiva da história com folga nas laterais */
+@media (max-width:760px){
+ #sttxt,#sttxt .st-block,#sttxt .st-line{overflow:visible!important}
+ #sttxt .st-line .hl{display:inline-block;padding:0 .3em 0 .25em;margin-left:-.1em}
+ .st-txt{padding-left:calc(var(--gutter) + .1em)!important}
+ .acc,.st-w.hl{line-height:1.1}
+}</style><style>/* R17: relíquias no celular — uma versão por vez, grande, deslizar para trocar */
+.relfan.single .rf-fan{height:min(70svh,560px)}
+.relfan.single .rf-c{left:50%!important;bottom:auto!important;top:50%!important;width:min(72vw,calc(66svh * 815 / 1110))!important;transform:translate(-50%,-50%) scale(.86)!important;opacity:0!important;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .35s!important;pointer-events:none;z-index:1}
+.relfan.single .rf-c.prev{transform:translate(calc(-50% - 70vw),-50%) rotate(-6deg) scale(.9)!important;opacity:.35!important}
+.relfan.single .rf-c.next{transform:translate(calc(-50% + 70vw),-50%) rotate(6deg) scale(.9)!important;opacity:.35!important}
+.relfan.single .rf-c.cur{transform:translate(-50%,-50%) scale(1)!important;opacity:1!important;pointer-events:auto;z-index:3}
+.relfan.single .rf-hint{display:none}
+.rf-dots{display:none;justify-content:center;gap:8px;margin-top:12px}
+.relfan.single .rf-dots{display:flex}
+.rf-dots i{width:8px;height:8px;border-radius:50%;background:color-mix(in srgb,var(--bone) 25%,transparent)}
+.rf-dots i.on{background:var(--rc,var(--accent))}
+</style>
+<style>/* R17: galeria em espiral */
+.galz{height:200vh!important}
+@media (max-width:760px){.galz{height:170vh!important}}
+.gz-stage{perspective:none}
+.gz-head{z-index:2;pointer-events:none}
+.gz-head .label,.gz-head h2{text-shadow:0 2px 18px rgba(255,250,240,.9),0 0 40px rgba(255,250,240,.9)}
+.gz-space{z-index:1}
+.gz-space figure{width:clamp(150px,17vw,280px)!important;will-change:transform,opacity;transition:none}
+.gz-space figure.gz-v{width:clamp(110px,12vw,200px)!important}
+@media (max-width:760px){.gz-space figure{width:38vw!important}.gz-space figure.gz-v{width:27vw!important}}
+</style>
+<style>.holo,.holo img{-webkit-user-drag:none;user-drag:none}</style>

@@ -43,12 +43,18 @@ const holos=[];
 function holo(el,max=16,grow=.05){el.classList.add('holo');const st={el,tx:0,ty:0,x:0,y:0,px:50,py:50,tpx:50,tpy:50,h:0,th:0,max,grow};holos.push(st);el._holo=st;
   el.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;const r=el.getBoundingClientRect();const x=clamp((e.clientX-r.left)/r.width),y=clamp((e.clientY-r.top)/r.height);st.tx=(x-.5)*2;st.ty=(y-.5)*2;st.tpx=x*100;st.tpy=y*100;st.th=1;el.style.zIndex=40});
   el.addEventListener('pointerleave',()=>{st.tx=st.ty=0;st.tpx=st.tpy=50;st.th=0;el.style.zIndex=''});
-  if(TOUCHUI){ /* R16: no toque, o dedo faz parallax dentro da carta e estica levemente a carta na direção do arrasto */
-    let t0=null; const rel=()=>{t0=null; st.tx=st.ty=0; st.th=0; el.style.setProperty('--tsx','1'); el.style.setProperty('--tsy','1')};
-    el.addEventListener('touchstart',e=>{const t=e.touches[0]; t0={x:t.clientX,y:t.clientY}; st.th=1},{passive:true});
-    el.addEventListener('touchmove',e=>{if(!t0) return; const t=e.touches[0], r=el.getBoundingClientRect(); const x=clamp((t.clientX-r.left)/r.width),y=clamp((t.clientY-r.top)/r.height); st.tx=(x-.5)*2; st.ty=(y-.5)*2; st.tpx=x*100; st.tpy=y*100;
-      const dx=(t.clientX-t0.x)/r.width, dy=(t.clientY-t0.y)/r.height; el.style.setProperty('--tsx',(1+Math.min(.06,Math.abs(dx)*.12)).toFixed(3)); el.style.setProperty('--tsy',(1+Math.min(.06,Math.abs(dy)*.12)).toFixed(3))},{passive:true});
-    el.addEventListener('touchend',rel,{passive:true}); el.addEventListener('touchcancel',rel,{passive:true}) }
+  /* R17: puxar a carta (dedo ou mouse) — ela segue com resistência e estica na direção do arrasto, como no nimth; ao soltar, volta com mola */
+  { const d={on:false,id:null,sx:0,sy:0,ox:0,oy:0,vx:0,vy:0,moved:0,raf:0};
+    const paint=()=>{ const I=Math.min(.32,Math.hypot(d.ox,d.oy)/380), P=Math.atan2(d.oy,d.ox)*180/Math.PI;
+      el.style.setProperty('--stretch',`translate(${d.ox.toFixed(1)}px,${d.oy.toFixed(1)}px) rotate(${P.toFixed(1)}deg) scale(${(1+I).toFixed(3)},${(1-.45*I).toFixed(3)}) rotate(${(-P).toFixed(1)}deg)`) };
+    const spring=()=>{ d.vx+=-d.ox*.16; d.vy+=-d.oy*.16; d.vx*=.74; d.vy*=.74; d.ox+=d.vx; d.oy+=d.vy; paint();
+      if(Math.abs(d.ox)+Math.abs(d.oy)+Math.abs(d.vx)+Math.abs(d.vy)>.4) d.raf=requestAnimationFrame(spring); else {d.raf=0; d.ox=d.oy=0; el.style.removeProperty('--stretch')} };
+    const rel=()=>{ if(!d.on) return; d.on=false; d.id=null; st.th=0; st.tx=st.ty=0; st.tpx=st.tpy=50; if(!d.raf) d.raf=requestAnimationFrame(spring); if(d.moved>8){ el._dragged=true; setTimeout(()=>el._dragged=false,0) } };
+    el.addEventListener('pointerdown',e=>{ if(e.button&&e.button!==0) return; if(e.pointerType!=='touch') e.preventDefault(); try{el.setPointerCapture(e.pointerId)}catch(_){} if(d.raf){cancelAnimationFrame(d.raf); d.raf=0} d.on=true; d.id=e.pointerId; d.sx=e.clientX-d.ox; d.sy=e.clientY-d.oy; d.vx=d.vy=0; d.moved=0; st.th=1 });
+    el.addEventListener('pointermove',e=>{ if(!d.on||e.pointerId!==d.id) return; const dx=e.clientX-d.sx, dy=e.clientY-d.sy, dist=Math.hypot(dx,dy)||1, o=1/(1+dist/260); d.moved=Math.max(d.moved,dist); d.ox=.6*dx*o; d.oy=.6*dy*o; paint();
+      if(TOUCHUI){ const r=el.getBoundingClientRect(); const x=clamp((e.clientX-r.left)/r.width),y=clamp((e.clientY-r.top)/r.height); st.tx=(x-.5)*2; st.ty=(y-.5)*2; st.tpx=x*100; st.tpy=y*100 } });
+    el.addEventListener('pointerup',rel); el.addEventListener('pointercancel',rel); el.addEventListener('lostpointercapture',rel);
+    el.addEventListener('click',e=>{ if(el._dragged){ e.stopImmediatePropagation(); e.preventDefault() } },true) }
   return st}
 function tickHolo(dt){const k=1-Math.exp(-dt*6);
   for(const s of holos){ if(s.th===0&&s.h<.002&&Math.abs(s.x)<.002&&Math.abs(s.y)<.002) continue;
@@ -56,7 +62,7 @@ function tickHolo(dt){const k=1-Math.exp(-dt*6);
     e.setProperty('--ry',(s.x*s.max)+'deg');e.setProperty('--rx',(-s.y*s.max)+'deg');e.setProperty('--px',s.px+'%');e.setProperty('--py',s.py+'%');e.setProperty('--hov',s.h.toFixed(3));e.setProperty('--ang',(115+s.x*25)+'deg');e.setProperty('--hs',(1+s.h*s.grow).toFixed(3));e.setProperty('--lx',s.x.toFixed(3));e.setProperty('--ly',s.y.toFixed(3))}}
 // carta em camadas: fundo sem o personagem + personagem recortado (parallax sutil)
 const TOUCHUI=matchMedia('(hover:none)').matches; MC.touchUI=TOUCHUI;
-function layersHTML(f,alt){ if(CUTS.has(f)&&!TOUCHUI) return `<img class="plate" src="assets/plate/${f}.jpg" alt=""><img class="char" src="assets/cut/${f}.webp" alt="${alt}">`; return `<img src="${IMP(f)}" alt="${alt}">`}
+function layersHTML(f,alt){ if(false&&CUTS.has(f)) return `<img class="plate" src="assets/plate/${f}.jpg" alt=""><img class="char" src="assets/cut/${f}.webp" alt="${alt}">`; return `<img src="${IMP(f)}" alt="${alt}">`}
 const fxHTML='<div class="fx sheen"></div><div class="fx film"></div><div class="fx glare"></div>';
 const nameOf=f=>{const d=find(f);return d?d.c.n:f};
 
@@ -200,7 +206,7 @@ const reinos=[];
 for(const id in R){const sec=document.getElementById(id), fan=sec.querySelector('.fan'), cards=[];
   R[id].forEach(f=>{const el=document.createElement('div');el.className='card';el.tabIndex=0;el.setAttribute('role','button');el.setAttribute('aria-label','Ver a carta '+nameOf(f));
     el.innerHTML=`<div class="f"><div class="layers">${layersHTML(f,'')}</div>${fxHTML}</div><div class="b"><img src="assets/imp/${id}/114-verso.jpg" alt=""></div>`;
-    holo(el,9); el.addEventListener('click',()=>openCard(f,el)); el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openCard(f,el)}});
+    holo(el,12,.06); el.addEventListener('click',()=>openCard(f,el)); el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openCard(f,el)}});
     fan.appendChild(el);cards.push(el)});
   reinos.push({sec,fan,cards,stage:sec.querySelector('.stage'),txt:sec.querySelector('.txt')})}
 const prog=sec=>{const r=sec.getBoundingClientRect();return clamp(-r.top/Math.max(1,r.height-MC.VH))};
@@ -287,6 +293,11 @@ const relM=$('#relm'), rfFan=$('#rffan'), canHover=matchMedia('(hover:hover)').m
 function relFill(el){ const list=el._rl; $('#relmt').textContent=el.querySelector('h3').textContent; relM.style.setProperty('--rc',getComputedStyle(el).getPropertyValue('--rc'));
   const n=list.length; rfFan.classList.remove('on'); rfFan.innerHTML=list.map((u,i)=>{const o=i-(n-1)/2; return `<div class="rf-c" style="--o:${o};--i:${i}"><img src="${u}" alt="Versão ${i+1}"></div>`}).join('');
   requestAnimationFrame(()=>requestAnimationFrame(()=>rfFan.classList.add('on'))) }
+// R17: no celular, uma versão por vez, grande; deslizar o dedo troca
+let relIdx=0; function relSet(i){ const cs=[...rfFan.querySelectorAll('.rf-c')]; if(!cs.length) return; relIdx=(i+cs.length)%cs.length; cs.forEach((c,k)=>{c.classList.toggle('cur',k===relIdx); c.classList.toggle('prev',k===(relIdx-1+cs.length)%cs.length); c.classList.toggle('next',k===(relIdx+1)%cs.length)});
+  let dots=relM.querySelector('.rf-dots'); if(!dots){dots=document.createElement('div'); dots.className='rf-dots'; rfFan.after(dots)} dots.innerHTML=cs.map((_,k)=>`<i class="${k===relIdx?'on':''}"></i>`).join('') }
+{ let sx=0,sy=0,on=false; rfFan.addEventListener('touchstart',e=>{const t=e.touches[0]; sx=t.clientX; sy=t.clientY; on=true},{passive:true});
+  rfFan.addEventListener('touchend',e=>{ if(!on||!relM.classList.contains('single')) return; on=false; const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy; if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)) relSet(relIdx+(dx<0?1:-1)) },{passive:true}) }
 // passar o mouse: o leque abre na tela, sem modal (fundo escurece e desfoca); tirar o mouse fecha
 function relShow(el){ clearTimeout(relT); relT=0; if(relFor===el&&!relM.hidden) return; relFor=el; relFill(el); relM.classList.add('hov'); relM.hidden=false }
 function relHide(){ relFor=null; rfFan.classList.remove('on'); relM.classList.add('closing'); setTimeout(()=>{ if(!relFor){relM.hidden=true; relM.classList.remove('hov','closing')} },320) }
@@ -296,7 +307,7 @@ if(canHover) addEventListener('pointermove',e=>{ if(e.pointerType==='touch') ret
   if(relM.classList.contains('hov')&&relFor&&!relT) relT=setTimeout(()=>{relT=0; relHide()},260) },{passive:true});
 $$('.rel').forEach(el=>{const img=el.querySelector('img'), g=Object.keys(RELS).find(k=>img.src.includes('-r-'+k)); if(!g) return; el._rl=RELS[g];
   el.insertAdjacentHTML('afterbegin',`<span class="rn">${el._rl.length} versões</span>`);
-  const open=()=>{ relFor=null; relM.classList.remove('hov','closing'); relFill(el); openModal(relM) };
+  const open=()=>{ relFor=null; relM.classList.remove('hov','closing'); relFill(el); if(TOUCHUI){ relM.classList.add('single'); relSet(0) } openModal(relM) };
   el.addEventListener('click',()=>{ if(canHover) relShow(el); else open() }); el.tabIndex=0; el.setAttribute('role','button'); el.setAttribute('aria-label','Ver as versões de '+el.querySelector('h3').textContent);
   el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}})});
 document.addEventListener('click',e=>{ if(relM.classList.contains('hov')&&relFor&&!e.target.closest('.rel,.rf-c')) relHide() });
@@ -333,7 +344,7 @@ function potClick(){ if(pot.classList.contains('brew')) return;
   else if(mstate==='play'){ pot.classList.add('flip'); setM('recipe') } }
 $('#again').onclick=()=>{ pot.classList.remove('flip','won'); setTimeout(()=>{mstate='idle'; potClick()},450) };
 {const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){io.disconnect(); setTimeout(()=>pot.classList.add('laid'),350)}}),{threshold:.45}); if(MC.reduce) pot.classList.add('laid'); else io.observe(pot)} // 12 entra em pé e deita na mesa
-holo(pot,9,.05); pot.querySelectorAll('.face').forEach(f=>f.insertAdjacentHTML('beforeend',fxHTML));
+holo(pot,12,.06); pot.querySelectorAll('.face').forEach(f=>f.insertAdjacentHTML('beforeend',fxHTML));
 pot.addEventListener('click',potClick); pot.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();potClick()}});
 function resetPot(){mix.length=0;paintSlots();pot.classList.remove('brew')}
 $('#cclear').onclick=()=>resetPot();
@@ -354,11 +365,11 @@ $('#brew').onclick=()=>{
 
 // ---------- efeitos de tela (caldeirão) ----------
 const fxc=$('#fxc'), fctx=fxc.getContext('2d'); let fxRun=null;
-function screenFX(kind){ if(MC.reduce) return; const W=fxc.width=innerWidth, H=fxc.height=MC.VH, t0=performance.now(), D=3400, P=[];
+function screenFX(kind){ /* R17: roda também no celular e com 'reduzir movimento' (é disparado por um toque do usuário) */ const W=fxc.width=innerWidth, H=fxc.height=MC.VH, t0=performance.now(), D=3400, P=[];
   const drip=['derreter','lava','gosma'].includes(kind), col={derreter:['#cfd6dc','#8a949c'],lava:['#ffb02e','#d2340f'],gosma:['#8cff4a','#2f8f1a']}[kind];
   if(drip){const N=Math.ceil(W/34); for(let i=0;i<N;i++) P.push({x:i*W/N+Math.random()*12,w:W/N*(.35+Math.random()*.75),sp:Math.random()<.25?.55+Math.random()*.35:.08+Math.random()*.32,dl:Math.random()*.3,b:Math.random()})}
   else for(let i=0;i<(kind==='neve'?260:220);i++) P.push({x:Math.random()*W,y:kind==='neve'?-Math.random()*H:H+Math.random()*H*.6,r:kind==='neve'?1+Math.random()*3.4:4+Math.random()*10,v:kind==='neve'?60+Math.random()*120:180+Math.random()*320,ph:Math.random()*6,l:Math.random()});
-  cancelAnimationFrame(fxRun); fxc.style.filter=drip?'url(#goo)':'none';
+  cancelAnimationFrame(fxRun); fxc.style.filter=(drip&&!TOUCHUI)?'url(#goo)':'none'; /* o filtro SVG na tela inteira não renderiza no iOS */
   const step=now=>{const t=(now-t0)/D, c=fctx, dt=1/60; c.clearRect(0,0,W,H); const fade=t<.75?1:1-(t-.75)/.25; if(t>=1){c.clearRect(0,0,W,H);return}
     c.globalAlpha=fade;
     if(kind==='neve'){const g=c.createRadialGradient(W/2,H/2,Math.min(W,H)*.3,W/2,H/2,Math.max(W,H)*.75); g.addColorStop(0,'rgba(200,230,255,0)'); g.addColorStop(1,'rgba(210,235,255,.55)'); c.fillStyle=g; c.fillRect(0,0,W,H);
@@ -643,8 +654,8 @@ function updStory(){ const r=stSec.getBoundingClientRect(); if(r.bottom<MC.VH*.5
     S.words.forEach((w,j)=>{const a=clamp(lit-j); w.style.setProperty('--a',a.toFixed(3))});
     S.cards.forEach((c,ci)=>{ /* R15: tudo booleano — quando S.B.early era undefined, `on` virava undefined e classList.toggle('in',undefined) ALTERNAVA a classe a cada quadro (a carta piscava) */ const wOn=lit-S.words.indexOf(c.w)>.5||!!(S.B.early&&c.w===S.cards[0].w&&tq>.15), on=!!(i===bi&&(S.B.red?(lit-S.words.indexOf(c.w)>.5||!!(S.B.early&&c.w===S.cards[0].w&&tq>.15+ci*.18)):(wOn&&tq>ci*.7))), gone=i<bi||(i===bi&&q>.9), pre=c.d.classList.contains('pre')||c.d.dataset.pre;
       if(c.big){ // o tabuleiro surge aos poucos desde o início, desfocado, e fica nítido no bloco dele
-        const bp=i<bi?1:(i===bi?clamp(q/.35):0), gb=i<bi||(i===bi&&q>.9); /* R16: o tabuleiro só surge no bloco dele */ c.d.style.setProperty('--rv',bp.toFixed(3));
-        c.d.style.opacity=gb||i!==bi?0:Math.pow(bp,1.4).toFixed(3); c.d.style.filter=innerWidth<761?'none':`blur(${((1-bp)*16).toFixed(1)}px)`; c.d.classList.add('in'); return }
+        const bp=i<bi?1:(i===bi?1:(i===bi+1?clamp((q-.15)/.45):0)), gb=i<bi||(i===bi&&q>.9); /* R17: o tabuleiro surge no bloco do templo e fica no bloco dele */ c.d.style.setProperty('--rv',bp.toFixed(3));
+        c.d.style.opacity=gb||(i!==bi&&i!==bi+1)?0:Math.pow(bp,1.4).toFixed(3); c.d.style.filter=innerWidth<761?'none':`blur(${((1-bp)*16).toFixed(1)}px)`; c.d.classList.add('in'); return }
       if(pre){ c.d.dataset.pre=1; c.d.classList.toggle('pre',!!(!on&&!gone&&i===bi)); c.d.classList.toggle('in',!!(i===bi&&!gone)); c.d.classList.toggle('out',!!gone); return }
       c.d.classList.toggle('in',!!(on&&!gone)); c.d.classList.toggle('out',!!gone) }) });
   stDots.forEach((d,i)=>d.classList.toggle('on',i===bi));
@@ -745,17 +756,21 @@ function makeRing(st,items,dir=1,spd=1){ const N=items.length, step=360/N, prev=
 
 // 11 galeria: volta ao mosaico (R4d); clicar amplia a foto como as cartas
 {const sec=document.getElementById('galeria'), mo=sec&&sec.querySelector('#gzspace'); if(mo){
-  // R5: galeria em túnel — as fotos nascem no centro, crescem rumo às bordas com a rolagem e saem de cena
-  [...mo.children].forEach(f=>mo.appendChild(f.cloneNode(true)));
-  const gzH=sec.querySelector('.gz-head'), figs=[...mo.querySelectorAll('figure')], N=figs.length, GAP=700, PRE=1200, POST=1300;
-  const pos=figs.map((f,i)=>{const a=i*2.39996+.6; return {a, ax:Math.cos(a), ay:Math.sin(a), o:-1, t:''}});
+  const gzH=sec.querySelector('.gz-head'); [...mo.children].forEach(f=>mo.appendChild(f.cloneNode(true)));
+  // R17: galeria em espiral — as fotos orbitam o texto em anéis (estilo ArtCraft); giram sozinhas e aceleram com a rolagem; clicar amplia
+  const figs=[...mo.querySelectorAll('figure')], N=figs.length;
   figs.forEach((f,i)=>f.classList.add(i%3===1?'gz-v':'gz-h'));
-  const gz=()=>{const r=sec.getBoundingClientRect(); if(r.bottom<0||r.top>MC.VH) return; const P=clamp(-r.top/Math.max(1,r.height-MC.VH)), W=innerWidth, H=MC.VH, mob=W<761;
-    const sx=W*(mob?.3:.33), sy=H*(mob?.26:.27), T0=.18, Pz=clamp((P-T0)/(1-T0)), cam=Pz*(N*GAP+PRE+POST); /* R16: primeiro o texto (sem fotos), depois o túnel */ {const ho=(1-clamp((P-T0+.04)/.08))+clamp((P-.94)/.05), hs=ho.toFixed(2); if(gzH.style.opacity!==hs) gzH.style.opacity=hs}
-    figs.forEach((f,i)=>{const z=-(i*GAP)-PRE+cam, q=pos[i]; let o=clamp((z+3700)/900)*clamp((900-z)/450)*clamp((P-T0)/.03); if(MC.reduce) o=o>.05?1:0;
-      const oS=o.toFixed(2); if(oS!==q.o){f.style.opacity=oS; f.style.visibility=o>.01?'visible':'hidden'; f.style.pointerEvents=o>.6?'auto':'none'; q.o=oS}
-      if(o>.01){const t=`translate(-50%,-50%) translate3d(${(q.ax*sx).toFixed(1)}px,${(q.ay*sy).toFixed(1)}px,${z.toFixed(1)}px) rotateY(${(-q.ax*8).toFixed(2)}deg) rotateX(${(q.ay*5).toFixed(2)}deg)`; if(t!==q.t){f.style.transform=t; q.t=t}}})};
-  MC.gz=gz; addEventListener('scroll',()=>requestAnimationFrame(gz),{passive:true}); addEventListener('resize',gz); gz();
+  const pos=figs.map((f,i)=>({ring:i%3, a0:(i*2.39996)%(Math.PI*2), o:'', t:''}));
+  let base=0, lastY=scrollY, lt=0, boost=0, raf=0, run=false;
+  const gz=now=>{ const r=sec.getBoundingClientRect(); const W=innerWidth, H=MC.VH, mob=W<761; const dt=lt?Math.min(.05,(now-lt)/1000):0; lt=now; const dy=scrollY-lastY; lastY=scrollY; boost+=(dy*.0025-boost)*.15; base+=(.09+boost)*dt*(mob?1.2:1);
+    const vis=clamp((H-r.top)/(H*.5))*clamp((r.bottom)/(H*.5)); gzH.style.opacity='1';
+    figs.forEach((f,i)=>{const q=pos[i], ring=q.ring, R=(mob?[.36,.52,.7]:[.3,.42,.55])[ring], rx=W*R*(mob?1.15:1), ry=H*(mob?.3:.36)*(mob?[.85,1.05,1.3][ring]:[.8,1.05,1.35][ring]);
+      const a=q.a0+base*(ring%2?-1:1)*(1-ring*.22); const x=Math.cos(a)*rx, y=Math.sin(a)*ry, depth=(Math.sin(a)+1)/2; const sc=(mob?.42:.5)+depth*(mob?.5:.6), o=(.35+depth*.65)*vis;
+      const oS=o.toFixed(2); if(oS!==q.o){f.style.opacity=oS; f.style.visibility=o>.02?'visible':'hidden'; f.style.pointerEvents=o>.5?'auto':'none'; q.o=oS}
+      const t=`translate(-50%,-50%) translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${sc.toFixed(3)})`; if(t!==q.t){f.style.transform=t; f.style.zIndex=Math.round(depth*20); q.t=t}});
+    if(run) raf=requestAnimationFrame(gz); else raf=0 };
+  new IntersectionObserver(es=>es.forEach(en=>{run=en.isIntersecting; if(run&&!raf){lt=0; lastY=scrollY; raf=requestAnimationFrame(gz)}}),{rootMargin:'120px'}).observe(sec);
+  MC.gz=gz;
   const gm=document.createElement('div'); gm.className='modal galm'; gm.id='galm'; gm.hidden=true; gm.setAttribute('role','dialog'); gm.setAttribute('aria-modal','true'); gm.setAttribute('aria-label','Foto da galeria');
   gm.innerHTML='<div class="mbg" data-close></div><img class="galm-img" alt="Foto do MythCaos na mesa"><button class="mx" type="button" aria-label="Fechar" data-close>×</button>'; document.body.appendChild(gm);
   const big=gm.querySelector('.galm-img');
